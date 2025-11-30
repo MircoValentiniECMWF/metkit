@@ -188,6 +188,13 @@ if ( HAVE_ODB )
     set( odc_libs odccore )
 endif()
 
+
+#if ( HAVE_MARS2GRIB )
+#    list( APPEND metkit_srcs
+#        )
+#    list( APPEND grib_libs mars2grib )
+#endif()
+
 ecbuild_add_library(
 
     TARGET metkit

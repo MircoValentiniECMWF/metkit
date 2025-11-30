@@ -1,0 +1,49 @@
+# SECTION1
+----------
+data-type
+origin
+reference-time
+tables
+
+
+# SECTION2
+----------
+mars
+longrange
+analysis
+satellites
+extremesDT
+climateDT
+on-demand-extremesDT
+
+
+# SECTION3
+----------
+regular-ll
+reduced-gg
+spherical-harmonics
+healpix
+
+
+# SECTION4
+----------
+chem
+dirfreq
+ensemble
+level
+model
+param
+period
+point-in-time
+random-patterns
+satellite
+statistics
+
+
+# SECTION5
+----------
+grid-simple
+ccsds
+spectral-complex
+
+
