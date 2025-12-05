@@ -109,9 +109,9 @@ struct SatelliteConceptInfo
     }
 
     template<auto Variant>
-    static std::string variantName()
+    static std::string_view variantName()
     {
-        return std::string(
+        return std::string_view(
             satelliteTypeName<
                 static_cast<SatelliteType>(Variant)
             >()

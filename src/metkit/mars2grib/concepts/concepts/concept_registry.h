@@ -52,16 +52,16 @@ struct ConceptRegistry
 
     using Table = std::array<std::array<FnPtr, NUM_SECTIONS>, NUM_STAGES>;
 
-    std::map<std::pair<std::string,std::string>, Table> map;
+    std::map<std::pair<std::string_view,std::string_view>, Table> map;
 
-    void add(std::string_view conceptName,
-             std::string_view variantName,
+    void add( const std::string_view& conceptName,
+              const std::string_view& variantName,
              Table table)
     {
         map.emplace(
             std::make_pair(
-                std::string(conceptName),
-                std::string(variantName)),
+                std::string_view(conceptName),
+                std::string_view(variantName)),
             std::move(table)
         );
     }

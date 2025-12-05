@@ -109,9 +109,9 @@ struct ExtremesdtConceptInfo
     }
 
     template<auto Variant>
-    static std::string variantName()
+    static std::string_view variantName()
     {
-        return std::string(
+        return std::string_view(
             extremesdtTypeName<
                 static_cast<ExtremesdtType>(Variant)
             >()
