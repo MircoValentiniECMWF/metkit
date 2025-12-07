@@ -98,19 +98,19 @@ make_section_initializers(const Cfg_t& cfg,
 
         switch (secIdx) {
             case 0:
-                fn = select_section_initializer<0, OutDict_t>(tmpl, cfg);
+                fn = resolveSectionTemplateConcepts<0, OutDict_t>(tmpl, cfg);
                 break;
             case 1:
-                fn = select_section_initializer<1, OutDict_t>(tmpl, cfg);
+                fn = resolveSectionTemplateConcepts<1, OutDict_t>(tmpl, cfg);
                 break;
             case 2:
-                fn = select_section_initializer<2, OutDict_t>(tmpl, cfg);
+                fn = resolveSectionTemplateConcepts<2, OutDict_t>(tmpl, cfg);
                 break;
             case 3:
-                fn = select_section_initializer<3, OutDict_t>(tmpl, cfg);
+                fn = resolveSectionTemplateConcepts<3, OutDict_t>(tmpl, cfg);
                 break;
             case 4:
-                fn = select_section_initializer<4, OutDict_t>(tmpl, cfg);
+                fn = resolveSectionTemplateConcepts<4, OutDict_t>(tmpl, cfg);
                 break;
             default:
                 break;
