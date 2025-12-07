@@ -64,8 +64,7 @@ ecbuild_add_option( FEATURE ODB
 
 ecbuild_add_option( FEATURE MARS2GRIB
                     DEFAULT ON
-                    DESCRIPTION "Add support for MARS2GRIB encoding"
-                    REQUIRED_PACKAGES "NAME mars2grib VERSION 1.0" )
+                    DESCRIPTION "Add support for MARS2GRIB encoding" )
 
 # METKIT config files support
 
