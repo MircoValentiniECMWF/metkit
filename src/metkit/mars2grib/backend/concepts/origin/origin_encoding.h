@@ -1,0 +1,43 @@
+#pragma once
+
+#include <string>
+#include <string_view>
+#include <iostream>
+
+#include "../concept_core.h"
+#include "origin_enum.h"
+
+// ======================================================
+// DEFAULT APPLICABILITY (user will override manually)
+// ======================================================
+constexpr bool originApplicable(int Stage, int Section, OriginType Variant)
+{
+    return false;
+}
+
+// ======================================================
+// MAIN OPERATION
+// ======================================================
+template<
+    int Stage, int Section,
+    OriginType Variant,
+    class MarsDict_t,
+    class GeoDict_t,
+    class ParDict_t,
+    class OptDict_t,
+    class OutDict_t
+>
+uint8_t OriginOp(
+    const MarsDict_t&  mars,
+    const GeoDict_t&   geo,
+    const ParDict_t&   par,
+    const OptDict_t&   opt,
+    OutDict_t&         out)
+{
+    std::cout << "[Concept Origin] Op called: "
+              << "Stage="   << Stage
+              << ", Section=" << Section
+              << ", Variant=" << std::string(originTypeName<Variant>())
+              << std::endl;
+    return 0;
+}

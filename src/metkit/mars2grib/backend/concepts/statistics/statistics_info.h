@@ -1,0 +1,57 @@
+#pragma once
+
+#include <string>
+#include <string_view>
+
+#include "../concept_core.h"
+#include "statistics_enum.h"
+#include "statistics_encoding.h"
+
+// ======================================================
+// ConceptInfo
+// ======================================================
+struct StatisticsConceptInfo
+{
+    static constexpr const char* name = "statistics";
+
+    template<
+        int Stage, int Sec,
+        StatisticsType Variant,
+        class MarsDict_t,
+        class GeoDict_t,
+        class ParDict_t,
+        class OptDict_t,
+        class OutDict_t
+    >
+    static constexpr Fn<
+        MarsDict_t,
+        GeoDict_t,
+        ParDict_t,
+        OptDict_t,
+        OutDict_t
+    > entry()
+    {
+        if constexpr ( statisticsApplicable(Stage, Sec, Variant) ) {
+            return &StatisticsOp<
+                Stage, Sec, Variant,
+                MarsDict_t,
+                GeoDict_t,
+                ParDict_t,
+                OptDict_t,
+                OutDict_t
+            >;
+        } else {
+            return nullptr;
+        }
+    }
+
+    template<auto Variant>
+    static std::string_view variantName()
+    {
+        return std::string_view(
+            statisticsTypeName<
+                static_cast<StatisticsType>(Variant)
+            >()
+        );
+    }
+};

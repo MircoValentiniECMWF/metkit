@@ -4,35 +4,34 @@
 #include <string>
 #include <array>
 #include <utility>
+
 #include "concept_core.h"
 
-#include "impl/analysisConcept.h"
-#include "impl/climatedtConcept.h"
-#include "impl/compositionConcept.h"
-#include "impl/datatypeConcept.h"
-#include "impl/dirfreqConcept.h"
-#include "impl/ensembleConcept.h"
-#include "impl/extremesdtConcept.h"
-#include "impl/gridtypeConcept.h"
-#include "impl/levelConcept.h"
-#include "impl/longrangeConcept.h"
-#include "impl/marsConcept.h"
-#include "impl/modelConcept.h"
-#include "impl/ondemandextremesdtConcept.h"
-#include "impl/originConcept.h"
-#include "impl/packingConcept.h"
-#include "impl/paramConcept.h"
-#include "impl/periodConcept.h"
-#include "impl/pointintimeConcept.h"
-#include "impl/randompatternsConcept.h"
-#include "impl/referencetimeConcept.h"
-#include "impl/satelliteConcept.h"
-#include "impl/satellitesConcept.h"
-#include "impl/statisticsConcept.h"
-#include "impl/tablesConcept.h"
+#include "./nil/nil.h"
+#include "./origin/origin.h"
+#include "./tables/tables.h"
+#include "./data-type/data_type.h"
+#include "./forecast-time/forecast_time.h"
+#include "./mars/mars.h"
+#include "./longrange/longrange.h"
+#include "./analysis/analysis.h"
+#include "./satellite/satellite.h"
+#include "./reforecast/reforecast.h"
+#include "./generating-process/generating_process.h"
+#include "./param/param.h"
+#include "./point-in-time/point_in_time.h"
+#include "./level/level.h"
+#include "./statistics/statistics.h"
+#include "./destine/destine.h"
+#include "./composition/composition.h"
+#include "./wave/wave.h"
+#include "./representation/representation.h"
+#include "./shape-of-the-earth/shape_of_the_earth.h"
+#include "./ensemble/ensemble.h"
+#include "./packing/packing.h"
 
 // ======================================================
-// Registry: (concept, variantName) -> table 3x5
+// Registry: (concept, variantName) -> table [NUM_STAGES x NUM_SECTIONS]
 // ======================================================
 template<
     class MarsDict_t,
@@ -56,12 +55,10 @@ struct ConceptRegistry
 
     void add( const std::string_view& conceptName,
               const std::string_view& variantName,
-             Table table)
+              Table table)
     {
         map.emplace(
-            std::make_pair(
-                std::string_view(conceptName),
-                std::string_view(variantName)),
+            std::make_pair(conceptName, variantName),
             std::move(table)
         );
     }
@@ -69,8 +66,7 @@ struct ConceptRegistry
 
 
 // ======================================================
-// make_concept_registry()
-// Registers ALL concepts
+// make_concept_registry()  (NON-SINGLETON)
 // ======================================================
 template<
     class MarsDict_t,
@@ -89,79 +85,94 @@ make_concept_registry()
 
     Registry registry;
 
-    // ============ ONE LINE PER CONCEPT ================
-    RegisterVariants<AnalysisConceptInfo, AnalysisList,
-                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
-
-    RegisterVariants<ClimatedtConceptInfo, ClimatedtList,
-                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
-
-    RegisterVariants<CompositionConceptInfo, CompositionList,
-                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
-
-    RegisterVariants<DatatypeConceptInfo, DatatypeList,
-                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
-
-    RegisterVariants<DirfreqConceptInfo, DirfreqList,
-                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
-
-    RegisterVariants<EnsembleConceptInfo, EnsembleList,
-                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
-
-    RegisterVariants<ExtremesdtConceptInfo, ExtremesdtList,
-                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
-
-    RegisterVariants<GridtypeConceptInfo, GridtypeList,
-                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
-
-    RegisterVariants<LevelConceptInfo, LevelList,
-                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
-
-    RegisterVariants<LongrangeConceptInfo, LongrangeList,
-                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
-
-    RegisterVariants<MarsConceptInfo, MarsList,
-                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
-
-    RegisterVariants<ModelConceptInfo, ModelList,
-                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
-
-    RegisterVariants<OndemandextremesdtConceptInfo, OndemandextremesdtList,
+    RegisterVariants<NilConceptInfo, NilList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
     RegisterVariants<OriginConceptInfo, OriginList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-    RegisterVariants<PackingConceptInfo, PackingList,
+    RegisterVariants<TablesConceptInfo, TablesList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-    RegisterVariants<ParamConceptInfo, ParamList,
+    RegisterVariants<DataTypeConceptInfo, DataTypeList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-    RegisterVariants<PeriodConceptInfo, PeriodList,
+    RegisterVariants<ForecastTimeConceptInfo, ForecastTimeList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-    RegisterVariants<PointintimeConceptInfo, PointintimeList,
+    RegisterVariants<MarsConceptInfo, MarsList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-    RegisterVariants<RandompatternsConceptInfo, RandompatternsList,
+    RegisterVariants<LongrangeConceptInfo, LongrangeList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-    RegisterVariants<ReferencetimeConceptInfo, ReferencetimeList,
+    RegisterVariants<AnalysisConceptInfo, AnalysisList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
     RegisterVariants<SatelliteConceptInfo, SatelliteList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-    RegisterVariants<SatellitesConceptInfo, SatellitesList,
+    RegisterVariants<ReforecastConceptInfo, ReforecastList,
+                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+    RegisterVariants<GeneratingProcessConceptInfo, GeneratingProcessList,
+                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+    RegisterVariants<ParamConceptInfo, ParamList,
+                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+    RegisterVariants<PointInTimeConceptInfo, PointInTimeList,
+                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+    RegisterVariants<LevelConceptInfo, LevelList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
     RegisterVariants<StatisticsConceptInfo, StatisticsList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-    RegisterVariants<TablesConceptInfo, TablesList,
+    RegisterVariants<DestineConceptInfo, DestineList,
+                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+    RegisterVariants<CompositionConceptInfo, CompositionList,
+                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+    RegisterVariants<WaveConceptInfo, WaveList,
+                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+    RegisterVariants<RepresentationConceptInfo, RepresentationList,
+                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+    RegisterVariants<ShapeOfTheEarthConceptInfo, ShapeOfTheEarthList,
+                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+    RegisterVariants<EnsembleConceptInfo, EnsembleList,
+                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+    RegisterVariants<PackingConceptInfo, PackingList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
     return registry;
+}
+
+// ======================================================
+// concept_registry_instance()  (SINGLETON)
+// ======================================================
+template<
+    class MarsDict_t,
+    class GeoDict_t,
+    class ParDict_t,
+    class OptDict_t,
+    class OutDict_t
+>
+ConceptRegistry<
+    MarsDict_t, GeoDict_t, ParDict_t, OptDict_t, OutDict_t
+>&
+concept_registry_instance()
+{
+    static auto instance =
+        make_concept_registry<
+            MarsDict_t, GeoDict_t, ParDict_t, OptDict_t, OutDict_t>();
+
+    return instance;
 }
 
