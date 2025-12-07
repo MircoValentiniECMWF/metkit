@@ -1,4 +1,4 @@
-#include "concepts/concept_registry.h"
+#include "concept_registry.h"
 
 #include <iostream>
 #include <string>

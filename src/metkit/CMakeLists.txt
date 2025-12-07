@@ -223,3 +223,19 @@ ecbuild_add_library(
         eckit_option
         ${grib_libs}
 )
+
+# ecbuild_add_executable(
+# 
+#   TARGET
+#       mars2grib-dict-test
+# 
+#   SOURCES
+#       mars2grib/utils/main.cc
+# 
+#   NO_AS_NEEDED
+# 
+#   LIBS
+#       eckit
+#       metkit
+#       eccodes
+# )
