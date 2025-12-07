@@ -43,6 +43,9 @@ struct NilConceptInfo
         } else {
             return nullptr;
         }
+
+        // Remove compiler warning
+        return nullptr;
     }
 
     template<auto Variant>
