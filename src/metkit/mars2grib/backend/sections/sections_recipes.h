@@ -1,12 +1,12 @@
+#pragma once
+
 #include <optional>
 #include <string_view>
 #include <initializer_list>
 #include <cstdint>
 #include <utility>
 
-namespace metkit {
-namespace mars2grib {
-namespace backend {
+namespace metkit::mars2grib::backend::sections {
 
 struct ConceptSpec {
     std::string_view name;
@@ -194,6 +194,4 @@ const std::optional<ConceptList> resolveSectionTemplateConcepts(uint16_t section
     }
 }
 
-} // namespace backend
-} // namespace mars2grib
-} // namespace metkit
+} // namespace metkit::mars2grib::sections

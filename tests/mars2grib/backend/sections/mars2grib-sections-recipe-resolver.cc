@@ -5,7 +5,7 @@
 
 #include "eckit/testing/Test.h"
 
-#include "metkit/mars2grib/backend/sections/sections-recipe.h"
+#include "metkit/mars2grib/backend/sections/sections_recipes.h"
 
 
 int main(int argc, char** argv) {
@@ -14,7 +14,8 @@ int main(int argc, char** argv) {
     uint16_t sectionId = 4;
     uint16_t templateId = 43;
 
-    const std::optional<metkit::mars2grib::backend::ConceptList> concepts = metkit::mars2grib::backend::resolveSectionTemplateConcepts(sectionId, templateId);
+    const std::optional<metkit::mars2grib::backend::sections::ConceptList> concepts =
+         metkit::mars2grib::backend::sections::resolveSectionTemplateConcepts(sectionId, templateId);
     if (concepts) {
         for (const auto& concept : *concepts) {
             if (concept.type) {

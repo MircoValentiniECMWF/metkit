@@ -189,11 +189,14 @@ if ( HAVE_ODB )
 endif()
 
 
-#if ( HAVE_MARS2GRIB )
-#    list( APPEND metkit_srcs
-#        )
-#    list( APPEND grib_libs mars2grib )
-#endif()
+if ( HAVE_MARS2GRIB )
+    list( APPEND metkit_srcs
+        mars2grib/backend/LocalConfigurationFrozenEncoder.cc
+        mars2grib/backend/LocalConfigurationFrozenEncoder.h
+        mars2grib/backend/GenericFrozenEncoder.h
+    )
+    list( APPEND grib_libs )
+endif()
 
 ecbuild_add_library(
 

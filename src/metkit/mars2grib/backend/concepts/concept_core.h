@@ -42,7 +42,7 @@ struct ForEachValue<ValueList<>, Func>
 // Constants
 // ======================================================
 static constexpr uint8_t NUM_STAGES   = 3;
-static constexpr uint8_t NUM_SECTIONS = 5;
+static constexpr uint8_t NUM_SECTIONS = 6;
 
 // ======================================================
 // Fn — default signature for all table functions
