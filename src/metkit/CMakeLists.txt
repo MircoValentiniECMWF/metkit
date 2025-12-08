@@ -194,6 +194,9 @@ if ( HAVE_MARS2GRIB )
         mars2grib/backend/LocalConfigurationFrozenEncoder.cc
         mars2grib/backend/LocalConfigurationFrozenEncoder.h
         mars2grib/backend/GenericFrozenEncoder.h
+
+        mars2grib/frontend/encoderConfig.cc
+        mars2grib/frontend/encoderConfig.h
     )
     list( APPEND grib_libs )
 endif()
