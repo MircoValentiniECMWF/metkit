@@ -7,6 +7,18 @@
 #include <iostream>
 
 // ======================================================
+// Constants
+// ======================================================
+static constexpr uint8_t NUM_STAGES   = 3;
+static constexpr uint8_t NUM_SECTIONS = 6;
+
+// ======================================================
+// Prototypes of different capabilities
+// ======================================================
+template<class MarsDict_t, class GeoDict_t, class ParDict_t, class OptDict_t, class OutDict_t>
+using Fn = uint8_t(*)(const MarsDict_t&, const GeoDict_t&, const ParDict_t&, const OptDict_t&, OutDict_t&);
+
+// ======================================================
 // ValueList
 // ======================================================
 template<auto... Vals>
@@ -38,17 +50,6 @@ struct ForEachValue<ValueList<>, Func>
     static void run(Args&&...) { }
 };
 
-// ======================================================
-// Constants
-// ======================================================
-static constexpr uint8_t NUM_STAGES   = 3;
-static constexpr uint8_t NUM_SECTIONS = 6;
-
-// ======================================================
-// Fn — default signature for all table functions
-// ======================================================
-template<class MarsDict_t, class GeoDict_t, class ParDict_t, class OptDict_t, class OutDict_t>
-using Fn = uint8_t(*)(const MarsDict_t&, const GeoDict_t&, const ParDict_t&, const OptDict_t&, OutDict_t&);
 
 // ======================================================
 // makeConceptTable() — UPDATED SIGNATURE
