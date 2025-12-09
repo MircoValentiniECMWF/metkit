@@ -93,7 +93,7 @@ public:
     }
 
     void run() override {
-        eckit::JSON json{eckit::Log::warning()};
+        eckit::JSON json{eckit::Log::warning(), eckit::JSON::Formatting::indent(2)};
         eckit::option::CmdArgs args{usage, 1, -1};
 
         const eckit::LocalConfiguration testCases{eckit::YAMLConfiguration{eckit::PathName(args(0))}};
@@ -107,13 +107,38 @@ public:
             const auto& mars = testCase.getSubConfiguration("mars");
             const auto& expectedEncoder = testCase.getSubConfiguration("encoder-config");
 
-            const auto actualEncoder = metkit::mars2grib::frontend::buildEncoderConfig(mars);
+            eckit::LocalConfiguration actualEncoder;
+            try {
+                actualEncoder = metkit::mars2grib::frontend::buildEncoderConfig(mars);
+            }
+            catch (const eckit::Exception& e) {
+                eckit::Log::warning() << "Encountered an exception!" << std::endl;
+                failed++;
+                continue;
+            }
 
             if (!compareLocalConfig(expectedEncoder, actualEncoder)) {
-                eckit::Log::warning() << "==================== FAILURE! ====================" << std::endl;
-                json << testCase;
-                eckit::Log::warning() << "\n==================================================" << std::endl;
                 failed++;
+                eckit::Log::warning() << "==================== FAILURE! ====================" << std::endl;
+                {
+                    eckit::JSON json{eckit::Log::warning(), eckit::JSON::Formatting::indent(2)};
+                    eckit::Log::warning() << "{" << std::endl << "\"mars\" : ";
+                    json << mars;
+                    eckit::Log::warning() << "," << std::endl << std::endl;
+                }
+                {
+                    eckit::JSON json{eckit::Log::warning(), eckit::JSON::Formatting::indent(2)};
+                    eckit::Log::warning() << "\"expected-encoder\" : ";
+                    json << expectedEncoder;
+                    eckit::Log::warning() << "," << std::endl << std::endl;
+                }
+                {
+                    eckit::JSON json{eckit::Log::warning(), eckit::JSON::Formatting::indent(2)};
+                    eckit::Log::warning() << "\"actual-encoder\" : ";
+                    json << actualEncoder;
+                    eckit::Log::warning() << std::endl << "}" << std::endl;
+                }
+                eckit::Log::warning() << "\n==================================================" << std::endl;
             }
         }
 
