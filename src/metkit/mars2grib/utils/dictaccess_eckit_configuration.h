@@ -117,9 +117,8 @@ struct DictGet<eckit::LocalConfiguration, T> {
 
 template<class T>
 struct DictSet<eckit::LocalConfiguration, T> {
-    static void set(eckit::LocalConfiguration&, std::string_view, const T&) {
-
-const std::string k{key};
+    static void set(eckit::LocalConfiguration& cfg, std::string_view key, const T& value) {
+        const std::string k{key};
 
         if constexpr (std::is_same_v<T, bool>) {
             cfg.set(k, value);
