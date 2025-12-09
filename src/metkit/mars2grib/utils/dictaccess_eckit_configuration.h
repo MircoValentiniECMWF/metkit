@@ -24,16 +24,13 @@ template<>
 struct DictMissing<eckit::LocalConfiguration> {
 
     template<class Dummy = void>
-    static bool isMissing(const eckit::LocalConfiguration&, std::string_view) {
-        static_assert(!std::is_same_v<Dummy, Dummy>,
-            "isMissing() is NOT supported for eckit::LocalConfiguration");
-        return false;
+    static bool isMissing(const eckit::LocalConfiguration& cfg, std::string_view key) {
+        return cfg.isNull(std::string(key));
     }
 
     template<class Dummy = void>
-    static void setMissing(eckit::LocalConfiguration&, std::string_view) {
-        static_assert(!std::is_same_v<Dummy, Dummy>,
-            "setMissing() is NOT supported for eckit::LocalConfiguration");
+    static void setMissing(eckit::LocalConfiguration& cfg, std::string_view key) {
+        cfg.setNull(std::string(key));
     }
 };
 

@@ -329,6 +329,31 @@ names: [foo, bar]
     }
 }
 
+CASE("Test generic missing") {
+
+    // Prepare a custom dictionary
+    const std::string yaml = R"yaml(
+names: [foo, bar]
+)yaml";
+
+    // Initialize the configuration
+    const eckit::YAMLConfiguration root(yaml);
+    eckit::LocalConfiguration cfg(root);
+    bool is_missing;
+
+    // Check if the key is missing
+    is_missing = metkit::mars2grib::utils::isMissing(cfg, "names");
+    EXPECT(!is_missing);
+
+    // Set missing
+    metkit::mars2grib::utils::setMissing(cfg, "names");
+
+    // Check if the key is missing
+    is_missing = metkit::mars2grib::utils::isMissing(cfg, "names");
+    EXPECT(is_missing);
+
+}
+
 int main(int argc, char** argv) {
     return eckit::testing::run_tests(argc, argv);
 }

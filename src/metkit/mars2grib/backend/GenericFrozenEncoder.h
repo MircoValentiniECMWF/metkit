@@ -90,6 +90,8 @@ public:
     void debug_print() const {
 
       std::cout << "========================================================" << std::endl;
+      std::cout << " + ENCODER LOG UTILS" << std::endl;
+      std::cout << "========================================================" << std::endl;
       int secId =0;
       for ( const auto& sec : cfg_.sec_ ) {
           std::cout << "Section " << secId << "." << sec.templateNumber_ << ":" << std::endl;
@@ -113,6 +115,7 @@ public:
 
         }
       }
+      std::cout << "========================================================" << std::endl;
 
     };
 
@@ -155,14 +158,15 @@ public:
     void encode(const MarsDict_t& mars,
                 const GeoDict_t& geo,
                 const ParDict_t& par,
-                OptDict_t& opt ) const
+                const OptDict_t& opt,
+                OutDict_t& out ) const
     {
 #if 0
         OutDict_t sample( cleanSample );
 
         prepare(mars, opt, sample);
         sample.safeReload();
-
+#endif
         for (std::size_t stage = 0; stage < NUM_STAGES; ++stage) {
             const auto& stageVecs = callbacks_[stage];
 
@@ -173,11 +177,11 @@ public:
                 }
             }
 
-            sample.safeReload();
+            // sample.safeReload();
         }
 
-        return sample;
-#endif
+        return;
+
 
     }
 
