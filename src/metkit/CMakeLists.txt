@@ -197,6 +197,8 @@ if ( HAVE_MARS2GRIB )
 
         mars2grib/frontend/encoderConfig.cc
         mars2grib/frontend/encoderConfig.h
+        mars2grib/frontend/pdt.cc
+        mars2grib/frontend/pdt.h
     )
     list( APPEND grib_libs )
 endif()

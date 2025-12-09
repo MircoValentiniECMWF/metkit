@@ -401,6 +401,12 @@ void setAll(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& se
 
     setSatellite(mars, sections);
     setDataRepresentationSection(mars, sections);
+
+    setRecursive(
+        sections,
+        "product-definition-section.template-number",
+        templateNumberFromPDT(*get<eckit::LocalConfiguration>(sections, "product-definition-section.product-categories"))
+    );
 }
 
 eckit::LocalConfiguration buildEncoderConfig(const eckit::LocalConfiguration& mars) {
