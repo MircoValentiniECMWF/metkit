@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool waveApplicable(int Stage, int Section, WaveType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

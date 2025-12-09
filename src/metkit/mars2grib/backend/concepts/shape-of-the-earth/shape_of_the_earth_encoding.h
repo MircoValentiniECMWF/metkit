@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool shape_of_the_earthApplicable(int Stage, int Section, ShapeOfTheEarthType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

@@ -49,6 +49,7 @@ make_callbacks( std::array<std::vector<std::pair<std::string_view,std::string_vi
           // Append functions to callbacks if relevant
           for (std::size_t stage = 0; stage < NUM_STAGES; ++stage) {
               auto f = fnTable[stage][sid];
+              std::cout << "Register Callbacks :: Stage: " << stage << ", Section: " << sid << ", isValid: " << (f ? "true" : "false") << std::endl;
               if (f) {
                   table[stage][sid].push_back(f);
               }
@@ -155,29 +156,33 @@ public:
     void encode(const MarsDict_t& mars,
                 const GeoDict_t& geo,
                 const ParDict_t& par,
-                OptDict_t& opt ) const
+                const OptDict_t& opt,
+                OutDict_t& out ) const
     {
 #if 0
         OutDict_t sample( cleanSample );
 
         prepare(mars, opt, sample);
         sample.safeReload();
+#endif
 
         for (std::size_t stage = 0; stage < NUM_STAGES; ++stage) {
             const auto& stageVecs = callbacks_[stage];
-
+            std::cout << std::endl << " + Stage: " << stage << std::endl;
             for (std::size_t secIdx = 0; secIdx < NUM_SECTIONS; ++secIdx) {
                 const auto& fns = stageVecs[secIdx];
+                std::cout << "    + Section: " << secIdx << std::endl;
                 for (Fn_t fn : fns) {
+                    std::cout << "       - ";
                     fn(mars, geo, par, opt, out);
                 }
             }
 
-            sample.safeReload();
+            // sample.safeReload();
         }
 
-        return sample;
-#endif
+        return;
+
 
     }
 

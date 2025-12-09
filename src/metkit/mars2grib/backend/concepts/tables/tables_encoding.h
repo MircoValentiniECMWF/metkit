@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool tablesApplicable(int Stage, int Section, TablesType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

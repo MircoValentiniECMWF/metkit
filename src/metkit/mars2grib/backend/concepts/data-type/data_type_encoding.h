@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool data_typeApplicable(int Stage, int Section, DataTypeType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

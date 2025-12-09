@@ -72,21 +72,24 @@ constexpr auto makeConceptTable()
             ConceptInfo::template entry<0,1,Variant,MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>(),
             ConceptInfo::template entry<0,2,Variant,MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>(),
             ConceptInfo::template entry<0,3,Variant,MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>(),
-            ConceptInfo::template entry<0,4,Variant,MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>()
+            ConceptInfo::template entry<0,4,Variant,MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>(),
+            ConceptInfo::template entry<0,5,Variant,MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>()
         },
         { // Stage 1
             ConceptInfo::template entry<1,0,Variant,MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>(),
             ConceptInfo::template entry<1,1,Variant,MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>(),
             ConceptInfo::template entry<1,2,Variant,MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>(),
             ConceptInfo::template entry<1,3,Variant,MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>(),
-            ConceptInfo::template entry<1,4,Variant,MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>()
+            ConceptInfo::template entry<1,4,Variant,MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>(),
+            ConceptInfo::template entry<0,5,Variant,MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>()
         },
         { // Stage 2
             ConceptInfo::template entry<2,0,Variant,MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>(),
             ConceptInfo::template entry<2,1,Variant,MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>(),
             ConceptInfo::template entry<2,2,Variant,MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>(),
             ConceptInfo::template entry<2,3,Variant,MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>(),
-            ConceptInfo::template entry<2,4,Variant,MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>()
+            ConceptInfo::template entry<2,4,Variant,MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>(),
+            ConceptInfo::template entry<0,5,Variant,MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>()
         }
     }};
 

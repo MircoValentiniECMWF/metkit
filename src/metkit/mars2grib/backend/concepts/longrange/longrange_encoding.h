@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool longrangeApplicable(int Stage, int Section, LongrangeType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

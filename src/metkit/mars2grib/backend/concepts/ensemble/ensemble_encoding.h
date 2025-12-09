@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool ensembleApplicable(int Stage, int Section, EnsembleType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

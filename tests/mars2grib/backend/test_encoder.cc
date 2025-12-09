@@ -1,5 +1,9 @@
 #include <iostream>
 
+#include "eckit/config/YAMLConfiguration.h"
+#include "eckit/config/LocalConfiguration.h"
+
+#include "metkit/codes/api/CodesAPI.h"
 #include "metkit/mars2grib/backend/LocalConfigurationFrozenEncoder.h"
 #include "metkit/mars2grib/utils/encoder_cfg.h"
 
@@ -33,6 +37,28 @@ int main(){
   metkit::mars2grib::backend::LocalConfigurationFrozenEncoder encoder( cfg );
 
   encoder.debug_print();
+
+
+   const std::string yaml(R"json({
+step: 12,
+lat: 45.5,
+flag: true,
+name: test
+})json");
+
+
+  const eckit::YAMLConfiguration root(yaml);
+
+  eckit::LocalConfiguration mars_dict(root);
+  eckit::LocalConfiguration geo_dict(root);
+  eckit::LocalConfiguration par_dict(root);
+  eckit::LocalConfiguration opt_dict(root);
+
+  auto handlePtr = metkit::codes::codesHandleFromSample("GRIB2");
+  auto& out_dict = *handlePtr;
+
+
+  encoder.encode(mars_dict, geo_dict, par_dict, opt_dict, out_dict );
 
   // Exit point
   return 0;

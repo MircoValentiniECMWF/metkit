@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool packingApplicable(int Stage, int Section, PackingType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

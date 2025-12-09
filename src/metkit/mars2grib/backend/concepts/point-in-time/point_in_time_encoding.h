@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool point_in_timeApplicable(int Stage, int Section, PointInTimeType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

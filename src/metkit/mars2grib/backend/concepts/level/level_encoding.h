@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool levelApplicable(int Stage, int Section, LevelType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool reforecastApplicable(int Stage, int Section, ReforecastType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

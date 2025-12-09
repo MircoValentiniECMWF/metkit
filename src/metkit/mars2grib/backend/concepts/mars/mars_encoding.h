@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool marsApplicable(int Stage, int Section, MarsType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

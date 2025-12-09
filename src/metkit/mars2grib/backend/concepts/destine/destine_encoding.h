@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool destineApplicable(int Stage, int Section, DestineType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool generating_processApplicable(int Stage, int Section, GeneratingProcessType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

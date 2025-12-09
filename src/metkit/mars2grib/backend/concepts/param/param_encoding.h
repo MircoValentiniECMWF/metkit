@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool paramApplicable(int Stage, int Section, ParamType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

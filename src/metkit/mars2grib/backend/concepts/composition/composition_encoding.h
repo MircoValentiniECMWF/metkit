@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool compositionApplicable(int Stage, int Section, CompositionType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

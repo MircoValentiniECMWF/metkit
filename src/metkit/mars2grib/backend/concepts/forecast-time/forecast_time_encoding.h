@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool forecast_timeApplicable(int Stage, int Section, ForecastTimeType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

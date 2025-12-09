@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool analysisApplicable(int Stage, int Section, AnalysisType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool nilApplicable(int Stage, int Section, NilType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

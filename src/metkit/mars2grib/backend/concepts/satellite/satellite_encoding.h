@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool satelliteApplicable(int Stage, int Section, SatelliteType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

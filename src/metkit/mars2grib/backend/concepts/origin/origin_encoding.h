@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool originApplicable(int Stage, int Section, OriginType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool representationApplicable(int Stage, int Section, RepresentationType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================

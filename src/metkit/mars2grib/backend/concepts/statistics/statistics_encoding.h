@@ -12,7 +12,7 @@
 // ======================================================
 constexpr bool statisticsApplicable(int Stage, int Section, StatisticsType Variant)
 {
-    return false;
+    return true;
 }
 
 // ======================================================
