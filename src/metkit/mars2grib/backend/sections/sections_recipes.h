@@ -190,6 +190,7 @@ const std::optional<ConceptList> resolveSectionTemplateConcepts(uint16_t section
         case 2: return binarySearch(Sec2Recipes, tmpl);
         case 3: return binarySearch(Sec3Recipes, tmpl);
         case 4: return binarySearch(Sec4Recipes, tmpl);
+        case 5: return binarySearch(Sec5Recipes, tmpl);
         default: return std::nullopt;
     }
 }

@@ -30,7 +30,7 @@ struct Section {
 };
 
 struct EncoderCfg {
-    std::array<Section, 5> sec_;
+    std::array<Section, NUM_SECTIONS> sec_;
 };
 
 // Extract the template numbers in an array format
@@ -51,6 +51,10 @@ make_section_concepts(const EncoderCfg& cfg){
       conceptsArr[sid].clear();
 
       auto Concepts = metkit::mars2grib::backend::sections::resolveSectionTemplateConcepts( sid, cfg.sec_[sid].templateNumber_ );
+      if ( !Concepts ){
+        std::cout << "ERROR: Could not resolve concepts for section " << sid << " with template number " << cfg.sec_[sid].templateNumber_ << std::endl;
+        throw std::runtime_error("Concept type mismatch");
+      }
 
       for ( const auto& cs : *Concepts ) {
         auto it = cfg.sec_[sid].concepts_.find(cs.name);
@@ -61,7 +65,7 @@ make_section_concepts(const EncoderCfg& cfg){
                     throw std::runtime_error("Concept type mismatch");
                 }
             }
-            conceptsArr[sid].push_back( std::make_pair(std::string(cs.name), conceptType) );
+            conceptsArr[sid].push_back( std::make_pair(std::string_view(cs.name), conceptType) );
         }
         else {
             conceptsArr[sid].push_back( std::make_pair(std::string_view(cs.name), std::string_view(cs.type.value_or("default")) ) );

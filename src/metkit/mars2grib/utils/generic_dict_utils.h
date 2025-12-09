@@ -8,13 +8,13 @@
 namespace metkit::mars2grib::utils {
 
 // ============================================================
-//  TRAITS ASTRATTI
+//  ABSTRACT TRAITS
 // ============================================================
 
 template<typename>
 struct dependent_false : std::false_type {};
 
-// Presenza chiave (non tipizzata)
+
 template<class Dict>
 struct DictHas {
     static bool has(const Dict&, std::string_view) {
@@ -24,7 +24,7 @@ struct DictHas {
     }
 };
 
-// Gestione missing (solo per alcuni Dict)
+
 template<class Dict>
 struct DictMissing {
     static bool isMissing(const Dict&, std::string_view) {
@@ -38,7 +38,7 @@ struct DictMissing {
     }
 };
 
-// Lettura tipizzata (ritorna std::optional<T>)
+
 template<class Dict, class T>
 struct DictGet {
     static std::optional<T> get(const Dict&, std::string_view) {
@@ -48,7 +48,6 @@ struct DictGet {
     }
 };
 
-// Scrittura tipizzata
 template<class Dict, class T>
 struct DictSet {
     static void set(Dict&, std::string_view, const T&) {
@@ -58,28 +57,28 @@ struct DictSet {
 };
 
 // ============================================================
-//  FUNZIONI DI BASE: has / isMissing / setMissing
+//  has / isMissing / setMissing
 // ============================================================
 
-// has<Dict>(dict,key) -> presenza chiave (semantica dipende da DictHas)
+// has<Dict>(dict,key)
 template<class Dict>
 inline bool has(const Dict& dict, std::string_view key) {
     return DictHas<Dict>::has(dict, key);
 }
 
-// has<T>(dict,key) -> presenza tipizzata (solo Dict leggibili)
+// has<T>(dict,key)
 template<class T, class Dict>
 inline bool has(const Dict& dict, std::string_view key) {
-    return static_cast<bool>(DictGet<Dict, T>::get(dict, key));
+    return DictGet<Dict, T>::get(dict, key).has_value();
 }
 
-// isMissing<Dict>(dict,key)  (solo Dict che specializzano DictMissing)
+// isMissing<Dict>(dict,key)
 template<class Dict>
 inline bool isMissing(const Dict& dict, std::string_view key) {
     return DictMissing<Dict>::isMissing(dict, key);
 }
 
-// setMissing<Dict>(dict,key) (solo Dict che specializzano DictMissing)
+// setMissing<Dict>(dict,key)
 template<class Dict>
 inline void setMissing(Dict& dict, std::string_view key) {
     DictMissing<Dict>::setMissing(dict, key);
@@ -126,53 +125,50 @@ inline void set(Dict& dict, std::string_view key, const T& value) {
 // ============================================================
 //
 //  forward:
-//    1) forward<InDict,OutDict,InT,OutT>(in,out,keyIn,keyOut)
-//         InT -> static_cast<OutT>(InT)
-//    2) forward<InDict,OutDict,InT,OutT>(..., modifier)
-//         InT -> modifier(InT) -> OutT
+//    1) forward<InDict,OutDict,T,T>(in,out,keyIn,keyOut)
+//         T -> static_cast<T>(T)
+//    2) forward<InDict,OutDict,T,T>(..., modifier)
+//         T -> modifier(T) -> T
 //
 //  cond_forward:
-//    3) cond_forward<InDict,OutDict,InT,OutT>(..., cond)
-//         cond: (const InT&) -> bool
-//    4) cond_forward<InDict,OutDict,InT,OutT>(..., cond, modifier)
-//         cond:     (const InT&) -> bool
-//         modifier: (const InT&) -> OutT
-//
-//  Nota: forward richiede che InDict sia leggibile (DictGet specializzato)
-//        e OutDict scrivibile (DictSet specializzato).
+//    3) cond_forward<InDict,OutDict,T,T>(..., cond)
+//         cond: (const T&) -> bool
+//    4) cond_forward<InDict,OutDict,T,T>(..., cond, modifier)
+//         cond:     (const T&) -> bool
+//         modifier: (const T&) -> T
 // ============================================================
 
 // forward senza modifier
-template<class InDict, class OutDict, class InT, class OutT>
+template<class InDict, class OutDict, class T>
 inline void forward(const InDict& inDict,
                     OutDict&      outDict,
                     std::string_view keyIn,
                     std::string_view keyOut) {
-    auto v = get<InT>(inDict, keyIn);
+    auto v = get<T>(inDict, keyIn);
     std::cout << "Forwarding key: " << keyIn << " " << *v;
-    if (auto v = get<InT>(inDict, keyIn); v) {
+    if (auto v = get<T>(inDict, keyIn); v) {
         std::cout << " with value: " << *v << std::endl;
-        OutT outVal = static_cast<OutT>(*v);
-        set<OutT>(outDict, keyOut, outVal);
+        T outVal = static_cast<T>(*v);
+        set<T>(outDict, keyOut, outVal);
     }
 }
 
-// forward con modifier: InT -> OutT
-template<class InDict, class OutDict, class InT, class OutT, class Modifier>
+// forward con modifier: T -> T
+template<class InDict, class OutDict, class T, class Modifier>
 inline void forward(const InDict& inDict,
                     OutDict&      outDict,
                     std::string_view keyIn,
                     std::string_view keyOut,
                     Modifier&& modifier) {
-    if (auto v = get<InT>(inDict, keyIn); v) {
-        OutT outVal = std::forward<Modifier>(modifier)(*v);
-        set<OutT>(outDict, keyOut, outVal);
+    if (auto v = get<T>(inDict, keyIn); v) {
+        T outVal = std::forward<Modifier>(modifier)(*v);
+        set<T>(outDict, keyOut, outVal);
     }
 }
 
 
 // ============================================================
-//  CHECK / COND_GET 
+//  CHECK / COND_GET
 // ============================================================
 
 // check<T>(dict,key,cond) -> bool
@@ -216,39 +212,35 @@ inline std::optional<T> cond_get(const Dict& dict,
 // ============================================================
 
 // 1) cond_forward(..., cond)
-template<class InDict, class OutDict,
-         class InT, class OutT,
-         class Cond>
+template<class InDict, class OutDict, class T, class Cond>
 inline void cond_forward(const InDict& inDict,
                          OutDict&      outDict,
                          std::string_view keyIn,
                          std::string_view keyOut,
                          Cond&& cond) {
-    if (auto v = get<InT>(inDict, keyIn); v) {
+    if (auto v = get<T>(inDict, keyIn); v) {
         if (!std::forward<Cond>(cond)(*v))
             return;
 
-        OutT outVal = static_cast<OutT>(*v);
-        set<OutT>(outDict, keyOut, outVal);
+        T outVal = static_cast<T>(*v);
+        set<T>(outDict, keyOut, outVal);
     }
 }
 
 // 2) cond_forward(..., cond, modifier)
-template<class InDict, class OutDict,
-         class InT, class OutT,
-         class Cond, class Modifier>
+template<class InDict, class OutDict, class T, class Cond, class Modifier>
 inline void cond_forward(const InDict& inDict,
                          OutDict&      outDict,
                          std::string_view keyIn,
                          std::string_view keyOut,
                          Cond&&     cond,
                          Modifier&& modifier) {
-    if (auto v = get<InT>(inDict, keyIn); v) {
+    if (auto v = get<T>(inDict, keyIn); v) {
         if (!std::forward<Cond>(cond)(*v))
             return;
 
-        OutT outVal = std::forward<Modifier>(modifier)(*v);
-        set<OutT>(outDict, keyOut, outVal);
+        T outVal = std::forward<Modifier>(modifier)(*v);
+        set<T>(outDict, keyOut, outVal);
     }
 }
 

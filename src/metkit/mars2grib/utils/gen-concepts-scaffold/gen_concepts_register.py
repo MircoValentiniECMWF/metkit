@@ -12,7 +12,7 @@ except ImportError:
 
 
 # ---------------------------------------------------------------------------
-# Naming helpers — IDENTICI allo script di scaffolding
+# Naming helpers
 # ---------------------------------------------------------------------------
 
 def split_words(name: str):

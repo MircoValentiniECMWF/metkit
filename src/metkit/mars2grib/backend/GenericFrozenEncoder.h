@@ -39,9 +39,9 @@ make_callbacks( std::array<std::vector<std::pair<std::string_view,std::string_vi
     for ( uint16_t sid=0; sid<NUM_SECTIONS; ++sid ) {
       for ( const auto& cs : conceptsArr[sid] ) {
 
-          // (name, effectiveType) → 3×NSECTIONS table of Fn_t
           auto it = registry.map.find(cs);
           if ( it == registry.map.end()) {
+              std::cout << "ERROR: Concept not found: " << cs.first << " / " << cs.second << std::endl;
               throw std::runtime_error("Concept not found in registry");
           }
           auto fnTable = it->second;
@@ -83,9 +83,38 @@ public:
 public:
 
     explicit GenericFrozenEncoder(const utils::EncoderCfg& cfg)
-        : callbacks_(make_callbacks<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>(
-              make_section_concepts(cfg)))
+        : cfg_{cfg},callbacks_{make_callbacks<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>(
+              make_section_concepts(cfg))}
     {}
+
+    void debug_print() const {
+
+      std::cout << "========================================================" << std::endl;
+      int secId =0;
+      for ( const auto& sec : cfg_.sec_ ) {
+          std::cout << "Section " << secId << "." << sec.templateNumber_ << ":" << std::endl;
+          for ( const auto& concept : sec.concepts_ ) {
+              std::cout << "Section " << secId << "." << sec.templateNumber_ <<
+              ": Concept " << concept.first << " / " << concept.second << std::endl;
+          }
+          ++secId;
+      }
+      std::cout << "========================================================" << std::endl;
+
+      // Generate the expanded configuration in order to debug concept expansion
+      const auto& expanded_configuration = make_section_concepts(cfg_);
+
+      // print expanded configuration
+      for ( uint16_t sid=0; sid<NUM_SECTIONS; ++sid ) {
+        std::cout << " + Section " << sid << std::endl;
+        for ( const auto& cs : expanded_configuration[sid] ) {
+
+            std::cout << "     - Concept processed: " << cs.first << " / " << cs.second << std::endl;
+
+        }
+      }
+
+    };
 
     // ============================
     // Encode SINGLE STAGE
@@ -153,7 +182,7 @@ public:
     }
 
 private:
-
+    const utils::EncoderCfg cfg_;
     const Callbacks callbacks_;
 
 private:
