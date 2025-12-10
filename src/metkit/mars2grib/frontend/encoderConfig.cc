@@ -15,8 +15,8 @@
 #include "eckit/exception/Exceptions.h"
 #include "eckit/log/CodeLocation.h"
 #include "metkit/mars2grib/frontend/pdt.h"
-#include "metkit/mars2grib/utils/generic_dict_utils.h"
 #include "metkit/mars2grib/utils/dictaccess_eckit_configuration.h"
+#include "metkit/mars2grib/utils/generic_dict_utils.h"
 
 using metkit::mars2grib::utils::get;
 using metkit::mars2grib::utils::has;
@@ -27,11 +27,7 @@ namespace metkit::mars2grib::frontend {
 //============================ Recursive Setters =============================//
 
 template <typename T>
-void setRecursive(
-    eckit::LocalConfiguration& config,
-    const std::string& key, T value,
-    bool ignoreIfAlreadySet = false
-) {
+void setRecursive(eckit::LocalConfiguration& config, const std::string& key, T value, bool ignoreIfAlreadySet = false) {
     const auto pos = key.find('.');
     if (pos == std::string::npos) {
         if (!ignoreIfAlreadySet || !has(config, key)) {
@@ -40,7 +36,7 @@ void setRecursive(
     }
     else {
         auto first = key.substr(0, pos);
-        auto rest = key.substr(pos + 1);
+        auto rest  = key.substr(pos + 1);
 
         auto subConfig = get<eckit::LocalConfiguration>(config, first).value_or(eckit::LocalConfiguration{});
         setRecursive(subConfig, rest, value);
@@ -48,10 +44,7 @@ void setRecursive(
     }
 }
 
-void setRecursiveDefault(
-    eckit::LocalConfiguration& config,
-    const std::string& key, const std::string& value
-) {
+void setRecursiveDefault(eckit::LocalConfiguration& config, const std::string& key, const std::string& value) {
     setRecursive(config, key, value, true);
 }
 
@@ -183,7 +176,7 @@ void setLocalUseSection(const eckit::LocalConfiguration& mars, eckit::LocalConfi
             setRecursive(sections, "local-use-section.template-number", 1001);
         }
         else {  // class != d1
-            if (has(mars, "method") ) {
+            if (has(mars, "method")) {
                 setRecursive(sections, "local-use-section.template-number", 15);
             }
             else {  // method missing
@@ -248,9 +241,7 @@ void setProcessType(const eckit::LocalConfiguration& mars, eckit::LocalConfigura
 struct Range {
     int first;
     int last;
-    bool contains(int x) const {
-        return x >= first && x <= last;
-    }
+    bool contains(int x) const { return x >= first && x <= last; }
 };
 
 Range range(int first, int last) {
@@ -267,7 +258,7 @@ bool matchSingle(int x, const T& arg) {
     }
 }
 
-template<typename... T>
+template <typename... T>
 bool matchAny(int value, T... arg) {
     return (matchSingle(value, arg) || ...);
 }
@@ -281,7 +272,7 @@ void setSOL(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& se
     if (matchAny(param, 33, 74, 238, 228038, 228141, 235078, 235080, 237080, 238080, 239080)) {
         setRecursive(sections, "product-definition-section.level-configurator.type", "snowLayer");
     }
-    else if (matchAny(param, 183, 235077,260199, 260360)) {
+    else if (matchAny(param, 183, 235077, 260199, 260360)) {
         setRecursive(sections, "product-definition-section.level-configurator.type", "soilLayer");
     }
     else if (matchAny(param, 262000, 262024)) {
@@ -365,7 +356,6 @@ void setSatellite(const eckit::LocalConfiguration& mars, eckit::LocalConfigurati
         setPointInTime(sections);
         setRecursiveDefault(sections, "product-definition-section.satellite-configurator.type", "default");
         setPDT(sections, "productCategory", "satellite");
-
     }
 }
 
@@ -402,11 +392,9 @@ void setAll(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& se
     setSatellite(mars, sections);
     setDataRepresentationSection(mars, sections);
 
-    setRecursive(
-        sections,
-        "product-definition-section.template-number",
-        templateNumberFromPDT(*get<eckit::LocalConfiguration>(sections, "product-definition-section.product-categories"))
-    );
+    setRecursive(sections, "product-definition-section.template-number",
+                 templateNumberFromPDT(
+                     *get<eckit::LocalConfiguration>(sections, "product-definition-section.product-categories")));
 }
 
 eckit::LocalConfiguration buildEncoderConfig(const eckit::LocalConfiguration& mars) {
@@ -415,4 +403,4 @@ eckit::LocalConfiguration buildEncoderConfig(const eckit::LocalConfiguration& ma
     return sections;
 }
 
-}
+}  // namespace metkit::mars2grib::frontend
