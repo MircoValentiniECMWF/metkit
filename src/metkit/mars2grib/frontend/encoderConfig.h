@@ -14,6 +14,6 @@
 
 namespace metkit::mars2grib::frontend {
 
-    eckit::LocalConfiguration buildEncoderConfig(const eckit::LocalConfiguration& mars);
+eckit::LocalConfiguration buildEncoderConfig(const eckit::LocalConfiguration& mars);
 
-}
+}  // namespace metkit::mars2grib::frontend
