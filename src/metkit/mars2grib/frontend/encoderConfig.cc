@@ -9,84 +9,22 @@
  */
 
 #include "encoderConfig.h"
+
 #include <string>
-#include <type_traits>
 #include "eckit/config/LocalConfiguration.h"
 #include "eckit/exception/Exceptions.h"
 #include "eckit/log/CodeLocation.h"
-#include "metkit/mars2grib/frontend/pdt.h"
 #include "metkit/mars2grib/utils/dictaccess_eckit_configuration.h"
 #include "metkit/mars2grib/utils/generic_dict_utils.h"
 
+#include "common.h"
+#include "level.h"
+#include "pdt.h"
+
 using metkit::mars2grib::utils::get;
 using metkit::mars2grib::utils::has;
-using metkit::mars2grib::utils::set;
 
 namespace metkit::mars2grib::frontend {
-
-//============================ Recursive Setters =============================//
-
-template <typename T>
-void setRecursive(eckit::LocalConfiguration& config, const std::string& key, T value, bool ignoreIfAlreadySet = false) {
-    const auto pos = key.find('.');
-    if (pos == std::string::npos) {
-        if (!ignoreIfAlreadySet || !has(config, key)) {
-            set(config, key, value);
-        }
-    }
-    else {
-        auto first = key.substr(0, pos);
-        auto rest  = key.substr(pos + 1);
-
-        auto subConfig = get<eckit::LocalConfiguration>(config, first).value_or(eckit::LocalConfiguration{});
-        setRecursive(subConfig, rest, value);
-        set(config, first, subConfig);
-    }
-}
-
-void setRecursiveDefault(eckit::LocalConfiguration& config, const std::string& key, const std::string& value) {
-    setRecursive(config, key, value, true);
-}
-
-//============================================================================//
-
-// TODO : Replace all calls to setPDT
-void setPDT(eckit::LocalConfiguration& sections, const std::string& key, const std::string& value) {
-    setRecursive(sections, "product-definition-section.product-categories." + key, value);
-}
-
-//============================================================================//
-
-// setPointInTime
-void setPointInTime(eckit::LocalConfiguration& sections) {
-    setPDT(sections, "timeExtent", "pointInTime");
-    setRecursiveDefault(sections, "product-definition-section.point-in-time-configurator.type", "default");
-}
-
-// setTimeRange
-// setTypeOfStatisticalProcessing
-// setOverallLengthOfTimeRange
-
-// setEnsemble
-// setLargeEnsemble
-// setReforecast
-// setderivedForecast
-
-// setChemical
-
-// setPeriodRange
-
-// setDirFreq
-
-// setSatellite
-
-// setRandomPatterns
-
-void setTypeOfLevel(eckit::LocalConfiguration& sections, const std::string& type) {
-    setRecursive(sections, "product-definition-section.level-configurator.type", type);
-}
-
-// setFixedLevel(level)
 
 //================================= Defaults =================================//
 
@@ -197,7 +135,6 @@ void setLocalUseSection(const eckit::LocalConfiguration& mars, eckit::LocalConfi
     }
 }
 
-
 //=============================== Process Type ===============================//
 
 void setProcessType(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& sections) {
@@ -238,51 +175,6 @@ void setProcessType(const eckit::LocalConfiguration& mars, eckit::LocalConfigura
 
 //================================ Horizontal ================================//
 
-struct Range {
-    int first;
-    int last;
-    bool contains(int x) const { return x >= first && x <= last; }
-};
-
-Range range(int first, int last) {
-    return {first, last};
-}
-
-template <typename T>
-bool matchSingle(int x, const T& arg) {
-    if constexpr (std::is_same_v<T, Range>) {
-        return arg.contains(x);
-    }
-    else {
-        return arg == x;
-    }
-}
-
-template <typename... T>
-bool matchAny(int value, T... arg) {
-    return (matchSingle(value, arg) || ...);
-}
-
-void setSFC(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& sections) {
-    throw eckit::NotImplemented{Here()};
-}
-
-void setSOL(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& sections) {
-    const auto param = *get<std::int64_t>(mars, "param");
-    if (matchAny(param, 33, 74, 238, 228038, 228141, 235078, 235080, 237080, 238080, 239080)) {
-        setRecursive(sections, "product-definition-section.level-configurator.type", "snowLayer");
-    }
-    else if (matchAny(param, 183, 235077, 260199, 260360)) {
-        setRecursive(sections, "product-definition-section.level-configurator.type", "soilLayer");
-    }
-    else if (matchAny(param, 262000, 262024)) {
-        setRecursive(sections, "product-definition-section.level-configurator.type", "seaIceLayer");
-    }
-    else {
-        throw eckit::Exception{"Unmatched param \"" + std::to_string(param) + "\" for levtype SOL", Here()};
-    }
-}
-
 void setStatistics(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& sections) {
     // TODO : Use automated mapping from param to typeOfStatisticalProcessing
 
@@ -295,40 +187,7 @@ void setHorizontal(const eckit::LocalConfiguration& mars, eckit::LocalConfigurat
         return;  // Bypass for satellite fields, they are handled in `setSatellite`
     }
 
-    // TODO : Be more strict and list all the params that exists on each given levtype!
-    const auto levtype = *get<std::string>(mars, "levtype");
-    if (levtype == "sfc") {
-        setSFC(mars, sections);
-    }
-    else if (levtype == "hl") {
-        setRecursive(sections, "product-definition-section.level-configurator.type", "heightAboveGround");
-    }
-    else if (levtype == "ml") {
-        setRecursive(sections, "product-definition-section.level-configurator.type", "hybrid");
-    }
-    else if (levtype == "pl") {
-        if (get<std::int64_t>(mars, "level") >= 100) {
-            setRecursive(sections, "product-definition-section.level-configurator.type", "isobaricInhPa");
-        }
-        else {
-            setRecursive(sections, "product-definition-section.level-configurator.type", "isobaricInPa");
-        }
-    }
-    else if (levtype == "pt") {
-        setRecursive(sections, "product-definition-section.level-configurator.type", "theta");
-    }
-    else if (levtype == "pv") {
-        setRecursive(sections, "product-definition-section.level-configurator.type", "potentialVorticity");
-    }
-    else if (levtype == "sol") {
-        setSOL(mars, sections);
-    }
-    else if (levtype == "al") {
-        setRecursive(sections, "product-definition-section.level-configurator.type", "abstractSingleLevel");
-    }
-    else {
-        throw eckit::Exception{"Unknown levtype \"" + levtype + "\"", Here()};
-    }
+    setLevel(mars, sections);
 
     setStatistics(mars, sections);
 }

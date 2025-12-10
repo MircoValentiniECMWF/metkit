@@ -197,8 +197,11 @@ if ( HAVE_MARS2GRIB )
 
         mars2grib/frontend/encoderConfig.cc
         mars2grib/frontend/encoderConfig.h
+        mars2grib/frontend/common.h
         mars2grib/frontend/pdt.cc
         mars2grib/frontend/pdt.h
+        mars2grib/frontend/level.cc
+        mars2grib/frontend/level.h
     )
     list( APPEND grib_libs )
 endif()
@@ -233,15 +236,15 @@ ecbuild_add_library(
 )
 
 # ecbuild_add_executable(
-# 
+#
 #   TARGET
 #       mars2grib-dict-test
-# 
+#
 #   SOURCES
 #       mars2grib/utils/main.cc
-# 
+#
 #   NO_AS_NEEDED
-# 
+#
 #   LIBS
 #       eckit
 #       metkit
