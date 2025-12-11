@@ -177,40 +177,92 @@ void setProcessType(const eckit::LocalConfiguration& mars, eckit::LocalConfigura
 
 //================================ Horizontal ================================//
 
+bool matchChemical(const eckit::LocalConfiguration& mars) {
+    return (has(mars, "chem") && !has(mars, "wavelength") && *get<std::int64_t>(mars, "chem") < 900);
+}
+
+void setChemical(eckit::LocalConfiguration& sections) {
+    setRecursiveDefault(sections, "product-definition-section.chemistry-configurator.type", "chemical");
+    setPDT(sections, "productCategory", "chemical");
+}
+
+// These rules had to be ported manually as they don't follow the same pattern as most level/time/statistical rules
+bool setMiscHorizontal(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& sections) {
+    const auto param = *get<std::int64_t>(mars, "param");
+
+    if (*get<std::string>(mars, "levtype") == "sfc") {
+        if (matchChemical(mars)) {
+            if (matchAny(param, range(228080, 228082), range(233032, 233035), range(235062, 235064))) {
+                setTypeOfLevel(sections, "surface");
+                setSinceLastPostProcessingStep(sections);
+                setTypeOfStatisticalProcessing(sections, "accumul");
+                setChemical(sections);
+                setRecursive(sections, "identification-section.tables-configurator.type", "custom");
+                setRecursive(sections, "identification-section.tables-configurator.tables-version", 30);
+                setRecursive(sections, "identification-section.tables-configurator.local-tables-version", 0);
+                return true;
+            }
+            else if (matchAny(param, range(228083, 228085))) {
+                setTypeOfLevel(sections, "surface");
+                setPointInTime(sections);
+                setChemical(sections);
+                return true;
+            }
+        }
+        else if (matchAny(param, range(140114, 140120))) {
+            setTypeOfLevel(sections, "surface");
+            setPointInTime(sections);
+
+            // Note: this param is a period-range!
+            setRecursiveDefault(sections, "product-definition-section.period-configurator.type", "default");
+            setPDT(sections, "productCategory", "wave");
+            setPDT(sections, "productSubCategory", "periodRange");
+            return true;
+        }
+        else if (matchAny(param, 140251)) {
+            setPointInTime(sections);
+
+            // Note: this param does not have a typeOfLevel, but direction and frequency instead!
+            setRecursiveDefault(sections, "product-definition-section.directions-frequencies-configurator.type",
+                                "default");
+            setPDT(sections, "productCategory", "wave");
+            setPDT(sections, "productSubCategory", "spectraList");
+            return true;
+        }
+    }
+
+    if (!has(mars, "channel")) {
+        return false;  // Not a satellite field
+    }
+
+    if (const auto& type = get<std::string>(mars, "type"); type && (*type == "em" || *type == "es")) {
+        // Derived ensemble forecast satellite
+        if (const auto param = *get<std::int64_t>(mars, "param"); matchAny(param, 194)) {
+            setTypeOfLevel(sections, "surface");
+            setPointInTime(sections);
+            return true;
+        }
+    }
+    else {
+        // Single satellite
+        if (const auto param = *get<std::int64_t>(mars, "param"); matchAny(param, range(260510, 260512))) {
+            setPointInTime(sections);
+            setRecursiveDefault(sections, "product-definition-section.satellite-configurator.type", "default");
+            setPDT(sections, "productCategory", "satellite");
+            return true;
+        }
+    }
+    throw eckit::Exception{"Unhandled satellite field!", Here()};
+}
+
 void setHorizontal(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& sections) {
-    if (has(mars, "channel")) {
-        return;  // Bypass for satellite fields, they are handled in `setSatellite`
+    if (setMiscHorizontal(mars, sections)) {
+        return;  // Bypass for special rules not captured below
     }
 
     setLevel(mars, sections);
     setTime(mars, sections);
     setStatistical(mars, sections);
-}
-
-//================================ Satellite =================================//
-
-void setSatellite(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& sections) {
-    if (!has(mars, "channel")) {
-        return;  // Not a satellite field
-    }
-
-    if (const auto& type = get<std::string>(mars, "type"); type && (*type == "em" || *type == "es")) {
-        // Derived ensemble forecaste satellite
-        if (*get<std::int64_t>(mars, "param") != 194) {
-            throw eckit::Exception{"Param not in range!", Here()};
-        }
-        setPointInTime(sections);
-        setTypeOfLevel(sections, "surface");
-    }
-    else {
-        // Single satellite
-        if (const auto param = *get<std::int64_t>(mars, "param"); !(param >= 260510 && param <= 260512)) {
-            throw eckit::Exception{"Param not in range!", Here()};
-        }
-        setPointInTime(sections);
-        setRecursiveDefault(sections, "product-definition-section.satellite-configurator.type", "default");
-        setPDT(sections, "productCategory", "satellite");
-    }
 }
 
 //======================= Data Representation Section ========================//
@@ -243,7 +295,6 @@ void setAll(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& se
     setProcessType(mars, sections);
     setHorizontal(mars, sections);
 
-    setSatellite(mars, sections);
     setDataRepresentationSection(mars, sections);
 
     setRecursive(sections, "product-definition-section.template-number",
