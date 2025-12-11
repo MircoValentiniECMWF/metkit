@@ -20,6 +20,7 @@
 #include "common.h"
 #include "level.h"
 #include "pdt.h"
+#include "time.h"
 
 using metkit::mars2grib::utils::get;
 using metkit::mars2grib::utils::has;
@@ -175,21 +176,13 @@ void setProcessType(const eckit::LocalConfiguration& mars, eckit::LocalConfigura
 
 //================================ Horizontal ================================//
 
-void setStatistics(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& sections) {
-    // TODO : Use automated mapping from param to typeOfStatisticalProcessing
-
-    // Assume the param is a point-in-time field for now
-    setPointInTime(sections);
-}
-
 void setHorizontal(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& sections) {
     if (has(mars, "channel")) {
         return;  // Bypass for satellite fields, they are handled in `setSatellite`
     }
 
     setLevel(mars, sections);
-
-    setStatistics(mars, sections);
+    setTime(mars, sections);
 }
 
 //================================ Satellite =================================//
