@@ -204,6 +204,8 @@ if ( HAVE_MARS2GRIB )
         mars2grib/frontend/level.h
         mars2grib/frontend/time.cc
         mars2grib/frontend/time.h
+        mars2grib/frontend/statistical.cc
+        mars2grib/frontend/statistical.h
     )
     list( APPEND grib_libs )
 endif()

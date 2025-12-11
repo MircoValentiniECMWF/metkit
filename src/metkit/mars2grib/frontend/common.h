@@ -97,6 +97,12 @@ inline void setFixedTimeRange(eckit::LocalConfiguration& sections, const std::st
                  length);
 }
 
+inline void setTypeOfStatisticalProcessing(eckit::LocalConfiguration& sections,
+                                           const std::string& typeOfStatisticalProcessing) {
+    setRecursive(sections, "product-definition-section.time-statistics-configurator.type-of-statistical-processing",
+                 typeOfStatisticalProcessing);
+}
+
 inline void setTypeOfLevel(eckit::LocalConfiguration& sections, const std::string& type) {
     setRecursive(sections, "product-definition-section.level-configurator.type", type);
 }

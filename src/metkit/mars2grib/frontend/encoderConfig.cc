@@ -20,6 +20,7 @@
 #include "common.h"
 #include "level.h"
 #include "pdt.h"
+#include "statistical.h"
 #include "time.h"
 
 using metkit::mars2grib::utils::get;
@@ -183,6 +184,7 @@ void setHorizontal(const eckit::LocalConfiguration& mars, eckit::LocalConfigurat
 
     setLevel(mars, sections);
     setTime(mars, sections);
+    setStatistical(mars, sections);
 }
 
 //================================ Satellite =================================//
