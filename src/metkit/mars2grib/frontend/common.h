@@ -84,6 +84,19 @@ inline void setPointInTime(eckit::LocalConfiguration& sections) {
     setRecursiveDefault(sections, "product-definition-section.point-in-time-configurator.type", "default");
 }
 
+inline void setSinceLastPostProcessingStep(eckit::LocalConfiguration& sections) {
+    setPDT(sections, "timeExtent", "timeRange");
+    setRecursiveDefault(sections, "product-definition-section.time-statistics-configurator.type",
+                        "since-last-post-processing-step");
+}
+
+inline void setFixedTimeRange(eckit::LocalConfiguration& sections, const std::string& length) {
+    setPDT(sections, "timeExtent", "timeRange");
+    setRecursive(sections, "product-definition-section.time-statistics-configurator.type", "fixed-timerange");
+    setRecursive(sections, "product-definition-section.time-statistics-configurator.overall-length-of-timerange",
+                 length);
+}
+
 inline void setTypeOfLevel(eckit::LocalConfiguration& sections, const std::string& type) {
     setRecursive(sections, "product-definition-section.level-configurator.type", type);
 }
