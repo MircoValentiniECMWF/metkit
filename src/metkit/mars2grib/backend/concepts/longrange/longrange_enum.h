@@ -6,7 +6,9 @@
 #include <cstdint>
 #include <iostream>
 
-#include "../concept_core.h"
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+
+namespace metkit::mars2grib::backend {
 
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
@@ -34,3 +36,5 @@ constexpr std::string_view longrangeTypeName();
     DEF(LongrangeType::Default, "default");
 
 #undef DEF
+
+} // namespace metkit::mars2grib::backend

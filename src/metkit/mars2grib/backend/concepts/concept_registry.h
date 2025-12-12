@@ -5,9 +5,11 @@
 #include <array>
 #include <utility>
 
-#include "concept_core.h"
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
 
-#include "./nil/nil.h"
+#include "metkit/mars2grib/backend/concepts/nil/nil.h"
+
+#if 0
 #include "./origin/origin.h"
 #include "./tables/tables.h"
 #include "./data-type/data_type.h"
@@ -29,6 +31,9 @@
 #include "./shape-of-the-earth/shape_of_the_earth.h"
 #include "./ensemble/ensemble.h"
 #include "./packing/packing.h"
+#endif
+
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // Registry: (concept, variantName) -> table [NUM_STAGES x NUM_SECTIONS]
@@ -42,13 +47,7 @@ template<
 >
 struct ConceptRegistry
 {
-    using FnPtr =
-        uint8_t(*)(const MarsDict_t&,
-                   const GeoDict_t&,
-                   const ParDict_t&,
-                   const OptDict_t&,
-                   OutDict_t&);
-
+    using FnPtr = Fn<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>;
     using Table = std::array<std::array<FnPtr, NUM_SECTIONS>, NUM_STAGES>;
 
     std::map<std::pair<std::string_view,std::string_view>, Table> map;
@@ -88,8 +87,10 @@ make_concept_registry()
     RegisterVariants<NilConceptInfo, NilList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
+#if 0
     RegisterVariants<OriginConceptInfo, OriginList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
 
     RegisterVariants<TablesConceptInfo, TablesList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
@@ -150,6 +151,7 @@ make_concept_registry()
 
     RegisterVariants<PackingConceptInfo, PackingList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+#endif
 
     return registry;
 }
@@ -176,3 +178,4 @@ concept_registry_instance()
     return instance;
 }
 
+} // namespace metkit::mars2grib::backend::cnpts

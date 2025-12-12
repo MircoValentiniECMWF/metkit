@@ -7,6 +7,8 @@
 #include "longrange_enum.h"
 #include "longrange_encoding.h"
 
+namespace metkit::mars2grib::backend {
+
 // ======================================================
 // ConceptInfo
 // ======================================================
@@ -58,3 +60,5 @@ struct LongrangeConceptInfo
         );
     }
 };
+
+} // namespace metkit::mars2grib::backend

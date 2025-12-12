@@ -3,9 +3,14 @@
 #include <string>
 #include <string_view>
 
-#include "../concept_core.h"
-#include "tables_enum.h"
-#include "tables_encoding.h"
+#include "metkit/config/LibMetkit.h"
+
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+#include "metkit/mars2grib/backend/concepts/tables/tables_enum.h"
+#include "metkit/mars2grib/backend/concepts/tables/tables_encoding.h"
+
+namespace metkit::mars2grib::backend::deductions {
+
 
 // ======================================================
 // ConceptInfo
@@ -58,3 +63,5 @@ struct TablesConceptInfo
         );
     }
 };
+
+} // namespace metkit::mars2grib::backend::deductions

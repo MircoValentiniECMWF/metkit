@@ -13,6 +13,10 @@
 
 namespace metkit::mars2grib::utils {
 
+// Namespaces shortcuts
+using metkit::mars2grib::backend::cnpts::NUM_SECTIONS;
+
+
 // Grib sections names
 inline constexpr std::array<std::string_view, NUM_SECTIONS> sectionNames = {{
     "indicator-section",

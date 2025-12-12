@@ -1,5 +1,5 @@
 #pragma once
 
-#include "destine_enum.h"
-#include "destine_encoding.h"
-#include "destine_info.h"
+#include "metkit/mars2grib/backend/concepts/destine/destine_enum.h"
+#include "metkit/mars2grib/backend/concepts/destine/destine_encoding.h"
+#include "metkit/mars2grib/backend/concepts/destine/destine_info.h"

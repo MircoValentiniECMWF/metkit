@@ -12,7 +12,9 @@ struct E { template<class T> void set(const std::string&, const T&) {} };
 
 int main()
 {
+    using namespace metkit::mars2grib::backend::cnpts;
     using Registry = ConceptRegistry<A,B,C,D,E>;
+
     Registry registry = make_concept_registry<A,B,C,D,E>();
 
     A aa;

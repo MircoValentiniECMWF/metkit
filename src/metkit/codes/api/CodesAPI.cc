@@ -166,6 +166,7 @@ void OwningCodesHandle::set(const std::string& key, double value) {
     throwOnError(codes_set_double(raw(), key.c_str(), value), Here(), "CodesHandle::set(string, double)", key);
 }
 void OwningCodesHandle::set(const std::string& key, long value) {
+    std::cout << "XXXXX " + key << " = " << std::to_string(value) << std::endl;
     throwOnError(codes_set_long(raw(), key.c_str(), value), Here(), "CodesHandle::set(string, long)", key);
 }
 

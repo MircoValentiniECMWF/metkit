@@ -7,6 +7,8 @@
 #include "data_type_enum.h"
 #include "data_type_encoding.h"
 
+namespace metkit::mars2grib::backend {
+
 // ======================================================
 // ConceptInfo
 // ======================================================
@@ -58,3 +60,5 @@ struct DataTypeConceptInfo
         );
     }
 };
+
+} // namespace metkit::mars2grib::backend

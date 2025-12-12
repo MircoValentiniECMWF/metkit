@@ -8,10 +8,12 @@
 
 #include "../concept_core.h"
 
+namespace metkit::mars2grib::backend {
+
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class DataTypeType : int {
+enum class DataTypeType : uint8_t {
     Default = 0
 };
 
@@ -34,3 +36,5 @@ constexpr std::string_view data_typeTypeName();
     DEF(DataTypeType::Default, "default");
 
 #undef DEF
+
+}  // namespace metkit::mars2grib::backend

@@ -6,17 +6,50 @@
 #include <string>
 #include <iostream>
 
+#include "eckit/log/Log.h"
+
+#include "metkit/config/LibMetkit.h"
+namespace metkit::mars2grib::backend::cnpts {
+
 // ======================================================
 // Constants
 // ======================================================
 static constexpr uint8_t NUM_STAGES   = 3;
 static constexpr uint8_t NUM_SECTIONS = 6;
 
+
+enum class StageType : uint8_t {
+    Allocate = 0,
+    Preset   = 1,
+    Runtime  = 2
+};
+
+// https://codes.ecmwf.int/grib/format/grib2/sections/
+enum class SectionType : uint8_t {
+    IndicatorSection = 0,
+    IdentificationSection = 1,
+    LocalUseSection = 2,
+    GridDefinitionSection = 3,
+    ProductDefinitionSection = 4,
+    DataRepresentationSection = 5
+};
+
+template<std::size_t N>
+struct BoolArrayOps {
+    std::array<bool, N> v;
+
+    bool all()  const { return std::all_of(v.begin(), v.end(), [](bool b){return b;}); }
+    bool any()  const { return std::any_of(v.begin(), v.end(), [](bool b){return b;}); }
+    bool none() const { return std::none_of(v.begin(), v.end(), [](bool b){return b;}); }
+    bool one()  const { return std::count(v.begin(), v.end(), true) == 1; }
+};
+
+
 // ======================================================
 // Prototypes of different capabilities
 // ======================================================
 template<class MarsDict_t, class GeoDict_t, class ParDict_t, class OptDict_t, class OutDict_t>
-using Fn = uint8_t(*)(const MarsDict_t&, const GeoDict_t&, const ParDict_t&, const OptDict_t&, OutDict_t&);
+using Fn = void(*)(const MarsDict_t&, const GeoDict_t&, const ParDict_t&, const OptDict_t&, OutDict_t&);
 
 // ======================================================
 // ValueList
@@ -222,3 +255,5 @@ struct RegisterVariants<
         ForEachValue<ValueList<Values...>, Helper::template Func>::run(registry);
     }
 };
+
+}  // namespace metkit::mars2grib::backend::cnpts

@@ -15,7 +15,9 @@
 
 namespace metkit::mars2grib::backend {
 
-
+using metkit::mars2grib::backend::cnpts::Fn;
+using metkit::mars2grib::backend::cnpts::NUM_SECTIONS;
+using metkit::mars2grib::backend::cnpts::NUM_STAGES;
 
 // Get the callbacks table
 template<
@@ -28,6 +30,26 @@ template<
 inline std::array<std::array<std::vector<Fn<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>>, NUM_SECTIONS>, NUM_STAGES>
 make_callbacks( std::array<std::vector<std::pair<std::string_view,std::string_view>>, NUM_SECTIONS> conceptsArr )
 {
+
+    // NOTE FOR MAINTAINERS:
+    //
+    // Do NOT replace the individual `using` declarations below with
+    //     `using namespace metkit::mars2grib::backend::concepts;`
+    //
+    // Even though `concepts` is a valid namespace, using-directives that
+    // contain identifiers beginning with the token sequence `concept` cause
+    // parsing ambiguities under C++20 due to the `concept` keyword.
+    // Several compilers (Clang/GCC/MSVC) misinterpret:
+    //
+    //     using namespace metkit::mars2grib::backend::concepts;
+    //
+    // and emit errors such as “expected an identifier”.  Importing symbols
+    // one by one avoids this issue and is required for correctness and
+    // portability.
+    //
+    // Do not simplify or refactor this section without verifying behavior
+    // across all supported compilers and language modes.
+    using metkit::mars2grib::backend::cnpts::concept_registry_instance;
 
     // Get the concept registry instance
     const auto& registry = concept_registry_instance<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>();

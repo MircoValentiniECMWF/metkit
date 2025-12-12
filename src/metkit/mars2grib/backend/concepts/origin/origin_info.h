@@ -3,16 +3,18 @@
 #include <string>
 #include <string_view>
 
-#include "../concept_core.h"
-#include "origin_enum.h"
-#include "origin_encoding.h"
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+#include "metkit/mars2grib/backend/concepts/origin/origin_enum.h"
+#include "metkit/mars2grib/backend/concepts/origin/origin_encoding.h"
+
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // ConceptInfo
 // ======================================================
 struct OriginConceptInfo
 {
-    static constexpr const char* name = "origin";
+    static constexpr const char* name = originName.data();
 
     template<
         int Stage, int Sec,
@@ -58,3 +60,5 @@ struct OriginConceptInfo
         );
     }
 };
+
+}  // namespace metkit::mars2grib::backend::cnpts

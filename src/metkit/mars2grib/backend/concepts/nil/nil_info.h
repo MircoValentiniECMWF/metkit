@@ -3,9 +3,11 @@
 #include <string>
 #include <string_view>
 
-#include "../concept_core.h"
-#include "nil_enum.h"
-#include "nil_encoding.h"
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+#include "metkit/mars2grib/backend/concepts/nil/nil_enum.h"
+#include "metkit/mars2grib/backend/concepts/nil/nil_encoding.h"
+
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // ConceptInfo
@@ -58,3 +60,5 @@ struct NilConceptInfo
         );
     }
 };
+
+} // namespace metkit::mars2grib::backend::cnpts

@@ -4,8 +4,10 @@
 #include <string_view>
 #include <iostream>
 
-#include "../concept_core.h"
-#include "nil_enum.h"
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+#include "metkit/mars2grib/backend/concepts/nil/nil_enum.h"
+
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // DEFAULT APPLICABILITY (user will override manually)
@@ -27,17 +29,20 @@ template<
     class OptDict_t,
     class OutDict_t
 >
-uint8_t NilOp(
+[[noreturn]]
+void NilOp(
     const MarsDict_t&  mars,
     const GeoDict_t&   geo,
     const ParDict_t&   par,
     const OptDict_t&   opt,
-    OutDict_t&         out)
+    OutDict_t&         out) noexcept(false)
 {
     std::cout << "[Concept Nil] Op called: "
               << "Stage="   << Stage
               << ", Section=" << Section
               << ", Variant=" << std::string(nilTypeName<Variant>())
               << std::endl;
-    return 0;
+    return;
 }
+
+} // namespace metkit::mars2grib::backend::cnpts

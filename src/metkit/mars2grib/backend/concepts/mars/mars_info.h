@@ -3,9 +3,12 @@
 #include <string>
 #include <string_view>
 
-#include "../concept_core.h"
-#include "mars_enum.h"
-#include "mars_encoding.h"
+// Core concept includes
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+#include "metkit/mars2grib/backend/concepts/mars/mars_enum.h"
+#include "metkit/mars2grib/backend/concepts/mars/mars_encoding.h"
+
+namespace metkit::mars2grib::backend {
 
 // ======================================================
 // ConceptInfo
@@ -58,3 +61,5 @@ struct MarsConceptInfo
         );
     }
 };
+
+} // namespace metkit::mars2grib::backend

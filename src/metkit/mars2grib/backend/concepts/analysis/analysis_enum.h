@@ -8,10 +8,12 @@
 
 #include "../concept_core.h"
 
+namespace metkit::mars2grib::backend {
+
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class AnalysisType : int {
+enum class AnalysisType : uint8_t {
     Default = 0
 };
 
@@ -34,3 +36,5 @@ constexpr std::string_view analysisTypeName();
     DEF(AnalysisType::Default, "default");
 
 #undef DEF
+
+}  // namespace metkit::mars2grib::backend

@@ -7,6 +7,8 @@
 #include "analysis_enum.h"
 #include "analysis_encoding.h"
 
+namespace metkit::mars2grib::backend {
+
 // ======================================================
 // ConceptInfo
 // ======================================================
@@ -15,7 +17,7 @@ struct AnalysisConceptInfo
     static constexpr const char* name = "analysis";
 
     template<
-        int Stage, int Sec,
+        StageType Stage, SectionType Sec,
         AnalysisType Variant,
         class MarsDict_t,
         class GeoDict_t,
@@ -58,3 +60,6 @@ struct AnalysisConceptInfo
         );
     }
 };
+
+
+}  // namespace metkit::mars2grib::backend

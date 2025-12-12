@@ -6,31 +6,40 @@
 #include <cstdint>
 #include <iostream>
 
-#include "../concept_core.h"
+// Core concept includes
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+
+namespace metkit::mars2grib::backend {
+
 
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class ForecastTimeType : int {
-    Default = 0
+enum class TimeType : uint8_t {
+    Standard = 0,
+    Reforecast = 1
 };
 
 // ======================================================
 // COMPILE-TIME TYPELIST
 // ======================================================
-using ForecastTimeList = ValueList<
-    ForecastTimeType::Default
+using TimeList = ValueList<
+    TimeType::Standard,
+    TimeType::Reforecast
 >;
 
 // ======================================================
 // VARIANT -> STRING MAPPING
 // ======================================================
-template<ForecastTimeType T>
-constexpr std::string_view forecast_timeTypeName();
+template<TimeType T>
+constexpr std::string_view timeTypeName();
 
 #define DEF(T,NAME) \
-    template<> constexpr std::string_view forecast_timeTypeName<T>() { return NAME; }
+    template<> constexpr std::string_view timeTypeName<T>() { return NAME; }
 
-    DEF(ForecastTimeType::Default, "default");
+    DEF(TimeType::Standard,   "standard" );
+    DEF(TimeType::Reforecast, "reforecast" );
 
 #undef DEF
+
+}  // namespace metkit::mars2grib::backend

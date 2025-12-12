@@ -3,9 +3,11 @@
 #include <string>
 #include <string_view>
 
-#include "../concept_core.h"
-#include "ensemble_enum.h"
-#include "ensemble_encoding.h"
+#include "metkit/mars2grib/backend/concepts//concept_core.h"
+#include "metkit/mars2grib/backend/concepts//ensemble/ensemble_enum.h"
+#include "metkit/mars2grib/backend/concepts//ensemble/ensemble_encoding.h"
+
+namespace metkit::mars2grib::backend {
 
 // ======================================================
 // ConceptInfo
@@ -58,3 +60,5 @@ struct EnsembleConceptInfo
         );
     }
 };
+
+} // namespace metkit::mars2grib::backend

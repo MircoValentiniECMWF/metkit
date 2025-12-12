@@ -6,16 +6,17 @@
 #include <cstdint>
 #include <iostream>
 
-#include "../concept_core.h"
+// Core concept includes
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+
+namespace metkit::mars2grib::backend {
 
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
 enum class DestineType : int {
     ClimateDT = 0,
-    ExtremesDT,
-    OnDemandExtremesDT,
-    Default
+    ExtremesDT
 };
 
 // ======================================================
@@ -23,9 +24,7 @@ enum class DestineType : int {
 // ======================================================
 using DestineList = ValueList<
     DestineType::ClimateDT,
-    DestineType::ExtremesDT,
-    DestineType::OnDemandExtremesDT,
-    DestineType::Default
+    DestineType::ExtremesDT
 >;
 
 // ======================================================
@@ -39,7 +38,7 @@ constexpr std::string_view destineTypeName();
 
     DEF(DestineType::ClimateDT, "climateDT");
     DEF(DestineType::ExtremesDT, "extremesDT");
-    DEF(DestineType::OnDemandExtremesDT, "onDemandExtremesDT");
-    DEF(DestineType::Default, "default");
 
 #undef DEF
+
+} // namespace metkit::mars2grib::backend

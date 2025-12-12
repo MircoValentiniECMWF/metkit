@@ -1,0 +1,206 @@
+#pragma once
+
+#include <cxxabi.h>
+#include <string_view>
+#include <optional>
+#include <type_traits>
+#include <utility>
+#include <exception>
+#include <cstdint>
+
+#include "eckit/exception/Exceptions.h"
+
+// Exceptions
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
+#include "metkit/mars2grib/utils/type_traits_name.h"
+
+
+namespace metkit::mars2grib::utils::dict_traits {
+
+using std::operator""s;
+
+template<typename>
+struct dependent_false : std::false_type {};
+
+
+template<class Dict>
+struct DictHas {
+
+    static bool has(const Dict&, std::string_view) noexcept(false) {
+        static_assert(dependent_false<Dict>::value,
+                      "DictHas not specialized for this Dict");
+        __builtin_unreachable();
+    }
+};
+
+
+template<class Dict>
+struct DictMissing {
+
+    static bool isMissing(const Dict&, std::string_view) noexcept(false) {
+        static_assert(dependent_false<Dict>::value,
+                      "DictMissing not specialized for this Dict");
+        __builtin_unreachable();
+    }
+
+    static void setMissing(Dict&, std::string_view) noexcept(false) {
+        static_assert(dependent_false<Dict>::value,
+                      "DictMissing not specialized for this Dict");
+        __builtin_unreachable();
+    }
+};
+
+template<class Dict, class T>
+struct DictGetOpt {
+
+    static std::optional<T> get_opt(const Dict&, std::string_view) noexcept(false) {
+        static_assert(dependent_false<Dict>::value,
+                      "DictGetOpt not specialized for this Dict and type");
+        __builtin_unreachable();
+    }
+};
+
+template<class Dict, class T>
+struct DictGetOrThrow {
+
+    static T get_or_throw(const Dict&, std::string_view) noexcept(false) {
+        static_assert(dependent_false<Dict>::value,
+                      "DictGetOrThrow not specialized for this Dict and type");
+        __builtin_unreachable();
+    }
+};
+
+template<class Dict, class T>
+struct DictSetOrIgnore {
+    static void set_or_ignore(Dict&, std::string_view, const T&) noexcept(false) {
+        static_assert(dependent_false<Dict>::value,
+                      "DictSetOrIgnore not specialized for this Dict and type");
+        __builtin_unreachable();
+    }
+};
+
+
+
+template<class Dict, class T>
+struct DictSetOrThrow {
+    static void set_or_throw(Dict&, std::string_view, const T&) noexcept(false) {
+        static_assert(dependent_false<Dict>::value,
+                      "DictSetOrThrow not specialized for this Dict and type");
+        __builtin_unreachable();
+    }
+};
+
+
+
+// ============================================================
+//  has / isMissing / setMissing
+// ============================================================
+
+// has<Dict>(dict,key)
+template<class Dict>
+inline bool has(const Dict& dict, std::string_view key) {
+    return DictHas<Dict>::has(dict, key);
+}
+
+// has<T>(dict,key)
+template<class T, class Dict>
+inline bool has(const Dict& dict, std::string_view key) {
+    return DictGetOpt<Dict, T>::get_opt(dict, key).has_value();
+}
+
+// isMissing<Dict>(dict,key)
+template<class Dict>
+inline bool isMissing(const Dict& dict, std::string_view key) {
+    return DictMissing<Dict>::isMissing(dict, key);
+}
+
+// setMissing<Dict>(dict,key)
+template<class Dict>
+inline void setMissing(Dict& dict, std::string_view key) {
+    DictMissing<Dict>::setMissing(dict, key);
+    return;
+}
+
+// check<T>(dict,key,cond) -> bool
+template<class T, class Dict, class Cond>
+inline bool check(const Dict& dict,
+                  std::string_view key,
+                  Cond&& condition) {
+    if (auto v = DictGetOpt<Dict, T>::get_opt(dict, key); v.has_value() ) {
+        return std::forward<Cond>(condition)(*v);
+    }
+    return false;
+}
+
+
+// ============================================================
+//  GET UTILITIES
+// ============================================================
+
+// get_or_throw<T>(dict,key) -> T
+template<class T, class Dict>
+inline T get_or_throw(const Dict& dict, std::string_view key) {
+    try {
+        return DictGetOrThrow<Dict, T>::get_or_throw(dict, key);
+    } catch (...) {
+        std::throw_with_nested(
+                exceptions::Mars2GribDictException(
+                        "Forwarding errors while getting key `"s + std::string(key)
+                        + "` as `" + std::string(type_name<T>()) + "` from dictionary`"s,
+                    Here()
+                )
+            );
+        __builtin_unreachable();
+    }
+    __builtin_unreachable();
+}
+
+// get<T>(dict,key) -> std::optional<T>
+template<class T, class Dict>
+inline std::optional<T> get_opt(const Dict& dict, std::string_view key ) {
+    try{
+        return DictGetOpt<Dict, T>::get_opt(dict, key);
+    } catch (...) {
+        return std::nullopt;
+    }
+    __builtin_unreachable();
+}
+
+
+// ============================================================
+//  SET UTILITIES
+// ============================================================
+
+// set<T>(dict,key,value)
+template<class T, class Dict>
+inline void set_or_throw(Dict& dict, std::string_view key, const T& value) {
+    try {
+        DictSetOrThrow<Dict, T>::set_or_throw(dict, key, value);
+        return;
+    } catch (...) {
+        std::throw_with_nested(
+                exceptions::Mars2GribDictException(
+                        "Forwarding errors while setting key `"s + std::string(key)
+                        + "` as `" + std::string(type_name<T>()) + "` to dictionary`"s,
+                    Here()
+                )
+            );
+        __builtin_unreachable();
+    }
+    __builtin_unreachable();
+}
+
+template<class T, class Dict>
+inline void set_or_ignore(Dict& dict, std::string_view key, const T& value) {
+    try {
+        DictSetOrIgnore<Dict, T>::set_or_ignore(dict, key, value);
+        return;
+    } catch (...) {
+        // ignore exceptions
+        __builtin_unreachable();
+    }
+    __builtin_unreachable();
+}
+
+
+} // namespace metkit::mars2grib::utils::dict

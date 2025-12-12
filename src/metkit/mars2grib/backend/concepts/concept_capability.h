@@ -8,15 +8,6 @@
 static constexpr uint8_t NUM_STAGES   = 3;
 static constexpr uint8_t NUM_SECTIONS = 6;
 
-// ======================================================
-// Definition of a capability table
-// ======================================================
-template<class Fn>
-using CapabilityTable =
-    std::array<
-        std::array<Fn, NSECTIONS>,  // sections
-        NSTAGES                     // stages
-    >;
 
 // ======================================================
 // Prototypes of different capabilities
@@ -29,6 +20,16 @@ using CheckFn = bool(*)(const MarsDict_t&, const GeoDict_t&, const ParDict_t&, c
 
 template<class OptDict_t, class OutDict_t>
 using Grib1ToGrib2Fn = uint8_t(*)(const OutDict_t&, const OutDict_t&, const OutDict_t& );
+
+// ======================================================
+// Definition of a capability table
+// ======================================================
+template<class Fn>
+using CapabilityTable =
+    std::array<
+        std::array<Fn, NSECTIONS>,  // sections
+        NSTAGES                     // stages
+    >;
 
 
 // ======================================================

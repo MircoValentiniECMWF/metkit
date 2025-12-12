@@ -3,20 +3,21 @@
 #include <string>
 #include <string_view>
 
-#include "../concept_core.h"
-#include "forecast_time_enum.h"
-#include "forecast_time_encoding.h"
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+#include "metkit/mars2grib/backend/concepts/derived/derived_enum.h"
+#include "metkit/mars2grib/backend/concepts/derived/derived_encoding.h"
 
+namespace metkit::mars2grib::backend {
 // ======================================================
 // ConceptInfo
 // ======================================================
-struct ForecastTimeConceptInfo
+struct EnsembleConceptInfo
 {
-    static constexpr const char* name = "forecastTime";
+    static constexpr const char* name = "ensemble";
 
     template<
         int Stage, int Sec,
-        ForecastTimeType Variant,
+        EnsembleType Variant,
         class MarsDict_t,
         class GeoDict_t,
         class ParDict_t,
@@ -31,8 +32,8 @@ struct ForecastTimeConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( forecast_timeApplicable(Stage, Sec, Variant) ) {
-            return &ForecastTimeOp<
+        if constexpr ( ensembleApplicable(Stage, Sec, Variant) ) {
+            return &EnsembleOp<
                 Stage, Sec, Variant,
                 MarsDict_t,
                 GeoDict_t,
@@ -52,9 +53,11 @@ struct ForecastTimeConceptInfo
     static std::string_view variantName()
     {
         return std::string_view(
-            forecast_timeTypeName<
-                static_cast<ForecastTimeType>(Variant)
+            ensembleTypeName<
+                static_cast<EnsembleType>(Variant)
             >()
         );
     }
 };
+
+} // namespace metkit::mars2grib::backend
