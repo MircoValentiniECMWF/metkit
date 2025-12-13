@@ -1,11 +1,5 @@
 #pragma once
 
-#include <optional>
-#include <array>
-#include <string>
-#include <string_view>
-#include <algorithm>
-
 #include "eckit/exception/Exceptions.h"
 #include "eckit/log/Log.h"
 
