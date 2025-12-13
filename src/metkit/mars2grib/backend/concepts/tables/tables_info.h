@@ -17,7 +17,7 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 struct TablesConceptInfo
 {
-    static constexpr const char* name = "tables";
+    static constexpr const char* name = tablesName.data();
 
     template<
         std::size_t Stage,

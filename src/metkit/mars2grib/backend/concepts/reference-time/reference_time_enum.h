@@ -14,33 +14,35 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 // NAME OF THE CONCEPT
 // ======================================================
-inline constexpr std::string_view marsName{"mars"};
+inline constexpr std::string_view referenceTimeName{"reference-time"};
 
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class MarsType : int {
-    Default = 0
+enum class ReferenceTimeType : std::size_t {
+    Standard = 0,
+    Reforecast = 1
 };
 
 // ======================================================
 // COMPILE-TIME TYPELIST
 // ======================================================
-using MarsList = ValueList<
-    MarsType::Default
+using ReferenceTimeList = ValueList<
+    ReferenceTimeType::Standard,
+    ReferenceTimeType::Reforecast
 >;
 
 // ======================================================
 // VARIANT -> STRING MAPPING
 // ======================================================
-template<MarsType T>
-constexpr std::string_view marsTypeName();
+template<ReferenceTimeType T>
+constexpr std::string_view referenceTimeTypeName();
 
 #define DEF(T,NAME) \
-    template<> constexpr std::string_view marsTypeName<T>() { return NAME; }
-
-    DEF(MarsType::Default, "default");
+    template<> constexpr std::string_view referenceTimeTypeName<T>() { return NAME; }
+    DEF(ReferenceTimeType::Standard,   "standard" );
+    DEF(ReferenceTimeType::Reforecast, "reforecast" );
 
 #undef DEF
 
-} // namespace metkit::mars2grib::backend::cnpts
+}  // namespace metkit::mars2grib::backend::cnpts

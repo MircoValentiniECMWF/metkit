@@ -2,22 +2,24 @@
 
 #include <string>
 #include <string_view>
+#include <cstdint>
 
-#include "../concept_core.h"
-#include "data_type_enum.h"
-#include "data_type_encoding.h"
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+#include "metkit/mars2grib/backend/concepts/data-type/data_type_enum.h"
+#include "metkit/mars2grib/backend/concepts/data-type/data_type_encoding.h"
 
-namespace metkit::mars2grib::backend {
+namespace metkit::mars2grib::backend::cnpts{
 
 // ======================================================
 // ConceptInfo
 // ======================================================
 struct DataTypeConceptInfo
 {
-    static constexpr const char* name = "dataType";
+    static constexpr const char* name = dataTypeName.data();
 
     template<
-        int Stage, int Sec,
+        std::size_t Stage,
+        std::size_t Sec,
         DataTypeType Variant,
         class MarsDict_t,
         class GeoDict_t,
@@ -46,8 +48,9 @@ struct DataTypeConceptInfo
             return nullptr;
         }
 
-        // Remove compiler warning
-        return nullptr;
+        // Avoid compile warnings
+        __builtin_unreachable();
+
     }
 
     template<auto Variant>
@@ -61,4 +64,4 @@ struct DataTypeConceptInfo
     }
 };
 
-} // namespace metkit::mars2grib::backend
+} // namespace metkit::mars2grib::backend::cnpts

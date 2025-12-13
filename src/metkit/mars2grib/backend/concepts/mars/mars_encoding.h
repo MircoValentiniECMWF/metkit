@@ -8,6 +8,15 @@
 #include "metkit/mars2grib/backend/concepts/concept_core.h"
 #include "metkit/mars2grib/backend/concepts/mars/mars_enum.h"
 
+// Deductions
+#include "metkit/mars2grib/backend/deductions/marsClass.h"
+#include "metkit/mars2grib/backend/deductions/marsType.h"
+#include "metkit/mars2grib/backend/deductions/marsStream.h"
+#include "metkit/mars2grib/backend/deductions/marsExpver.h"
+
+// Exceptions
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
+
 namespace metkit::mars2grib::backend {
 
 // ======================================================
@@ -16,19 +25,10 @@ namespace metkit::mars2grib::backend {
 constexpr bool marsApplicable(int Stage, int Section, MarsType Variant)
 {
 
-    // Compile time conditions to apply this concept
-    std::array<bool,3> conditions = {{
-      (Variant == MarsType::Default),
-      (Stage == StageType::Preset),
-      (Section == SectionType::LocalUseSection)
-    }};
-
     // Confitions to apply concept
-    return std::all_of(
-        conditions.begin(),
-        conditions.end(),
-        [](bool b){ return b; }
-    );
+    return ((Variant == MarsType::Default) &&
+      (Stage == StagePreset) &&
+      (Section == SecLocalUseSection) );
 
 }
 
@@ -36,7 +36,8 @@ constexpr bool marsApplicable(int Stage, int Section, MarsType Variant)
 // MAIN OPERATION
 // ======================================================
 template<
-    int Stage, int Section,
+    std::size_t Stage,
+    std::size_t Section,
     MarsType Variant,
     class MarsDict_t,
     class GeoDict_t,
@@ -44,7 +45,7 @@ template<
     class OptDict_t,
     class OutDict_t
 >
-uint8_t MarsOp(
+void MarsOp(
     const MarsDict_t&  mars,
     const GeoDict_t&   geo,
     const ParDict_t&   par,
@@ -52,68 +53,92 @@ uint8_t MarsOp(
     OutDict_t&         out)
 {
 
+    using metkit::mars2grib::utils::dict_traits::set_or_throw;
+    using metkit::mars2grib::utils::dict_traits::check;
+    using metkit::mars2grib::utils::dict_traits::get_opt;
+    using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
+
     // eccodes/definitions/grib2/local.98.36.def
     if constexpr ( marsApplicable(Stage, Section, Variant) ) {
 
 
-        // =============================================================
-        // Logging
-        LOG_DEBUG_LIB(LibMetkit)
-            << "[Concept Mars] Op called: "
-            << "Stage="   << Stage
-            << ", Section=" << Section
-            << ", Variant=" << std::string(marsTypeName<Variant>())
-            << std::endl;
+        try {
 
-        // =============================================================
-        // Preconditions/contracts for this concept
-        has_or_throw<ConceptException>( out, "localUsePresent",
-            [](){ return "Missing `localDefinitionNumber` in grib Header"; },
-            Here()
-        );
+            // =============================================================
+            // Logging
+            LOG_DEBUG_LIB(LibMetkit)
+                << "[Concept Mars] Op called: "
+                << "Stage="   << Stage
+                << ", Section=" << Section
+                << ", Variant=" << std::string(marsTypeName<Variant>())
+                << std::endl;
 
+            // =============================================================
+            // Preconditions/contracts for this concept
+            if ( !check<long>( out, "LocalUsePresent",
+                        []( long& v ){
+                            return ( v == 1 ) ? true : false;
+                        }
+                    )
+            ) {
+                throw Mars2GribConceptException(
+                    std::string( marsName ),
+                    std::string( marsTypeName<Variant>() ),
+                    std::to_string(Stage),
+                    std::to_string(Section),
+                    "`mars` concept can only be applied when `LocalUsePresent` is present in the sample",
+                    Here()
+                );
+            }
 
-        // =============================================================
-        // Get values from input MARS dictionary
-        std::string classVal  = get_mars_or_throw<std::string,ConceptException>( mars, "class", Here() );
-        std::string typeVal   = get_mars_or_throw<std::string,ConceptException>( mars, "type", Here() );
-        std::string streamVal = get_mars_or_throw<std::string,ConceptException>( mars, "stream", Here() );
-        std::string expverVal = get_mars_or_throw<std::string,ConceptException>( mars, "expver", Here() );
+            // =============================================================
+            // Get values from input MARS dictionary
+            std::string marsClassVal  = deductions::marsClass( mars, par );
+            std::string marsTypeVal   = deductions::marsType( mars, par );
+            std::string marsStreamVal = deductions::marsStream( mars, par );
+            std::string marsExpverVal = deductions::marsExpver( mars, par );
 
-        // =============================================================
-        // Set values in output dictionary
-        set_or_throw<long,ConceptException>(
-            out, "class", classVal,
-            [&classVal](){ "`class` could not be set to the grib header with value: " + std::to_string(classVal); },
-            Here()
-        );
+            // =============================================================
+            // Set values in output dictionary
+            set_or_throw<std::string>( out, "class", marsClassVal );
+            set_or_throw<std::string>( out, "type", marsTypeVal );
+            set_or_throw<std::string>( out, "stream", marsStreamVal );
+            set_or_throw<std::string>( out, "expver", marsExpverVal );
 
-        set_or_throw<long,ConceptException>(
-            out, "type", typeVal,
-            [&typeVal](){ "`type` could not be set to the grib header with value: " + std::to_string(typeVal); },
-            Here()
-        );
+        }
+        catch ( ... ){
+            // Rethrow nested exceptions
+            std::throw_with_nested(
+                Mars2GribConceptException(
+                    std::string( marsName ),
+                    std::string( marsTypeName<Variant>() ),
+                    std::to_string(Stage),
+                    std::to_string(Section),
+                    "Unable to set `mars` concept...",
+                    Here()
+                )
+            );
 
-        set_or_throw<long,ConceptException>(
-            out, "stream", streamVal,
-            [&streamVal](){ "`stream` could not be set to the grib header with value: " + std::to_string(streamVal); },
-            Here()
-        );
-
-        set_or_throw<long,ConceptException>(
-            out, "expver", expverVal,
-            [&expverVal](){ "`expver` could not be set to the grib header with value: " + std::to_string(expverVal); },
-            Here()
-        );
-
+        }
 
         // Successful operation
-        return 0;
+        return;
 
-    }
+    } // if constexpr ( marsApplicable(Stage, Section, Variant) )
 
-    // Operation not applicable
-    return 1;
+    // Paranoid check. Should never arrive here
+    throw Mars2GribConceptException(
+            std::string( marsName ),
+            std::string( marsTypeName<Variant>() ),
+            std::to_string(Stage),
+            std::to_string(Section),
+            "Concept called when not applicable...",
+            Here()
+        );
+
+    // Remove compiler warning
+    __builtin_unreachable();
+
 }
 
 } // namespace metkit::mars2grib::backend

@@ -2,23 +2,25 @@
 
 #include <string>
 #include <string_view>
+#include <cstdint>
 
 // Core concept includes
 #include "metkit/mars2grib/backend/concepts/concept_core.h"
 #include "metkit/mars2grib/backend/concepts/mars/mars_enum.h"
 #include "metkit/mars2grib/backend/concepts/mars/mars_encoding.h"
 
-namespace metkit::mars2grib::backend {
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // ConceptInfo
 // ======================================================
 struct MarsConceptInfo
 {
-    static constexpr const char* name = "mars";
+    static constexpr const char* name = marsName.data();
 
     template<
-        int Stage, int Sec,
+        std::size_t Stage,
+        std::size_t Sec,
         MarsType Variant,
         class MarsDict_t,
         class GeoDict_t,
@@ -62,4 +64,4 @@ struct MarsConceptInfo
     }
 };
 
-} // namespace metkit::mars2grib::backend
+} // namespace metkit::mars2grib::backend::cnpts

@@ -3,46 +3,43 @@
 #include <string>
 #include <string_view>
 #include <iostream>
-#include <algorithm>
-#include <array>
+
+// Logging
+#include "metkit/config/LibMetkit.h"
+
+// dictionary traits
+#include "metkit/mars2grib/utils/dictionary_traits/dictionary_access_traits.h"
 
 // Core concept includes
 #include "metkit/mars2grib/backend/concepts/concept_core.h"
 #include "metkit/mars2grib/backend/concepts/data-type/data_type_enum.h"
 
 // Deductions
-#include "metkit/mars2grib/backend/deductions/typeOfProcessed.h"
+#include "metkit/mars2grib/backend/deductions/typeOfProcessedData.h"
 #include "metkit/mars2grib/backend/deductions/productionStatusOfProcessedData.h"
 
-namespace metkit::mars2grib::backend {
+// Exceptions
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
+
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // DEFAULT APPLICABILITY (user will override manually)
 // ======================================================
-constexpr bool data_typeApplicable(int Stage, int Section, DataTypeType Variant)
+constexpr bool data_typeApplicable(std::size_t Stage, std::size_t Section, DataTypeType Variant)
 {
-    // Compile time conditions to apply this concept
-    std::array<bool,3> conditions = {{
-        (Variant == DataTypeType::Default),
-        (Stage == StageType::Preset),
-        (Section == SectionType::IdentificationSection)
-    }};
 
-    // Confitions to apply concept
-    return std::all_of(
-        conditions.begin(),
-        conditions.end(),
-        [](bool b){ return b; }
-    );
-
-    return true;
+    return ( (Variant == DataTypeType::Default) &&
+             (Stage == StagePreset) &&
+             (Section == SecIdentificationSection) );
 }
 
 // ======================================================
 // MAIN OPERATION
 // ======================================================
 template<
-    int Stage, int Section,
+    std::size_t Stage,
+    std::size_t Section,
     DataTypeType Variant,
     class MarsDict_t,
     class GeoDict_t,
@@ -50,7 +47,7 @@ template<
     class OptDict_t,
     class OutDict_t
 >
-uint8_t DataTypeOp(
+void DataTypeOp(
     const MarsDict_t&  mars,
     const GeoDict_t&   geo,
     const ParDict_t&   par,
@@ -58,6 +55,9 @@ uint8_t DataTypeOp(
     OutDict_t&         out)
 {
 
+    using metkit::mars2grib::utils::dict_traits::set_or_throw;
+    using metkit::mars2grib::utils::dict_traits::get_opt;
+    using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
 
     if constexpr ( data_typeApplicable(Stage, Section, Variant) ) {
 
@@ -70,42 +70,57 @@ uint8_t DataTypeOp(
               << ", Variant=" << std::string(data_typeTypeName<Variant>())
               << std::endl;
 
-        // Lookup needed data
-        if ( auto typeOfProcessedDataOpt = deductions::typeOfProcessedData<MarsDict_t,ParDict_t>( mars, par ); typeOfProcessedDataOpt.has_value() ){
-            set_or_throw<ConceptException>(  out, "typeOfProcessedData",
-                long(typeOfProcessedDataOpt.value()),
-                [&typeOfProcessedDataOpt](){ return "`typeOfProcessedData` could not be deduced from MARS dictionaries: " + std::to_string(typeOfProcessedDataOpt.value()); },
-                Here()
-            );
+        // Options whether to set to Missing if deduction fails
+        // Default is false to mimic the behaviour of all the other encoders we have in place
+        bool setTypeOfProcessedDataMissingIfNotFound =
+            get_opt<bool>( opt, "setTypeOfProcessedDataToMissingIfNotFound" ).value_or( false );
+
+        bool setProductionStatusOfProcessedDataMissingIfNotFound =
+            get_opt<bool>( opt, "setProductionStatusOfProcessedDataToMissingIfNotFound" ).value_or( false );
+
+        // Deductions
+        auto typeOfProcessedData = deductions::typeOfProcessed<MarsDict_t,ParDict_t>( mars, par );
+        auto productionStatusOfProcessedData = deductions::productionStatusOfProcessed<MarsDict_t,ParDict_t>( mars, par );
+
+
+        // Set values in output dictionary (grib sample)
+        if ( typeOfProcessedData != deductions::TypeOfProcessedData::Missing ) {
+            set_or_throw<long>( out, "typeOfProcessedData", static_cast<long>(typeOfProcessedData) );
         }
-        else {
-            throw ConceptException(
-                "`typeOfProcessedData` is mandatory and could not be deduced from MARS dictionaries",
-                Here()
-            );
+        else if ( setTypeOfProcessedDataMissingIfNotFound ) {
+
+            // WARNING MIVAL: Setting to Missing might not be the best option here. The encoder relies on whatever is set here
+            // to decide how to encode the field. If Missing is not appropriate for the field being
+            set_or_throw<long>( out, "typeOfProcessedData", static_cast<long>(deductions::TypeOfProcessedData::Missing) );
         }
 
-        // TODO MIVAL: In the fortran code this is not set if missing, need to clarify with DGOV team
-        if ( auto productionStatusOfProcessedDataOpt = deductions::productionStatusOfProcessed<MarsDict_t,ParDict_t>( mars, par ); productionStatusOfProcessedDataOpt.has_value() ) {
-            set_or_throw<ConceptException>(  out, "productionStatusOfProcessedData",
-                long(productionStatusOfProcessedDataOpt.value()),
-                [&productionStatusOfProcessedDataOpt](){ return "`productionStatusOfProcessedData` could not be deduced from MARS dictionaries: " + std::to_string(productionStatusOfProcessedDataOpt.value()); },
-                Here()
-            );
+        if ( productionStatusOfProcessedData != deductions::ProductionStatusOfProcessedData::Missing ) {
+            set_or_throw<long>( out, "productionStatusOfProcessedData", static_cast<long>(productionStatusOfProcessedData) );
         }
-        else {
-            LOG_DEBUG_LIB(LibMetkit)
-                << "`productionStatusOfProcessedData` is not set to any value; encoding rely on previous value in the grib header"
-                <<  ", at: " << Here()
-                << std::endl;
+        else if ( setProductionStatusOfProcessedDataMissingIfNotFound ) {
+
+            // WARNING MIVAL: Setting to Missing might not be the best option here. The encoder relies on whatever is set here
+            // to decide how to encode the field. If Missing is not appropriate for the field being
+            set_or_throw<long>( out, "productionStatusOfProcessedData", static_cast<long>(deductions::ProductionStatusOfProcessedData::Missing) );
         }
 
         // Successful operation
-        return 0;
-    }
+        return;
 
-    // Operation not applicable
-    return 1;
+    } // if constexpr ( data_typeApplicable(Stage, Section, Variant) )
+
+    // Paranoid check. Should never arrive here
+    throw Mars2GribConceptException(
+            std::string( dataTypeName ),
+            std::string( data_typeTypeName<Variant>() ),
+            std::to_string(Stage),
+            std::to_string(Section),
+            "Concept called when not applicable...",
+            Here()
+        );
+
+    // Remove compiler warning
+    __builtin_unreachable();
 }
 
-}  // namespace metkit::mars2grib::backend
+}  // namespace metkit::mars2grib::backend::cnpts

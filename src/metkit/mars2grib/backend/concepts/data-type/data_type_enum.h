@@ -6,14 +6,19 @@
 #include <cstdint>
 #include <iostream>
 
-#include "../concept_core.h"
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
 
-namespace metkit::mars2grib::backend {
+namespace metkit::mars2grib::backend::cnpts {
+
+// ======================================================
+// NAME OF THE CONCEPT
+// ======================================================
+inline constexpr std::string_view dataTypeName{"data-type"};
 
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class DataTypeType : uint8_t {
+enum class DataTypeType : std::size_t {
     Default = 0
 };
 
@@ -37,4 +42,4 @@ constexpr std::string_view data_typeTypeName();
 
 #undef DEF
 
-}  // namespace metkit::mars2grib::backend
+}  // namespace metkit::mars2grib::backend::cnpts

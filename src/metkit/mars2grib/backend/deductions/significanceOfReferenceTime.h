@@ -1,16 +1,17 @@
 #pragma once
 
-#include <optional>
 #include <array>
 #include <string>
 #include <string_view>
 #include <algorithm>
+#include <exception>
 
 
 #include "eckit/exception/Exceptions.h"
 #include "eckit/log/Log.h"
 
 #include "metkit/config/LibMetkit.h"
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
 
 
 namespace metkit::mars2grib::backend::deductions {
@@ -33,44 +34,60 @@ enum class SignificanceOfReferenceTime : uint8_t {
 
 // grib2 section 1 octet 12 for significance of reference time (code Table 1.2)
 template<class MarsDict_t, class ParDict_t>
-std::optional<SignificanceOfReferenceTime> significanceOfReferenceTime(
+SignificanceOfReferenceTime significanceOfReferenceTime(
     const MarsDict_t& mars, const ParDict_t& par){
 
-    // Get the mars.type
-    auto marsType = get_or_throw<std::string>(
-        mars, "type",
-        [](){
-            return "`type` is required in mars dictionary to deduce `significanceOfReferenceTime`";
-        },
-        Here() );
+    using metkit::mars2grib::utils::dict_traits::get_or_throw;
+    using metkit::mars2grib::utils::exceptions::Mars2GribDeductionException;
 
-    constexpr std::array<std::string_view, 19> analysisTypes = {{
-        "an", "ia", "oi", "3v", "4v", "3g", "4g", "ea", "4i",
-        "pa", "tpa", "ga", "gai", "ai", "af", "ab", "oai",
-        "ga", "gai"
-    }};
+    try {
 
-    constexpr std::array<std::string_view, 33> forecastTypes = {{
-        "fc", "cf", "pf", "cm", "fp", "em", "es", "fa",
-        "efi", "efic", "bf", "cd", "me", "wem", "wes", "cr",
-        "ses", "taem", "taes", "sg", "sf", "if",
-        "fcmean", "fcmax", "fcmin", "fcstdev",
-        "ssd", "tf", "bf", "cd", "hcmean", "s3", "si"
-    }};
+        // Get the mars.type
+        auto marsType = get_or_throw<std::string>(
+            mars, "type");
 
-    if (std::any_of(analysisTypes.begin(), analysisTypes.end(),
-                [&marsType](auto v){ return marsType == v; }))
-    return TimeReference::Analysis;
+        constexpr std::array<std::string_view, 19> analysisTypes = {{
+            "an", "ia", "oi", "3v", "4v", "3g", "4g", "ea", "4i",
+            "pa", "tpa", "ga", "gai", "ai", "af", "ab", "oai",
+            "ga", "gai"
+        }};
 
-    if (std::any_of(forecastTypes.begin(), forecastTypes.end(),
-                [&marsType](auto v){ return marsType == v; }))
-    return TimeReference::ForecastStart;
+        constexpr std::array<std::string_view, 33> forecastTypes = {{
+            "fc", "cf", "pf", "cm", "fp", "em", "es", "fa",
+            "efi", "efic", "bf", "cd", "me", "wem", "wes", "cr",
+            "ses", "taem", "taes", "sg", "sf", "if",
+            "fcmean", "fcmax", "fcmin", "fcstdev",
+            "ssd", "tf", "bf", "cd", "hcmean", "s3", "si"
+        }};
 
-    throw std::runtime_error(
-        std::string("Unhandled marsType: ") + std::string(marsType)
-    );
+        if (std::any_of(analysisTypes.begin(), analysisTypes.end(),
+                    [&marsType](auto v){ return marsType == v; })) {
+            return SignificanceOfReferenceTime::Analysis;
+        }
 
+        if (std::any_of(forecastTypes.begin(), forecastTypes.end(),
+                    [&marsType](auto v){ return marsType == v; })){
+            return SignificanceOfReferenceTime::ForecastStart;
+        }
 
-    };
+        // Unhandled cases
+        throw Mars2GribDeductionException(
+            "Unable to deduce `significanceOfReferenceTime` from MARS type: " + marsType,
+            Here()
+        );
+    }
+    catch ( ... ) {
+        std::throw_with_nested(
+            Mars2GribDeductionException(
+                "Could not deduce `significanceOfReferenceTime` from MARS dictionaries",
+                Here()
+            )
+        );
+    }
+
+    // Remove compiler warning
+    __builtin_unreachable();
+
+};
 
 } // namespace metkit::mars2grib::backend::deductions

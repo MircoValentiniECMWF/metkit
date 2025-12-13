@@ -2,25 +2,26 @@
 
 #include <string>
 #include <string_view>
+#include <cstdint>
 
 // Core concept includes
 #include "metkit/mars2grib/backend/concepts/concept_core.h"
+#include "metkit/mars2grib/backend/concepts/reference-time/reference_time_enum.h"
+#include "metkit/mars2grib/backend/concepts/reference-time/reference_time_encoding.h"
 
-#include "metkit/mars2grib/backend/concepts/time/reference_time_enum.h"
-#include "metkit/mars2grib/backend/concepts/time/reference_time_encoding.h"
-
-namespace metkit::mars2grib::backend {
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // ConceptInfo
 // ======================================================
-struct TimeConceptInfo
+struct ReferenceTimeConceptInfo
 {
-    static constexpr const char* name = "time";
+    static constexpr const char* name = referenceTimeName.data();
 
     template<
-        int Stage, int Sec,
-        TimeType Variant,
+        std::size_t Stage,
+        std::size_t Sec,
+        ReferenceTimeType Variant,
         class MarsDict_t,
         class GeoDict_t,
         class ParDict_t,
@@ -35,8 +36,8 @@ struct TimeConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( timeApplicable(Stage, Sec, Variant) ) {
-            return &TimeOp<
+        if constexpr ( referenceTimeApplicable(Stage, Sec, Variant) ) {
+            return &ReferenceTimeOp<
                 Stage, Sec, Variant,
                 MarsDict_t,
                 GeoDict_t,
@@ -48,19 +49,20 @@ struct TimeConceptInfo
             return nullptr;
         }
 
-        // Remove compiler warning
-        return nullptr;
+        // Avoid compile warnings
+        __builtin_unreachable();
+
     }
 
     template<auto Variant>
     static std::string_view variantName()
     {
         return std::string_view(
-            timeTypeName<
-                static_cast<TimeType>(Variant)
+            referenceTimeTypeName<
+                static_cast<ReferenceTimeType>(Variant)
             >()
         );
     }
 };
 
-} // namespace metkit::mars2grib::backend
+} // namespace metkit::mars2grib::backend::cnpts
