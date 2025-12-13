@@ -14,6 +14,8 @@ namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // Constants
+// Node: these constants are not enumerators because I
+// need to loop through all of them at compile time!!!
 // ======================================================
 inline constexpr std::size_t NUM_STAGES   = 3;
 inline constexpr std::size_t NUM_SECTIONS = 6;
