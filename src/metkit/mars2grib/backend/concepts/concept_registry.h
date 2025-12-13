@@ -8,10 +8,11 @@
 #include "metkit/mars2grib/backend/concepts/concept_core.h"
 
 #include "metkit/mars2grib/backend/concepts/nil/nil.h"
-#include "./origin/origin.h"
+#include "metkit/mars2grib/backend/concepts/origin/origin.h"
+#include "metkit/mars2grib/backend/concepts/param/param.h"
+#include "metkit/mars2grib/backend/concepts/tables/tables.h"
 
 #if 0
-#include "./tables/tables.h"
 #include "./data-type/data_type.h"
 #include "./forecast-time/forecast_time.h"
 #include "./mars/mars.h"
@@ -20,7 +21,6 @@
 #include "./satellite/satellite.h"
 #include "./reforecast/reforecast.h"
 #include "./generating-process/generating_process.h"
-#include "./param/param.h"
 #include "./point-in-time/point_in_time.h"
 #include "./level/level.h"
 #include "./statistics/statistics.h"
@@ -91,9 +91,13 @@ make_concept_registry()
     RegisterVariants<OriginConceptInfo, OriginList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-#if 0
+    RegisterVariants<ParamConceptInfo, ParamList,
+                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
     RegisterVariants<TablesConceptInfo, TablesList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+#if 0
 
     RegisterVariants<DataTypeConceptInfo, DataTypeList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
@@ -117,9 +121,6 @@ make_concept_registry()
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
     RegisterVariants<GeneratingProcessConceptInfo, GeneratingProcessList,
-                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
-
-    RegisterVariants<ParamConceptInfo, ParamList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
     RegisterVariants<PointInTimeConceptInfo, PointInTimeList,

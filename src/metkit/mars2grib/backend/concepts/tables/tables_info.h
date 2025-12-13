@@ -9,7 +9,7 @@
 #include "metkit/mars2grib/backend/concepts/tables/tables_enum.h"
 #include "metkit/mars2grib/backend/concepts/tables/tables_encoding.h"
 
-namespace metkit::mars2grib::backend::deductions {
+namespace metkit::mars2grib::backend::cnpts {
 
 
 // ======================================================
@@ -20,7 +20,8 @@ struct TablesConceptInfo
     static constexpr const char* name = "tables";
 
     template<
-        int Stage, int Sec,
+        std::size_t Stage,
+        std::size_t Sec,
         TablesType Variant,
         class MarsDict_t,
         class GeoDict_t,
@@ -49,8 +50,8 @@ struct TablesConceptInfo
             return nullptr;
         }
 
-        // Remove compiler warning
-        return nullptr;
+        // Avoid compile warnings
+        __builtin_unreachable();
     }
 
     template<auto Variant>
@@ -64,4 +65,4 @@ struct TablesConceptInfo
     }
 };
 
-} // namespace metkit::mars2grib::backend::deductions
+} // namespace metkit::mars2grib::backend::cnpts

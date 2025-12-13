@@ -9,12 +9,18 @@
 
 #include "metkit/mars2grib/backend/concepts/concept_core.h"
 
-namespace metkit::mars2grib::backend::deductions {
+namespace metkit::mars2grib::backend::cnpts {
+
+
+// ======================================================
+// NAME OF THE CONCEPT
+// ======================================================
+inline constexpr std::string_view tablesName{"tables"};
 
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class TablesType : int {
+enum class TablesType : std::size_t {
     Default = 0
 };
 
@@ -38,4 +44,4 @@ constexpr std::string_view tablesTypeName();
 
 #undef DEF
 
-} // namespace metkit::mars2grib::backend
+} // namespace metkit::mars2grib::cnpts

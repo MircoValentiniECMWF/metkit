@@ -4,7 +4,11 @@
 #include <string_view>
 #include <iostream>
 
+// Logging
 #include "metkit/config/LibMetkit.h"
+
+// dictionary traits
+#include "metkit/mars2grib/utils/dictionary_traits/dictionary_access_traits.h"
 
 // Core concept includes
 #include "metkit/mars2grib/backend/concepts/concept_core.h"
@@ -14,34 +18,30 @@
 #include "metkit/mars2grib/backend/deductions/tablesVersion.h"
 #include "metkit/mars2grib/backend/deductions/localTablesVersion.h"
 
-namespace metkit::mars2grib::backend {
+// Exceptions
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
+
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // DEFAULT APPLICABILITY (user will override manually)
 // ======================================================
-constexpr bool tablesApplicable(int Stage, int Section, TablesType Variant)
+constexpr bool tablesApplicable(std::size_t Stage, std::size_t Section, TablesType Variant)
 {
 
-    // Compile time conditions to apply this concept
-    std::array<bool,3> conditions = {{
-      (Variant == TablesType::Default),
-      (Stage == StageType::Preset),
-      (Section == SectionType::LocalUseSection)
-    }};
+    // Conditions to apply concept
+    return ((Variant == TablesType::Default) &&
+            (Stage == StagePreset) &&
+            (Section == SecLocalUseSection));
 
-    // Confitions to apply concept
-    return std::all_of(
-        conditions.begin(),
-        conditions.end(),
-        [](bool b){ return b; }
-    );
 }
 
 // ======================================================
 // MAIN OPERATION
 // ======================================================
 template<
-    int Stage, int Section,
+    std::size_t Stage,
+    std::size_t Section,
     TablesType Variant,
     class MarsDict_t,
     class GeoDict_t,
@@ -49,7 +49,7 @@ template<
     class OptDict_t,
     class OutDict_t
 >
-uint8_t TablesOp(
+void TablesOp(
     const MarsDict_t&  mars,
     const GeoDict_t&   geo,
     const ParDict_t&   par,
@@ -57,42 +57,64 @@ uint8_t TablesOp(
     OutDict_t&         out)
 {
 
+    using metkit::mars2grib::utils::dict_traits::set_or_throw;
+    using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
+
     if constexpr ( tablesApplicable(Stage, Section, Variant) ) {
 
+        try {
 
-        // =============================================================
-        // Logging
-        LOG_DEBUG_LIB(LibMetkit)
-            << "[Concept Tables] Op called: "
-            << "Stage="   << Stage
-            << ", Section=" << Section
-            << ", Variant=" << std::string(tablesTypeName<Variant>())
-            << std::endl;
+                // Debug output
+            LOG_DEBUG_LIB(LibMetkit)
+                << "[Concept Tables] Op called: "
+                << "Stage="   << Stage
+                << ", Section=" << Section
+                << ", Variant=" << std::string(tablesTypeName<Variant>())
+                << std::endl;
 
-        // deduce tablesVersion and localTablesVersion
-        long tablesVersionVal = deductions::tablesVersion<MarsDict_t,ParDict_t>( mars, par );
-        long localTablesVersionVal = deductions::localTablesVersion<MarsDict_t,ParDict_t>( mars, par );
+            // deduce tablesVersion and localTablesVersion
+            long tablesVersionVal = deductions::tablesVersion<MarsDict_t,ParDict_t>( mars, par );
+            long localTablesVersionVal = deductions::localTablesVersion<MarsDict_t,ParDict_t>( mars, par );
 
-        // set in output dictionary
-        set_or_throw<ConceptException>(  out, "tablesVersion",
-            tablesVersionVal,
-            [&tablesVersionVal](){ return "`tablesVersion` could not be deduced from MARS dictionaries: " +  std::to_string(tablesVersionVal); },
-            Here()
-        );
-        set_or_throw<ConceptException>(  out, "localTablesVersion",
-            localTablesVersionVal,
-            [&localTablesVersionVal](){ return "`localTablesVersion` could not be deduced from MARS dictionaries: " +  std::to_string(localTablesVersionVal); },
-            Here()
-        );
+            // set in output dictionary
+            set_or_throw<long>(  out, "tablesVersion", tablesVersionVal );
+            set_or_throw<long>(  out, "localTablesVersion", localTablesVersionVal );
+
+        }
+        catch ( ... ){
+
+            // Rethrow nested exceptions
+            std::throw_with_nested(
+                Mars2GribConceptException(
+                    std::string( tablesName ),
+                    std::string( tablesTypeName<Variant>() ),
+                    std::to_string(Stage),
+                    std::to_string(Section),
+                    "Unable to set `tables` concept...",
+                    Here()
+                )
+            );
+
+        }
 
         // Successful operation
-        return 0;
+        return;
 
-    }
+    } // if constexpr ( tablesApplicable(Stage, Section, Variant) )
 
-    // Operation not applicable
-    return 1;
+    // Paranoid check. Should never arrive here
+    throw Mars2GribConceptException(
+            std::string( tablesName ),
+            std::string( tablesTypeName<Variant>() ),
+            std::to_string(Stage),
+            std::to_string(Section),
+            "Concept called when not applicable...",
+            Here()
+        );
+
+    // Remove compiler warning
+    __builtin_unreachable();
 
 }
 
-} // namespace metkit::mars2grib::backend
+} // namespace metkit::mars2grib::backend::cnpts

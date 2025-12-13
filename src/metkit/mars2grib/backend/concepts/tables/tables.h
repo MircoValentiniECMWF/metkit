@@ -1,5 +1,5 @@
 #pragma once
 
-#include "tables_enum.h"
-#include "tables_encoding.h"
-#include "tables_info.h"
+#include "metkit/mars2grib/backend/concepts/tables/tables_enum.h"
+#include "metkit/mars2grib/backend/concepts/tables/tables_encoding.h"
+#include "metkit/mars2grib/backend/concepts/tables/tables_info.h"
