@@ -6,6 +6,10 @@
 #include <array>
 #include <exception>
 
+
+// Logging
+#include "metkit/config/LibMetkit.h"
+
 // dictionary traits
 #include "metkit/mars2grib/utils/dictionary_traits/dictionary_access_traits.h"
 
@@ -72,11 +76,11 @@ void OriginOp(
                 << std::endl;
 
             // Deduction rules
-            std::string origin = deductions::centre( mars, par );
+            std::string centre = deductions::centre( mars, par );
             long subCentre = deductions::sub_centre( mars, par );
 
             // Set values in output dictionary (grib sample)
-            set_or_throw<std::string>( out, "origin", origin );
+            set_or_throw<std::string>( out, "origin", centre );
             set_or_throw<long>( out, "subCentre", subCentre );
 
         }
