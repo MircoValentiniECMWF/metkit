@@ -12,7 +12,10 @@
 namespace metkit::mars2grib::backend::deductions {
 
 template<class MarsDict_t, class ParDict_t>
-std::string mars_origin( const MarsDict_t& mars, const ParDict_t& par){
+std::string centre( const MarsDict_t& mars, const ParDict_t& par){
+
+    using metkit::mars2grib::utils::dict_traits::get_or_throw;
+    using metkit::mars2grib::utils::exceptions::Mars2GribDeductionException;
 
     try {
 
@@ -21,16 +24,16 @@ std::string mars_origin( const MarsDict_t& mars, const ParDict_t& par){
 
 
         // Return validated origin
-        return origin.value();
+        return origin;
     }
     catch ( ... ) {
 
         // Rethrow nested exceptions
-        std::rethrow_with_nested(
-            utils::Mars2gGibDeductionException(
+        std::throw_with_nested(
+            Mars2GribDeductionException(
                 "Unable to get `origin` as string from Mars dictionary",
                 Here()
-            );
+            )
         );
     }
 

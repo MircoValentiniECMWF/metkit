@@ -10,10 +10,16 @@
 
 namespace metkit::mars2grib::backend::cnpts {
 
+
+// ======================================================
+// NAME OF THE CONCEPT
+// ======================================================
+inline constexpr std::string_view nilName{"nil"};
+
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class NilType : uint8_t {
+enum class NilType : std::size_t {
     Default = 0
 };
 

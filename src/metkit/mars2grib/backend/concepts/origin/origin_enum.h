@@ -13,12 +13,12 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 // NAME OF THE CONCEPT
 // ======================================================
-constexpr inline std::string_view originName{"origin"};
+inline constexpr std::string_view originName{"origin"};
 
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class OriginType : uint8_t {
+enum class OriginType : std::size_t {
     Default = 0
 };
 
@@ -32,8 +32,6 @@ using OriginList = ValueList<
 // ======================================================
 // VARIANT -> STRING MAPPING
 // ======================================================
-inline constexpr std::string_view originName{"origin"};
-
 template<OriginType T>
 constexpr std::string_view originTypeName();
 

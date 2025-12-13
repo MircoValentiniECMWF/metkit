@@ -8,9 +8,9 @@
 #include "metkit/mars2grib/backend/concepts/concept_core.h"
 
 #include "metkit/mars2grib/backend/concepts/nil/nil.h"
+#include "./origin/origin.h"
 
 #if 0
-#include "./origin/origin.h"
 #include "./tables/tables.h"
 #include "./data-type/data_type.h"
 #include "./forecast-time/forecast_time.h"
@@ -87,11 +87,11 @@ make_concept_registry()
     RegisterVariants<NilConceptInfo, NilList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-#if 0
+
     RegisterVariants<OriginConceptInfo, OriginList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-
+#if 0
     RegisterVariants<TablesConceptInfo, TablesList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 

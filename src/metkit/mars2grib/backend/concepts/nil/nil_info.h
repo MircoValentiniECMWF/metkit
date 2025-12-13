@@ -2,6 +2,7 @@
 
 #include <string>
 #include <string_view>
+#include <cstdint>
 
 #include "metkit/mars2grib/backend/concepts/concept_core.h"
 #include "metkit/mars2grib/backend/concepts/nil/nil_enum.h"
@@ -14,10 +15,11 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 struct NilConceptInfo
 {
-    static constexpr const char* name = "nil";
+    static constexpr const char* name = nilName.data();
 
     template<
-        int Stage, int Sec,
+        std::size_t Stage,
+        std::size_t Sec,
         NilType Variant,
         class MarsDict_t,
         class GeoDict_t,
@@ -46,8 +48,8 @@ struct NilConceptInfo
             return nullptr;
         }
 
-        // Remove compiler warning
-        return nullptr;
+        // Avoid compile warnings
+        __builtin_unreachable();
     }
 
     template<auto Variant>

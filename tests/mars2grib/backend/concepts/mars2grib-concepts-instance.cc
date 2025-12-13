@@ -1,27 +1,29 @@
-#include "metkit/mars2grib/backend/concepts/concept_registry.h"
-
 #include <iostream>
 #include <string>
 
-// Dummy types A,B,C,D
-struct A { template<class T> T get(const std::string&) const { return {}; } };
-struct B { };
-struct C { template<class T> T get(const std::string&) const { return {}; } };
-struct D { template<class T> void set(const std::string&, const T&) {} };
-struct E { template<class T> void set(const std::string&, const T&) {} };
+#include "metkit/mars2grib/backend/concepts/concept_registry.h"
+
+#include <eckit/config/LocalConfiguration.h>
+#include <metkit/codes/api/CodesAPI.h>
+
+// dictionary traits
+#include "metkit/mars2grib/utils/dictionary_traits/dictionary_access_traits.h"
+#include "metkit/mars2grib/utils/dictionary_traits/dictaccess_codes_handle.h"
+#include "metkit/mars2grib/utils/dictionary_traits/dictaccess_eckit_configuration.h"
 
 int main()
 {
     using namespace metkit::mars2grib::backend::cnpts;
-    using Registry = ConceptRegistry<A,B,C,D,E>;
+    using Registry = ConceptRegistry<eckit::LocalConfiguration,eckit::LocalConfiguration,eckit::LocalConfiguration,eckit::LocalConfiguration,metkit::codes::CodesHandle>;
 
-    Registry registry = make_concept_registry<A,B,C,D,E>();
+    Registry registry = concept_registry_instance<eckit::LocalConfiguration,eckit::LocalConfiguration,eckit::LocalConfiguration,eckit::LocalConfiguration,metkit::codes::CodesHandle>();
 
-    A aa;
-    B bb;
-    C cc;
-    D dd;
-    E ee;
+    eckit::LocalConfiguration aa;
+    eckit::LocalConfiguration bb;
+    eckit::LocalConfiguration cc;
+    eckit::LocalConfiguration dd;
+    auto pee = metkit::codes::codesHandleFromSample("GRIB2");
+
 
     // Loop su tutti i typeOfLevel e stampa la tabella
     for (const auto& [ key, table ] : registry.map )
@@ -38,7 +40,7 @@ int main()
                           << ", section " << sec
                           << ": " << (assigned ? "yes" : "no")
                           << std::endl;
-                if (assigned) table[stage][sec](aa, bb, cc, dd, ee); // chiamata dummy
+                if (assigned) table[stage][sec](aa, bb, cc, dd, *pee); // chiamata dummy
 
             }
         }

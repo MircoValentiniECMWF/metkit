@@ -2,10 +2,14 @@
 
 #include <string>
 #include <string_view>
+#include <iostream>
+#include <cstdint>
 
-#include "../concept_core.h"
-#include "param_enum.h"
-#include "param_encoding.h"
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+#include "metkit/mars2grib/backend/concepts/param/param_enum.h"
+#include "metkit/mars2grib/backend/concepts/param/param_encoding.h"
+
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // ConceptInfo
@@ -15,7 +19,8 @@ struct ParamConceptInfo
     static constexpr const char* name = "param";
 
     template<
-        int Stage, int Sec,
+        std::size_t Stage,
+        std::size_t Sec,
         ParamType Variant,
         class MarsDict_t,
         class GeoDict_t,
@@ -44,8 +49,8 @@ struct ParamConceptInfo
             return nullptr;
         }
 
-        // Remove compiler warning
-        return nullptr;
+        // Avoid compile warnings
+        __builtin_unreachable();
     }
 
     template<auto Variant>
@@ -58,3 +63,5 @@ struct ParamConceptInfo
         );
     }
 };
+
+} // namespace metkit::mars2grib::backend::cnpts

@@ -4,6 +4,12 @@
 #include <string_view>
 #include <iostream>
 
+
+// dictionary traits
+#include "metkit/mars2grib/utils/dictionary_traits/dictionary_access_traits.h"
+#include "metkit/mars2grib/utils/dictionary_traits/dictaccess_codes_handle.h"
+
+// Core concept includes
 #include "metkit/mars2grib/backend/concepts/concept_core.h"
 #include "metkit/mars2grib/backend/concepts/nil/nil_enum.h"
 
@@ -12,7 +18,7 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 // DEFAULT APPLICABILITY (user will override manually)
 // ======================================================
-constexpr bool nilApplicable(int Stage, int Section, NilType Variant)
+constexpr bool nilApplicable(std::size_t Stage, std::size_t Section, NilType Variant)
 {
     return true;
 }
@@ -21,7 +27,8 @@ constexpr bool nilApplicable(int Stage, int Section, NilType Variant)
 // MAIN OPERATION
 // ======================================================
 template<
-    int Stage, int Section,
+    std::size_t Stage,
+    std::size_t Section,
     NilType Variant,
     class MarsDict_t,
     class GeoDict_t,
@@ -29,7 +36,6 @@ template<
     class OptDict_t,
     class OutDict_t
 >
-[[noreturn]]
 void NilOp(
     const MarsDict_t&  mars,
     const GeoDict_t&   geo,
@@ -37,12 +43,21 @@ void NilOp(
     const OptDict_t&   opt,
     OutDict_t&         out) noexcept(false)
 {
-    std::cout << "[Concept Nil] Op called: "
-              << "Stage="   << Stage
-              << ", Section=" << Section
-              << ", Variant=" << std::string(nilTypeName<Variant>())
-              << std::endl;
+
+
+    using metkit::mars2grib::utils::dict_traits::set_or_throw;
+
+    // Debug output
+    LOG_DEBUG_LIB(LibMetkit)
+        << "[Concept Nil] Op called: "
+        << "Stage="   << Stage
+        << ", Section=" << Section
+        << ", Variant=" << std::string(nilTypeName<Variant>())
+        << std::endl;
+
+    // Successful no-op
     return;
+
 }
 
 } // namespace metkit::mars2grib::backend::cnpts

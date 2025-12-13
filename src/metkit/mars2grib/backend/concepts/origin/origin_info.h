@@ -2,6 +2,7 @@
 
 #include <string>
 #include <string_view>
+#include <cstdint>
 
 #include "metkit/mars2grib/backend/concepts/concept_core.h"
 #include "metkit/mars2grib/backend/concepts/origin/origin_enum.h"
@@ -17,7 +18,8 @@ struct OriginConceptInfo
     static constexpr const char* name = originName.data();
 
     template<
-        int Stage, int Sec,
+        std::size_t Stage,
+        std::size_t Sec,
         OriginType Variant,
         class MarsDict_t,
         class GeoDict_t,
@@ -46,8 +48,8 @@ struct OriginConceptInfo
             return nullptr;
         }
 
-        // Remove compiler warning
-        return nullptr;
+        // Avoid compile warnings
+        __builtin_unreachable();
     }
 
     template<auto Variant>

@@ -55,7 +55,7 @@ make_callbacks( std::array<std::vector<std::pair<std::string_view,std::string_vi
     const auto& registry = concept_registry_instance<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>();
 
     // Prepare callback table
-    std::array<std::array<std::vector<Fn<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>>, NUM_SECTIONS>, NUM_STAGES> table{};
+    std::array<std::array<std::vector<Fn<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>>, NUM_SECTIONS>, NUM_STAGES> table;
 
     // Populate callback table
     for ( uint16_t sid=0; sid<NUM_SECTIONS; ++sid ) {

@@ -6,20 +6,27 @@
 #include <cstdint>
 #include <iostream>
 
-#include "../concept_core.h"
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+
+namespace metkit::mars2grib::backend::cnpts {
+
+// ======================================================
+// NAME OF THE CONCEPT
+// ======================================================
+inline constexpr std::string_view paramName{"param"};
 
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class ParamType : int {
-    Default = 0
+enum class ParamType : std::size_t {
+    ParamId = 0
 };
 
 // ======================================================
 // COMPILE-TIME TYPELIST
 // ======================================================
 using ParamList = ValueList<
-    ParamType::Default
+    ParamType::ParamId
 >;
 
 // ======================================================
@@ -31,6 +38,8 @@ constexpr std::string_view paramTypeName();
 #define DEF(T,NAME) \
     template<> constexpr std::string_view paramTypeName<T>() { return NAME; }
 
-    DEF(ParamType::Default, "default");
+    DEF(ParamType::ParamId, "paramId");
 
 #undef DEF
+
+} // namespace metkit::mars2grib::backend::cnpts

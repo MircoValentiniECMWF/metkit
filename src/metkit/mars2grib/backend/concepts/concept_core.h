@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <string>
 #include <iostream>
+#include <algorithm>
 
 #include "eckit/log/Log.h"
 
@@ -14,25 +15,21 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 // Constants
 // ======================================================
-static constexpr uint8_t NUM_STAGES   = 3;
-static constexpr uint8_t NUM_SECTIONS = 6;
+inline constexpr std::size_t NUM_STAGES   = 3;
+inline constexpr std::size_t NUM_SECTIONS = 6;
 
+inline constexpr std::size_t StageAllocate = 0;
+inline constexpr std::size_t StagePreset   = 1;
+inline constexpr std::size_t StageRuntime  = 2;
 
-enum class StageType : uint8_t {
-    Allocate = 0,
-    Preset   = 1,
-    Runtime  = 2
-};
 
 // https://codes.ecmwf.int/grib/format/grib2/sections/
-enum class SectionType : uint8_t {
-    IndicatorSection = 0,
-    IdentificationSection = 1,
-    LocalUseSection = 2,
-    GridDefinitionSection = 3,
-    ProductDefinitionSection = 4,
-    DataRepresentationSection = 5
-};
+inline constexpr std::size_t SecIndicatorSection = 0;
+inline constexpr std::size_t SecIdentificationSection = 1;
+inline constexpr std::size_t SecLocalUseSection = 2;
+inline constexpr std::size_t SecGridDefinitionSection = 3;
+inline constexpr std::size_t SecProductDefinitionSection = 4;
+inline constexpr std::size_t SecDataRepresentationSection = 5;
 
 template<std::size_t N>
 struct BoolArrayOps {

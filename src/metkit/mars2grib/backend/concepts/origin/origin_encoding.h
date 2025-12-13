@@ -6,13 +6,15 @@
 #include <array>
 #include <exception>
 
+// dictionary traits
+#include "metkit/mars2grib/utils/dictionary_traits/dictionary_access_traits.h"
 
 // Core concept includes
 #include "metkit/mars2grib/backend/concepts/concept_core.h"
 #include "metkit/mars2grib/backend/concepts/origin/origin_enum.h"
 
 // Deductions
-#include "metkit/mars2grib/backend/deductions/mars-origin.h"
+#include "metkit/mars2grib/backend/deductions/centre.h"
 #include "metkit/mars2grib/backend/deductions/subCentre.h"
 
 // Exceptions
@@ -23,22 +25,13 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 // DEFAULT APPLICABILITY (user will override manually)
 // ======================================================
-constexpr bool originApplicable(uint8_t Stage, uint8_t Section, OriginType Variant)
+constexpr bool originApplicable(std::size_t Stage, std::size_t Section, OriginType Variant)
 {
 
-    // Compile time conditions to apply this concept
-    std::array<bool,3> conditions = {{
-      (Variant == OriginType::Default),
-      (Stage == StageType::Preset),
-      (Section == SectionType::LocalUseSection)
-    }};
-
-    // Confitions to apply concept
-    return std::all_of(
-        conditions.begin(),
-        conditions.end(),
-        [](bool b){ return b; }
-    );
+    // Conditions to apply concept
+    return ((Variant == OriginType::Default) &&
+            (Stage == StagePreset) &&
+            (Section == SecLocalUseSection));
 
 }
 
@@ -46,7 +39,8 @@ constexpr bool originApplicable(uint8_t Stage, uint8_t Section, OriginType Varia
 // MAIN OPERATION
 // ======================================================
 template<
-    int Stage, int Section,
+    std::size_t Stage,
+    std::size_t Section,
     OriginType Variant,
     class MarsDict_t,
     class GeoDict_t,
@@ -62,10 +56,14 @@ void OriginOp(
     OutDict_t&         out) noexcept(false)
 {
 
+    using metkit::mars2grib::utils::dict_traits::set_or_throw;
+    using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
+
     if constexpr ( originApplicable(Stage, Section, Variant) ) {
 
         try {
 
+            // Debug output
             LOG_DEBUG_LIB(LibMetkit)
                 << "[Concept Origin] Op called: "
                 << "Stage="   << Stage
@@ -73,9 +71,11 @@ void OriginOp(
                 << ", Variant=" << std::string(originTypeName<Variant>())
                 << std::endl;
 
-            std::string origin = deductions::mars_origin( mars, par );
+            // Deduction rules
+            std::string origin = deductions::centre( mars, par );
             long subCentre = deductions::sub_centre( mars, par );
 
+            // Set values in output dictionary (grib sample)
             set_or_throw<std::string>( out, "origin", origin );
             set_or_throw<long>( out, "subCentre", subCentre );
 
@@ -83,12 +83,12 @@ void OriginOp(
         catch ( ... ){
 
             // Rethrow nested exceptions
-            std::rethrow_with_nested(
-                utils::Mars2gGibConceptException(
+            std::throw_with_nested(
+                Mars2GribConceptException(
                     std::string( originName ),
-                    std::string( originTypeName(Variant) ),
-                    std::to_string(static_cast<uint8_t>(Stage)),
-                    std::to_string(static_cast<uint8_t>(Section)),
+                    std::string( originTypeName<Variant>() ),
+                    std::to_string(Stage),
+                    std::to_string(Section),
                     "Unable to set `origin` concept...",
                     Here()
                 )
@@ -102,11 +102,11 @@ void OriginOp(
     } // if constexpr ( originApplicable(Stage, Section, Variant) )
 
     // Paranoid check. Should never arrive here
-    throw utils::Mars2gGibConceptException(
+    throw Mars2GribConceptException(
             std::string( originName ),
-            std::string( originTypeName(Variant) ),
-            std::to_string(static_cast<uint8_t>(Stage)),
-            std::to_string(static_cast<uint8_t>(Section)),
+            std::string( originTypeName<Variant>() ),
+            std::to_string(Stage),
+            std::to_string(Section),
             "Concept called when not applicable...",
             Here()
         );
