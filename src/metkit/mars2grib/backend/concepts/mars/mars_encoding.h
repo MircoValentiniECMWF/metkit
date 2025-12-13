@@ -17,12 +17,12 @@
 // Exceptions
 #include "metkit/mars2grib/utils/mars2grib-exception.h"
 
-namespace metkit::mars2grib::backend {
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // DEFAULT APPLICABILITY (user will override manually)
 // ======================================================
-constexpr bool marsApplicable(int Stage, int Section, MarsType Variant)
+constexpr bool marsApplicable(std::size_t Stage, std::size_t Section, MarsType Variant)
 {
 
     // Confitions to apply concept
@@ -60,7 +60,6 @@ void MarsOp(
 
     // eccodes/definitions/grib2/local.98.36.def
     if constexpr ( marsApplicable(Stage, Section, Variant) ) {
-
 
         try {
 
@@ -100,10 +99,10 @@ void MarsOp(
 
             // =============================================================
             // Set values in output dictionary
-            set_or_throw<std::string>( out, "class", marsClassVal );
-            set_or_throw<std::string>( out, "type", marsTypeVal );
-            set_or_throw<std::string>( out, "stream", marsStreamVal );
-            set_or_throw<std::string>( out, "expver", marsExpverVal );
+            set_or_throw( out, "class", marsClassVal );
+            set_or_throw( out, "type", marsTypeVal );
+            set_or_throw( out, "stream", marsStreamVal );
+            set_or_throw( out, "expver", marsExpverVal );
 
         }
         catch ( ... ){
@@ -141,4 +140,4 @@ void MarsOp(
 
 }
 
-} // namespace metkit::mars2grib::backend
+} // namespace metkit::mars2grib::backend::cnpts

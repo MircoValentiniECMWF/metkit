@@ -27,12 +27,14 @@ eckit::DateTime hindcastDateTime(
 
     try {
 
-      // Get the mars.date and mars.time
-      auto marsDate = get_or_throw<long>( mars, "hdate" );
+        // TODO MIVAL: get as string and parse/normalize with metkit utilities
 
-      auto marsTime = get_or_throw<long>( mars, "htime" );
+        // Get the mars.date and mars.time
+        auto marsDate = get_or_throw<long>( mars, "hdate" );
 
-      return eckit::DateTime(marsDate, marsTime);
+        auto marsTime = get_or_throw<long>( mars, "htime" );
+
+        return eckit::DateTime(marsDate, marsTime);
 
     } catch ( ... ) {
 
@@ -45,6 +47,10 @@ eckit::DateTime hindcastDateTime(
         );
 
     };
+
+    // Remove compiler warning
+    __builtin_unreachable();
+
 
 };
 

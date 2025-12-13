@@ -13,6 +13,7 @@
 #include "metkit/mars2grib/backend/concepts/tables/tables.h"
 #include "metkit/mars2grib/backend/concepts/data-type/data_type.h"
 #include "metkit/mars2grib/backend/concepts/reference-time/reference_time.h"
+#include "metkit/mars2grib/backend/concepts/mars/mars.h"
 
 #if 0
 #include "./mars/mars.h"
@@ -104,10 +105,10 @@ make_concept_registry()
     RegisterVariants<ReferenceTimeConceptInfo, ReferenceTimeList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-#if 0
-
     RegisterVariants<MarsConceptInfo, MarsList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+#if 0
 
     RegisterVariants<LongrangeConceptInfo, LongrangeList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);

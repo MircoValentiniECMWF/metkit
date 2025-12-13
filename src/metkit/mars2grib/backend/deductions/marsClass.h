@@ -19,7 +19,7 @@
 namespace metkit::mars2grib::backend::deductions {
 
 template<class MarsDict_t, class ParDict_t>
-eckit::DateTime forecastDateTime(
+std::string marsClass(
     const MarsDict_t& mars, const ParDict_t& par){
 
     using metkit::mars2grib::utils::dict_traits::get_or_throw;
@@ -27,21 +27,19 @@ eckit::DateTime forecastDateTime(
 
     try {
 
-       // TODO MIVAL: get as string and parse/normalize with metkit utilities
+        // Get the mars.date and mars.time
+        auto marsClassVal = get_or_throw<std::string>( mars, "class" );
 
-       // Get the mars.date and mars.time
-       auto marsDate = get_or_throw<long>( mars, "date" );
+        // TODO MIVAL: Validate
 
-       auto marsTime = get_or_throw<long>( mars, "time" );
-
-       return eckit::DateTime(marsDate, marsTime);
+        return marsClassVal;
 
     } catch ( ... ) {
 
         // Rethrow nested exceptions
         std::throw_with_nested(
             Mars2GribDeductionException(
-                "Unable to get `date` and `time` from Mars dictionary to deduce `dateTime`",
+                "Unable to get `class` from Mars dictionary",
                 Here()
             )
         );
