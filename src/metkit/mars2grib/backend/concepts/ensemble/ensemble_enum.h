@@ -8,7 +8,13 @@
 
 #include "metkit/mars2grib/backend/concepts/concept_core.h"
 
-namespace metkit::mars2grib::backend {
+namespace metkit::mars2grib::backend::cnpts {
+
+// ======================================================
+// NAME OF THE CONCEPT
+// ======================================================
+inline constexpr std::string_view ensembleName{"ensemble"};
+
 
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
@@ -43,4 +49,4 @@ constexpr std::string_view ensembleTypeName();
 
 #undef DEF
 
-} // namespace metkit::mars2grib::backend
+} // namespace metkit::mars2grib::backend::cnpts

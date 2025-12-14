@@ -56,7 +56,6 @@ void AnalysisOp(
     OutDict_t&         out)
 {
 
-
     using metkit::mars2grib::utils::dict_traits::set_or_throw;
     using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
 

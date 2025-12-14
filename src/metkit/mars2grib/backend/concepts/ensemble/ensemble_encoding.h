@@ -11,34 +11,33 @@
 // Deductions
 #include "metkit/mars2grib/backend/deductions/typeOfEnsembleForecast.h"
 #include "metkit/mars2grib/backend/deductions/numberOfForecastsInEnsemble.h"
+#include "metkit/mars2grib/backend/deductions/marsNumber.h"
 
-namespace metkit::mars2grib::backend {
+// checks
+#include "metkit/mars2grib/backend/checks/isEnsembleProductDefinitionTemplateNumber.h"
+
+// Exceptions
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
+
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // DEFAULT APPLICABILITY (user will override manually)
 // ======================================================
-constexpr bool ensembleApplicable(int Stage, int Section, EnsembleType Variant)
+constexpr bool ensembleApplicable(std::size_t Stage, std::size_t Section, EnsembleType Variant)
 {
-    // Compile time conditions to apply this concept
-    std::array<bool,3> conditions = {{
-      (Variant == EnsembleType::Individual),
-      (Stage == StageType::Preset),
-      (Section == SectionType::ProductDefinitionSection)
-    }};
-
     // Confitions to apply concept
-    return std::all_of(
-        conditions.begin(),
-        conditions.end(),
-        [](bool b){ return b; }
-    );
+    return ((Variant == EnsembleType::Individual) &&
+       (Stage == StagePreset) &&
+       (Section == SecProductDefinitionSection) );
 }
 
 // ======================================================
 // MAIN OPERATION
 // ======================================================
 template<
-    int Stage, int Section,
+    std::size_t Stage,
+    std::size_t Section,
     EnsembleType Variant,
     class MarsDict_t,
     class GeoDict_t,
@@ -46,7 +45,7 @@ template<
     class OptDict_t,
     class OutDict_t
 >
-uint8_t EnsembleOp(
+void EnsembleOp(
     const MarsDict_t&  mars,
     const GeoDict_t&   geo,
     const ParDict_t&   par,
@@ -54,46 +53,75 @@ uint8_t EnsembleOp(
     OutDict_t&         out)
 {
 
+    using metkit::mars2grib::utils::dict_traits::set_or_throw;
+    using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
+
     if constexpr ( ensembleApplicable(Stage, Section, Variant) ) {
 
+        try {
 
-        // =============================================================
-        // Logging
-        LOG_DEBUG_LIB(LibMetkit)
-            << "[Concept Ensemble] Op called: "
-            << "Stage="   << Stage
-            << ", Section=" << Section
-            << ", Variant=" << std::string(ensembleTypeName<Variant>())
-            << std::endl;
+            // Logging
+            LOG_DEBUG_LIB(LibMetkit)
+                << "[Concept Ensemble] Op called: "
+                << "Stage="   << Stage
+                << ", Section=" << Section
+                << ", Variant=" << std::string(ensembleTypeName<Variant>())
+                << std::endl;
 
-        // =============================================================
-        // Deduce typeOfEnsembleForecast from mars dictionary
-        auto typeOfEnsembleForecast = deductions::typeOfEnsembleForecast( mars, par );
-        auto numberOfForecastsInEnsemble = deductions::numberOfForecastsInEnsemble( mars, par );
+            if constexpr( Variant == EnsembleType::Individual ) {
+
+                // =============================================================
+                // Checks
+                checks::isEnsembleProductDefinitionTemplateNumber_or_throw( opt, out );
+
+                // =============================================================
+                // Deduce typeOfEnsembleForecast from mars dictionary
+                deductions::TypeOfEnsembleForecast typeOfEnsembleForecast = deductions::typeOfEnsembleForecast( mars, par );
+                long numberOfForecastsInEnsemble = deductions::numberOfForecastsInEnsemble( mars, par );
+                long marsNumber = deductions::marsNumber( mars, par );
 
 
-        // Set grib key
-        set_or_throw<ConceptException>( out, "typeOfEnsembleForecast",
-                long(typeOfEnsembleForecast),
-                [&typeOfEnsembleForecast](){ return "`typeOfEnsembleForecast` could not be set to the grib header with value: " + std::to_string(long(typeOfEnsembleForecast)); },
-                Here()
+                // Set grib key
+                set_or_throw<long>( out, "typeOfEnsembleForecast", static_cast<long>( typeOfEnsembleForecast ) );
+                set_or_throw<long>( out, "perturbationNumber", marsNumber );
+                set_or_throw<long>( out, "numberOfForecastsInEnsemble", numberOfForecastsInEnsemble);
+
+            }
+
+        }
+        catch ( ... ){
+            // Rethrow nested exceptions
+            std::throw_with_nested(
+                Mars2GribConceptException(
+                    std::string( ensembleName ),
+                    std::string( ensembleTypeName<Variant>() ),
+                    std::to_string(Stage),
+                    std::to_string(Section),
+                    "Unable to set `ensemble` concept...",
+                    Here()
+                )
             );
 
-        set_or_throw<ConceptException>( out, "numberOfForecastsInEnsemble",
-                long(numberOfForecastsInEnsemble),
-                [&numberOfForecastsInEnsemble](){ return "`numberOfForecastsInEnsemble` could not be set to the grib header with value: " + std::to_string(long(numberOfForecastsInEnsemble)); },
-                Here()
-            );
-
+        }
 
         // Successful operation
-        return 0;
+        return;
 
-    }
+    } // if constexpr ( longrangeApplicable(Stage, Section, Variant) )
 
-    // Operation not applicable
-    return 1;
+    // Paranoid check. Should never arrive here
+    throw Mars2GribConceptException(
+            std::string( ensembleName ),
+            std::string( ensembleTypeName<Variant>() ),
+            std::to_string(Stage),
+            std::to_string(Section),
+            "Concept called when not applicable...",
+            Here()
+        );
+
+    // Remove compiler warning
+    __builtin_unreachable();
 
 }
 
-} // namespace metkit::mars2grib::backend
+} // namespace metkit::mars2grib::backend::cnpts

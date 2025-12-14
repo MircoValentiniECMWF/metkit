@@ -17,7 +17,7 @@ namespace metkit::mars2grib::backend::deductions {
 // or to set these values in grib messages via string or via eccodes API.
 
 // eccodes codes table 4.6
-enum class typeOfEnsembleForecast : long {
+enum class TypeOfEnsembleForecast : long {
     UnperturbedHighResControl           = 0,
     UnperturbedLowResControl            = 1,
     NegativelyPerturbed                 = 2,
@@ -36,29 +36,43 @@ enum class typeOfEnsembleForecast : long {
 // need interaction with DGOV team to improve/define this mapping
 
 template<class MarsDict_t, class ParDict_t>
-typeOfEnsembleForecast productionStatusOfProcessed(
-    const MarsDict_t& mars, cost ParDict_t& par){
+TypeOfEnsembleForecast typeOfEnsembleForecast(
+    const MarsDict_t& mars, const ParDict_t& par){
 
+    using metkit::mars2grib::utils::dict_traits::get_or_throw;
+    using metkit::mars2grib::utils::exceptions::Mars2GribDeductionException;
+
+    try {
     // Get mars type from dictionary
-    std::string marsType = get_or_throw<ConceptException,std::string>( mars, "type",
-        [](){
-            return "`type` is required in mars dictionary to deduce `typeOfEnsembleForecast`";
-        },
-        Here()
-    );
+    std::string marsType = get_or_throw<std::string>( mars, "type" );
 
     if (  marsType == "cf" ) {
-        return typeOfEnsembleForecast::Unperturbed;
+        return TypeOfEnsembleForecast::Unperturbed;
     }
     else if ( marsType == "pf" ) {
-        return typeOfEnsembleForecast::Perturbed;
+        return TypeOfEnsembleForecast::Perturbed;
     }
     else {
-        throw ConceptException(
+        throw Mars2GribDeductionException(
             "`type` value '" + marsType + "' is not mapped to any known `typeOfEnsembleForecast`",
             Here()
         );
     }
+
+    }  catch ( ... ) {
+
+        // Rethrow nested exceptions
+        std::throw_with_nested(
+            Mars2GribDeductionException(
+                "Unable to deduce `typeOfEnsembleForecast` from Mars dictionary",
+                Here()
+            )
+        );
+
+    };
+
+    // Remove compiler warning
+    __builtin_unreachable();
 
 };
 

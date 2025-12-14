@@ -7,7 +7,7 @@
 #include "metkit/mars2grib/backend/concepts//ensemble/ensemble_enum.h"
 #include "metkit/mars2grib/backend/concepts//ensemble/ensemble_encoding.h"
 
-namespace metkit::mars2grib::backend {
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // ConceptInfo
@@ -17,7 +17,8 @@ struct EnsembleConceptInfo
     static constexpr const char* name = "ensemble";
 
     template<
-        int Stage, int Sec,
+        std::size_t Stage,
+        std::size_t Sec,
         EnsembleType Variant,
         class MarsDict_t,
         class GeoDict_t,
@@ -46,8 +47,9 @@ struct EnsembleConceptInfo
             return nullptr;
         }
 
-        // Remove compiler warning
-        return nullptr;
+        // Avoid compile warnings
+        __builtin_unreachable();
+
     }
 
     template<auto Variant>
@@ -61,4 +63,4 @@ struct EnsembleConceptInfo
     }
 };
 
-} // namespace metkit::mars2grib::backend
+} // namespace metkit::mars2grib::backend::cnpts
