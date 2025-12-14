@@ -7,9 +7,6 @@
 #include <algorithm>
 
 
-#include "eckit/types/Date.h"
-#include "eckit/types/Time.h"
-#include "eckit/types/DateTime.h"
 #include "eckit/exception/Exceptions.h"
 #include "eckit/log/Log.h"
 
@@ -27,7 +24,7 @@ std::string marsExpver(
 
     try {
 
-        // Get the mars.date and mars.time
+        // Get the mars.expver
         auto marsExpverVal = get_or_throw<std::string>( mars, "expver" );
 
         // TODO MIVAL: Validate

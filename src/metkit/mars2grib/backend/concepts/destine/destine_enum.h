@@ -9,12 +9,17 @@
 // Core concept includes
 #include "metkit/mars2grib/backend/concepts/concept_core.h"
 
-namespace metkit::mars2grib::backend {
+namespace metkit::mars2grib::backend::cnpts {
+
+// ======================================================
+// NAME OF THE CONCEPT
+// ======================================================
+inline constexpr std::string_view destineName{"destine"};
 
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class DestineType : int {
+enum class DestineType : std::size_t {
     ClimateDT = 0,
     ExtremesDT
 };

@@ -14,6 +14,9 @@
 #include "metkit/mars2grib/backend/deductions/marsStream.h"
 #include "metkit/mars2grib/backend/deductions/marsExpver.h"
 
+// checks
+#include "metkit/mars2grib/backend/checks/hasLocalUseSection.h"
+
 // Exceptions
 #include "metkit/mars2grib/utils/mars2grib-exception.h"
 
@@ -73,22 +76,8 @@ void MarsOp(
                 << std::endl;
 
             // =============================================================
-            // Preconditions/contracts for this concept
-            if ( !check<long>( out, "LocalUsePresent",
-                        []( long& v ){
-                            return ( v == 1 ) ? true : false;
-                        }
-                    )
-            ) {
-                throw Mars2GribConceptException(
-                    std::string( marsName ),
-                    std::string( marsTypeName<Variant>() ),
-                    std::to_string(Stage),
-                    std::to_string(Section),
-                    "`mars` concept can only be applied when `LocalUsePresent` is present in the sample",
-                    Here()
-                );
-            }
+            // Checks
+            checks::hasLocalUseSection_or_throw( opt, out );
 
             // =============================================================
             // Get values from input MARS dictionary
@@ -99,10 +88,10 @@ void MarsOp(
 
             // =============================================================
             // Set values in output dictionary
-            set_or_throw( out, "class", marsClassVal );
-            set_or_throw( out, "type", marsTypeVal );
-            set_or_throw( out, "stream", marsStreamVal );
-            set_or_throw( out, "expver", marsExpverVal );
+            set_or_throw<std::string>( out, "class", marsClassVal );
+            set_or_throw<std::string>( out, "type", marsTypeVal );
+            set_or_throw<std::string>( out, "stream", marsStreamVal );
+            set_or_throw<std::string>( out, "expver", marsExpverVal );
 
         }
         catch ( ... ){

@@ -4,32 +4,39 @@
 #include <string_view>
 #include <iostream>
 
+
+// Logging
+#include "metkit/config/LibMetkit.h"
+
+// dictionary traits
+#include "metkit/mars2grib/utils/dictionary_traits/dictionary_access_traits.h"
+
 // Core concept includes
 #include "metkit/mars2grib/backend/concepts/concept_core.h"
 #include "metkit/mars2grib/backend/concepts/longrange/longrange_enum.h"
 
+// Deductions
+#include "metkit/mars2grib/backend/deductions/marsMethod.h"
+#include "metkit/mars2grib/backend/deductions/marsSystem.h"
 
-namespace metkit::mars2grib::backend {
+// checks
+#include "metkit/mars2grib/backend/checks/matchLocalDefinitionNumber.h"
+
+// Exceptions
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
+
+
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // DEFAULT APPLICABILITY (user will override manually)
 // ======================================================
-constexpr bool longrangeApplicable(int Stage, int Section, LongrangeType Variant)
+constexpr bool longrangeApplicable(std::size_t Stage, std::size_t Section, LongrangeType Variant)
 {
+    return ( (Variant == LongrangeType::Default) &&
+             (Stage == StagePreset) &&
+             (Section == SecLocalUseSection) );
 
-    // Compile time conditions to apply this concept
-    std::array<bool,3> conditions = {{
-      (Variant == LongrangeType::Default),
-      (Stage == StageType::Preset),
-      (Section == SectionType::LocalUseSection)
-    }};
-
-    // Confitions to apply concept
-    return std::all_of(
-        conditions.begin(),
-        conditions.end(),
-        [](bool b){ return b; }
-    );
 
 }
 
@@ -37,7 +44,8 @@ constexpr bool longrangeApplicable(int Stage, int Section, LongrangeType Variant
 // MAIN OPERATION
 // ======================================================
 template<
-    int Stage, int Section,
+    std::size_t Stage,
+    std::size_t Section,
     LongrangeType Variant,
     class MarsDict_t,
     class GeoDict_t,
@@ -45,66 +53,79 @@ template<
     class OptDict_t,
     class OutDict_t
 >
-uint8_t LongrangeOp(
+void LongrangeOp(
     const MarsDict_t&  mars,
     const GeoDict_t&   geo,
     const ParDict_t&   par,
     const OptDict_t&   opt,
     OutDict_t&         out)
 {
-    // eccodes/definitions/grib2/local.98.36.def
+
+    using metkit::mars2grib::utils::dict_traits::set_or_throw;
+    using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
+
     if constexpr ( longrangeApplicable(Stage, Section, Variant) ) {
 
 
-        // =============================================================
-        // Logging
-        LOG_DEBUG_LIB(LibMetkit)
-            << "[Concept Longrange] Applying longrange encoding"
-            << "Stage="   << Stage
-            << ", Section=" << Section
-            << ", Variant=" << std::string(longrangeTypeName<Variant>())
-            << std::endl;
+        try {
 
-        // =============================================================
-        // Preconditions/contracts for this concept
-        has_or_throw<ConceptException>( out, "localUsePresent",
-            [](){ return "Missing `localDefinitionNumber` in grib Header"; },
+            // =============================================================
+            // Logging
+            LOG_DEBUG_LIB(LibMetkit)
+                << "[Concept Longrange] Applying longrange encoding"
+                << "Stage="   << Stage
+                << ", Section=" << Section
+                << ", Variant=" << std::string(longrangeTypeName<Variant>())
+                << std::endl;
+
+            // =============================================================
+            // Preconditions/contracts for this concept
+            checks::matchLocalDefinitionNumber_or_throw( opt, out, {15L} );
+
+            // =============================================================
+            // Get values from input MARS dictionary
+            auto methodVal = deductions::marsMethod( mars, par );
+            auto systemVal = deductions::marsSystem( mars, par );
+
+
+            // =============================================================
+            // Set values in output GRIB dictionary
+            set_or_throw<long>(out, "methodNumber", methodVal );
+            set_or_throw<long>(out, "systemNumber", systemVal );
+
+        }
+        catch ( ... ){
+            // Rethrow nested exceptions
+            std::throw_with_nested(
+                Mars2GribConceptException(
+                    std::string( longrangeName ),
+                    std::string( longrangeTypeName<Variant>() ),
+                    std::to_string(Stage),
+                    std::to_string(Section),
+                    "Unable to set `longrange` concept...",
+                    Here()
+                )
+            );
+
+        }
+
+        // Successful operation
+        return;
+
+    } // if constexpr ( marsApplicable(Stage, Section, Variant) )
+
+    // Paranoid check. Should never arrive here
+    throw Mars2GribConceptException(
+            std::string( longrangeName ),
+            std::string( longrangeTypeName<Variant>() ),
+            std::to_string(Stage),
+            std::to_string(Section),
+            "Concept called when not applicable...",
             Here()
         );
 
-        check_or_throw<long,ConceptException>( out, "localDefinitionNumber",
-            []( long& v ){
-                if ( v != 15 ) {
-                    throw ConceptException("localDefinitionNumber is not 15", Here());
-                };
-                return true;
-            }
-        );
-
-        // =============================================================
-        // Get values from input MARS dictionary
-        auto methodVal = get_mars_or_throw<long,ConceptException>( mars, "method", Here() );
-        auto systemVal = get_mars_or_throw<long,ConceptException>( mars, "system", Here() );
-
-
-        // =============================================================
-        // Set values in output GRIB dictionary
-        set_or_throw<long,ConceptException>(
-            out, "methodNumber", methodVal,
-            [&methodVal](){ "`methodNumber` could not be set to the grib header with value: " + std::to_string(methodVal); },
-            Here() );
-        set_or_throw<long,ConceptException>(
-            out, "systemNumber", systemVal,
-            [&systemVal](){ "`systemNumber` could not be set to the grib header with value: " + std::to_string(systemVal); },
-            Here() );
-
-        // Successful operation
-        return 0;
-
-    }
-
-    // Operation not applicable
-    return 1;
+    // Remove compiler warning
+    __builtin_unreachable();
 
 }
 

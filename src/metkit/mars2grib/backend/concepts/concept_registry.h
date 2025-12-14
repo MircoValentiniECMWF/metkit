@@ -14,25 +14,28 @@
 #include "metkit/mars2grib/backend/concepts/data-type/data_type.h"
 #include "metkit/mars2grib/backend/concepts/reference-time/reference_time.h"
 #include "metkit/mars2grib/backend/concepts/mars/mars.h"
+#include "metkit/mars2grib/backend/concepts/longrange/longrange.h"
+#include "./analysis/analysis.h"
+#include "./destine/destine.h"
 
 #if 0
-#include "./mars/mars.h"
-#include "./longrange/longrange.h"
-#include "./analysis/analysis.h"
-
+#include "./ensemble/ensemble.h"
 #include "./satellite/satellite.h"
-#include "./reforecast/reforecast.h"
+
+
+#include "./level/level.h"
+
+#include "./point-in-time/point_in_time.h"
+
+#include "./representation/representation.h"
 
 #include "./generating-process/generating_process.h"
-#include "./point-in-time/point_in_time.h"
-#include "./level/level.h"
-#include "./statistics/statistics.h"
-#include "./destine/destine.h"
-#include "./composition/composition.h"
 #include "./wave/wave.h"
-#include "./representation/representation.h"
+#include "./statistics/statistics.h"
+#include "./composition/composition.h"
+
 #include "./shape-of-the-earth/shape_of_the_earth.h"
-#include "./ensemble/ensemble.h"
+#include "./reforecast/reforecast.h"
 #include "./packing/packing.h"
 #endif
 
@@ -108,8 +111,6 @@ make_concept_registry()
     RegisterVariants<MarsConceptInfo, MarsList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-#if 0
-
     RegisterVariants<LongrangeConceptInfo, LongrangeList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
@@ -118,6 +119,8 @@ make_concept_registry()
 
     RegisterVariants<DestineConceptInfo, DestineList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+#if 0
 
     RegisterVariants<EnsembleConceptInfo, EnsembleList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);

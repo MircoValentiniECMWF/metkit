@@ -20,6 +20,9 @@
 #include "metkit/mars2grib/backend/deductions/forecastDateTime.h"
 #include "metkit/mars2grib/backend/deductions/hindcastDateTime.h"
 
+// Checks
+#include "metkit/mars2grib/backend/checks/matchProductDefinitionTemplateNumber.h"
+
 // Exceptions
 #include "metkit/mars2grib/utils/mars2grib-exception.h"
 
@@ -148,26 +151,8 @@ void ReferenceTimeOp(
                            (Variant == ReferenceTimeType::Reforecast) ) {
 
                 // Checks on template number to ensure this is a reforecast product
-                if (bool applyChecks = get_opt<bool>( opt, "applyChecks" ).value_or( true ); applyChecks) {
+                checks::matchProductDefinitionTemplateNumber_or_throw( opt, out, { 60L, 61L } );
 
-                    // Check returns false if condition not met or key not found or any error occurs
-                    if ( !check<long>( out, "ProductDefinitionTemplateNumber",
-                                []( long& v ){
-                                    return ( v == 60 && v == 61 ) ? true : false;
-                                }
-                            )
-                    ) {
-                        throw Mars2GribConceptException(
-                            std::string( referenceTimeName ),
-                            std::string( referenceTimeTypeName<Variant>() ),
-                            std::to_string(Stage),
-                            std::to_string(Section),
-                            "`reference-time` concept for reforecast can only be applied "
-                            "when ProductDefinitionTemplateNumber is 60 or 61",
-                            Here()
-                        );
-                    }
-                };
 
                 // Deduce date and time components from dateTime deduction
                 auto dateTime = deductions::forecastDateTime( mars, par );

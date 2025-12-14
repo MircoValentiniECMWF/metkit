@@ -3,21 +3,22 @@
 #include <string>
 #include <string_view>
 
-#include "../concept_core.h"
-#include "analysis_enum.h"
-#include "analysis_encoding.h"
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+#include "metkit/mars2grib/backend/concepts/analysis/analysis_enum.h"
+#include "metkit/mars2grib/backend/concepts/analysis/analysis_encoding.h"
 
-namespace metkit::mars2grib::backend {
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // ConceptInfo
 // ======================================================
 struct AnalysisConceptInfo
 {
-    static constexpr const char* name = "analysis";
+    static constexpr const char* name = analysisName.data();
 
     template<
-        StageType Stage, SectionType Sec,
+        std::size_t Stage,
+        std::size_t Sec,
         AnalysisType Variant,
         class MarsDict_t,
         class GeoDict_t,
@@ -46,8 +47,9 @@ struct AnalysisConceptInfo
             return nullptr;
         }
 
-        // Remove compiler warning
-        return nullptr;
+        // Avoid compile warnings
+        __builtin_unreachable();
+
     }
 
     template<auto Variant>
@@ -62,4 +64,4 @@ struct AnalysisConceptInfo
 };
 
 
-}  // namespace metkit::mars2grib::backend
+}  // namespace metkit::mars2grib::backend::cnpts

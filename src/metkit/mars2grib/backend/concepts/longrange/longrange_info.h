@@ -3,21 +3,22 @@
 #include <string>
 #include <string_view>
 
-#include "../concept_core.h"
-#include "longrange_enum.h"
-#include "longrange_encoding.h"
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+#include "metkit/mars2grib/backend/concepts/longrange/longrange_enum.h"
+#include "metkit/mars2grib/backend/concepts/longrange/longrange_encoding.h"
 
-namespace metkit::mars2grib::backend {
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // ConceptInfo
 // ======================================================
 struct LongrangeConceptInfo
 {
-    static constexpr const char* name = "longrange";
+    static constexpr const char* name = longrangeName.data();
 
     template<
-        int Stage, int Sec,
+        std::size_t Stage,
+        std::size_t Sec,
         LongrangeType Variant,
         class MarsDict_t,
         class GeoDict_t,
@@ -46,8 +47,9 @@ struct LongrangeConceptInfo
             return nullptr;
         }
 
-        // Remove compiler warning
-        return nullptr;
+        // Avoid compile warnings
+        __builtin_unreachable();
+
     }
 
     template<auto Variant>
@@ -61,4 +63,4 @@ struct LongrangeConceptInfo
     }
 };
 
-} // namespace metkit::mars2grib::backend
+} // namespace metkit::mars2grib::backend::cnpts

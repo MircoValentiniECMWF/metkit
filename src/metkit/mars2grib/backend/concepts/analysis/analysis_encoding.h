@@ -11,36 +11,36 @@
 #include "metkit/mars2grib/backend/concepts/analysis/analysis_enum.h"
 
 // Deductions
+#include "metkit/mars2grib/backend/deductions/marsAnoffset.h"
 #include "metkit/mars2grib/backend/deductions/lengthOfTimeWindow.h"
 
-namespace metkit::mars2grib::backend {
+// checks
+#include "metkit/mars2grib/backend/checks/matchLocalDefinitionNumber.h"
+
+// Exceptions
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
+
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // DEFAULT APPLICABILITY (user will override manually)
 // ======================================================
-constexpr bool analysisApplicable(StageType Stage, SectionType Section, AnalysisType Variant)
+constexpr bool analysisApplicable(std::size_t Stage, std::size_t Section, AnalysisType Variant)
 {
 
-    // Compile time conditions to apply this concept
-    std::array<bool,3> conditions = {{
-      (Variant == AnalysisType::Default),
-      (Stage == StageType::Preset),
-      (Section == SectionType::LocalUseSection)
-    }};
-
     // Conditions to apply concept
-    return std::all_of(
-        conditions.begin(),
-        conditions.end(),
-        [](bool b){ return b; }
-    );
+    return ( (Variant == AnalysisType::Default) &&
+      (Stage == StagePreset) &&
+      (Section == SecLocalUseSection) );
+
 }
 
 // ======================================================
 // MAIN OPERATION
 // ======================================================
 template<
-    StageType Stage, SectionType Section,
+    std::size_t Stage,
+    std::size_t Section,
     AnalysisType Variant,
     class MarsDict_t,
     class GeoDict_t,
@@ -48,7 +48,7 @@ template<
     class OptDict_t,
     class OutDict_t
 >
-uint8_t AnalysisOp(
+void AnalysisOp(
     const MarsDict_t&  mars,
     const GeoDict_t&   geo,
     const ParDict_t&   par,
@@ -56,64 +56,74 @@ uint8_t AnalysisOp(
     OutDict_t&         out)
 {
 
-    // eccodes/definitions/grib2/local.98.36.def
+
+    using metkit::mars2grib::utils::dict_traits::set_or_throw;
+    using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
+
     if constexpr ( analysisApplicable(Stage, Section, Variant) ) {
 
+        try {
 
-        // =============================================================
-        // Logging
-        LOG_DEBUG_LIB(LibMetkit)
-              << "[Concept Analysis] Op called: "
-              << "Stage="   << Stage
-              << ", Section=" << Section
-              << ", Variant=" << std::string(analysisTypeName<Variant>())
-              << std::endl;
+            // =============================================================
+            // Logging
+            LOG_DEBUG_LIB(LibMetkit)
+                  << "[Concept Analysis] Op called: "
+                  << "Stage="   << Stage
+                  << ", Section=" << Section
+                  << ", Variant=" << std::string(analysisTypeName<Variant>())
+                  << std::endl;
 
-        // =============================================================
-        // Preconditions/contracts for this concept
-        has_or_throw<ConceptException>( out, "localUsePresent",
-            [](){ return "Missing `localDefinitionNumber` in grib Header"; },
-            Here()
-        );
+            // =============================================================
+            // Preconditions/contracts for this concept
+            checks::matchLocalDefinitionNumber_or_throw( opt, out, {36L} );
 
-        check_or_throw<long,ConceptException>( out, "localDefinitionNumber",
-            []( long& v ){
-                if ( v != 36 ) {
-                    throw ConceptException("localDefinitionNumber is not 36", Here());
-                };
-                return true;
+            // =============================================================
+            // Get values from input MARS dictionary
+            auto anoffsetVal = deductions::marsAnoffset( mars, par );
+            auto lengthOfTimeWindowOpt = deductions::lengthOfTimeWindow_opt( mars, par );
+
+            // =============================================================
+            // Set values in output GRIB dictionary
+            set_or_throw<long>(out, "offsetToEndOf4DvarWindow", anoffsetVal );
+
+            // Optional arguments
+            if ( lengthOfTimeWindowOpt.has_value() ) {
+                set_or_throw<long>(out, "lengthOf4DvarWindow", lengthOfTimeWindowOpt.value() );
             }
-        );
 
-        // =============================================================
-        // Mandatory operations
-        // Forward "anoffset" from mars to grib sample
-        forward_or_throw<long, long, ConceptException>(
-            mars, out, "anoffset", "offsetToEndOf4DvarWindow", Here()
-        );
-
-        // =============================================================
-        // Conditional operations
-        // Forward "length of time window" from parametrization to grib sample
-        // (Number must be in hours)
-        // TODO MIVAL: this needs to be improved. Currently this function
-        // rely on what is in the initial sample, but ideally we should
-        // compute it somehow
-        if (  auto lengthOfTimeWindowOpt = deductions::lengthOfTimeWindow<MarsDict_t,ParDict_t>( mars, par ); lengthOfTimeWindowOpt.has_value() ) {
-            set_or_throw<ConceptException>( out, "lengthOfTimeWindow",
-                long(lengthOfTimeWindowOpt.value()),
-                [&lengthOfTimeWindowOpt](){ return "`lengthOfTimeWindow` could not be set to the grib header with value: " + std::to_string(lengthOfTimeWindowOpt.value()); },
-                Here()
+        }
+        catch ( ... ){
+            // Rethrow nested exceptions
+            std::throw_with_nested(
+                Mars2GribConceptException(
+                    std::string( analysisName ),
+                    std::string( analysisTypeName<Variant>() ),
+                    std::to_string(Stage),
+                    std::to_string(Section),
+                    "Unable to set `analysis` concept...",
+                    Here()
+                )
             );
+
         }
 
         // Successful operation
-        return 0;
+        return;
 
-    }
+    } // if constexpr ( longrangeApplicable(Stage, Section, Variant) )
 
-    // Operation not applicable
-    return 1;
+    // Paranoid check. Should never arrive here
+    throw Mars2GribConceptException(
+            std::string( analysisName ),
+            std::string( analysisTypeName<Variant>() ),
+            std::to_string(Stage),
+            std::to_string(Section),
+            "Concept called when not applicable...",
+            Here()
+        );
+
+    // Remove compiler warning
+    __builtin_unreachable();
 }
 
-}  // namespace metkit::mars2grib::backend
+}  // namespace metkit::mars2grib::backend::cnpts

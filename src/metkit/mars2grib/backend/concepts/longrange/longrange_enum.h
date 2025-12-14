@@ -8,12 +8,17 @@
 
 #include "metkit/mars2grib/backend/concepts/concept_core.h"
 
-namespace metkit::mars2grib::backend {
+namespace metkit::mars2grib::backend::cnpts {
+
+// ======================================================
+// NAME OF THE CONCEPT
+// ======================================================
+inline constexpr std::string_view longrangeName{"longrange"};
 
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class LongrangeType : int {
+enum class LongrangeType : std::size_t {
     Default = 0
 };
 

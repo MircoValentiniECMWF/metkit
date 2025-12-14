@@ -16,7 +16,7 @@
 namespace metkit::mars2grib::backend::deductions {
 
 template<class MarsDict_t, class ParDict_t>
-std::string marsClass(
+std::string marsActivity(
     const MarsDict_t& mars, const ParDict_t& par){
 
     using metkit::mars2grib::utils::dict_traits::get_or_throw;
@@ -24,19 +24,19 @@ std::string marsClass(
 
     try {
 
-        // Get the mars.class
-        auto marsClassVal = get_or_throw<std::string>( mars, "class" );
+        // Get the mars.activity
+        auto marsActivityVal = get_or_throw<std::string>( mars, "activity" );
 
         // TODO MIVAL: Validate
 
-        return marsClassVal;
+        return marsActivityVal;
 
     } catch ( ... ) {
 
         // Rethrow nested exceptions
         std::throw_with_nested(
             Mars2GribDeductionException(
-                "Unable to get `class` from Mars dictionary",
+                "Unable to get `activity` from Mars dictionary",
                 Here()
             )
         );

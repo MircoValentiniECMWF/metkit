@@ -8,17 +8,18 @@
 #include "metkit/mars2grib/backend/concepts/destine/destine_enum.h"
 #include "metkit/mars2grib/backend/concepts/destine/destine_encoding.h"
 
-namespace metkit::mars2grib::backend {
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // ConceptInfo
 // ======================================================
 struct DestineConceptInfo
 {
-    static constexpr const char* name = "destine";
+    static constexpr const char* name = destineName.data();
 
     template<
-        int Stage, int Sec,
+        std::size_t Stage,
+        std::size_t Sec,
         DestineType Variant,
         class MarsDict_t,
         class GeoDict_t,
@@ -47,8 +48,9 @@ struct DestineConceptInfo
             return nullptr;
         }
 
-        // Remove compiler warning
-        return nullptr;
+        // Avoid compile warnings
+        __builtin_unreachable();
+
     }
 
     template<auto Variant>
