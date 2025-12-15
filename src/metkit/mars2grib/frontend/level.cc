@@ -158,7 +158,8 @@ void setPL(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& sec
     const auto param = *get<std::int64_t>(mars, "param");
     const auto level = *get<std::int64_t>(mars, "level");
 
-    if (matchAny(param, 1, 2, 10, 60, 75, 76, range(129, 135), 138, 152, 155, 157, 203, range(246, 248), 260290)) {
+    if (matchAny(param, 1, 2, 10, 60, 75, 76, range(129, 135), 138, 152, 155, 157, 203, range(246, 248), 235100,
+                 range(235129, 235133), 235135, 235138, 235152, 235155, 235157, 235203, 235246, 260290, 263107)) {
         if (level >= 100) {
             setTypeOfLevel(sections, "isobaricInhPa");
         }
