@@ -105,7 +105,7 @@ public:
             count++;
 
             const auto& mars = testCase.getSubConfiguration("mars");
-            const auto& expectedEncoder = testCase.getSubConfiguration("encoder-config");
+            const auto& expectedEncoder = testCase.getSubConfiguration("conf");
 
             eckit::LocalConfiguration actualEncoder;
             try {
