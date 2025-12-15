@@ -116,7 +116,7 @@ inline bool isMissing(const Dict& dict, std::string_view key) {
 
 // setMissing<Dict>(dict,key)
 template<class Dict>
-inline void setMissing(Dict& dict, std::string_view key) {
+inline void setMissing_or_throw(Dict& dict, std::string_view key) {
     DictMissing<Dict>::setMissing(dict, key);
     return;
 }

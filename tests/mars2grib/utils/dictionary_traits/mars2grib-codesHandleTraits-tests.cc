@@ -73,14 +73,14 @@ CASE("CodesHandle: scalar vs vector distinction") {
 CASE("CodesHandle: missing") {
 
     auto h = metkit::codes::codesHandleFromSample("GRIB2");
-    using metkit::mars2grib::utils::dict_traits::setMissing;
+    using metkit::mars2grib::utils::dict_traits::setMissing_or_throw;
     using metkit::mars2grib::utils::dict_traits::isMissing;
     using metkit::mars2grib::utils::dict_traits::get_opt;
     using metkit::mars2grib::utils::dict_traits::get_or_throw;
     using metkit::mars2grib::utils::dict_traits::set_or_throw;
 
     set_or_throw<long>(*h, "productDefinitionTemplateNumber", 0L);
-    setMissing(*h, "scaleFactorOfFirstFixedSurface" );
+    setMissing_or_throw(*h, "scaleFactorOfFirstFixedSurface" );
 
     EXPECT(isMissing(*h, "scaleFactorOfFirstFixedSurface"));
     // EXPECT(!get_opt<long>(*h, "myMissing").has_value());

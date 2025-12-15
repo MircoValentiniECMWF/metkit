@@ -55,7 +55,7 @@ getTimeDescriptorFromMars_orThrow(
     using metkit::mars2grib::utils::time::StatOp;
 
     try {
-            StatisticalProcessing out{};
+        StatisticalProcessing out{};
 
         // ---------------------------------------------------------------------
         // Number of loops

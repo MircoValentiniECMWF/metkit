@@ -31,12 +31,12 @@ constexpr bool levelApplicable()
 
     if constexpr ( Section == SecProductDefinitionSection && Variant == LevelType::Hybrid ) {
         // Hybrid needs to allocate space for the pv array
-        return ( Stage == StageAllocate || Stage == StagePreset || Stage == StageRuntime );
+        return true;
     }
 
     if constexpr ( Section == SecProductDefinitionSection && Variant != LevelType::Hybrid ) {
         // Hybrid needs to allocate space for the pv array
-        return ( Stage == StagePreset || Stage == StageRuntime );
+        return ( Stage != StageAllocate );
     }
 
     return false;
@@ -184,7 +184,6 @@ void LevelOp(
 
     // Remove compiler warning
     __builtin_unreachable();
-
 
 }
 

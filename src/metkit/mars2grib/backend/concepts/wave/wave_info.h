@@ -3,19 +3,26 @@
 #include <string>
 #include <string_view>
 
-#include "../concept_core.h"
-#include "wave_enum.h"
-#include "wave_encoding.h"
+// Core concept includes
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+#include "metkit/mars2grib/backend/concepts/wave/wave_enum.h"
+#include "metkit/mars2grib/backend/concepts/wave/wave_encoding.h"
+
+// Exceptions
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
+
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // ConceptInfo
 // ======================================================
 struct WaveConceptInfo
 {
-    static constexpr const char* name = "wave";
+    static constexpr const char* name = waveName.data();
 
     template<
-        int Stage, int Sec,
+        std::size_t Stage,
+        std::size_t Sec,
         WaveType Variant,
         class MarsDict_t,
         class GeoDict_t,
@@ -31,7 +38,7 @@ struct WaveConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( waveApplicable(Stage, Sec, Variant) ) {
+        if constexpr ( waveApplicable<Stage, Sec, Variant>() ) {
             return &WaveOp<
                 Stage, Sec, Variant,
                 MarsDict_t,
@@ -44,8 +51,9 @@ struct WaveConceptInfo
             return nullptr;
         }
 
-        // Remove compiler warning
-        return nullptr;
+        // Avoid compile warnings
+        __builtin_unreachable();
+
     }
 
     template<auto Variant>
@@ -58,3 +66,5 @@ struct WaveConceptInfo
         );
     }
 };
+
+} // namespace metkit::mars2grib::backend::cnpts

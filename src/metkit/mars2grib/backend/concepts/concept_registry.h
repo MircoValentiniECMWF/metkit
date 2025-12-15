@@ -20,12 +20,12 @@
 #include "metkit/mars2grib/backend/concepts/ensemble/ensemble.h"
 #include "./level/level.h"
 #include "./statistics/statistics.h"
+#include "./wave/wave.h"
+#include "./forecast-time/forecast_time.h"
 
 #if 0
 
 
-#include "./point-in-time/point_in_time.h"
-#include "./wave/wave.h"
 #include "./representation/representation.h"
 #include "./generating-process/generating_process.h"
 
@@ -128,13 +128,14 @@ make_concept_registry()
     RegisterVariants<StatisticsConceptInfo, StatisticsList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-#if 0
-
-    RegisterVariants<PointInTimeConceptInfo, PointInTimeList,
-                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
-
     RegisterVariants<WaveConceptInfo, WaveList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+    RegisterVariants<ForecastTimeConceptInfo, ForecastTimeList,
+                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+#if 0
+
 
     RegisterVariants<RepresentationConceptInfo, RepresentationList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);

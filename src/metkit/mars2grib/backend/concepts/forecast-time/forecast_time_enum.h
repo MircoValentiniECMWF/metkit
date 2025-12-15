@@ -6,46 +6,42 @@
 #include <cstdint>
 #include <iostream>
 
-// Core concept includes
 #include "metkit/mars2grib/backend/concepts/concept_core.h"
+
+// Exceptions
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
 
 namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // NAME OF THE CONCEPT
 // ======================================================
-inline constexpr std::string_view waveName{"wave"};
+inline constexpr std::string_view forecastTimeName{"forecastTime"};
 
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class WaveType : int {
-    Spectra = 0,
-    Period,
-    Default
+enum class ForecastTimeType : int {
+    Default = 0
 };
 
 // ======================================================
 // COMPILE-TIME TYPELIST
 // ======================================================
-using WaveList = ValueList<
-    WaveType::Spectra,
-    WaveType::Period,
-    WaveType::Default
+using ForecastTimeList = ValueList<
+    ForecastTimeType::Default
 >;
 
 // ======================================================
 // VARIANT -> STRING MAPPING
 // ======================================================
-template<WaveType T>
-constexpr std::string_view waveTypeName();
+template<ForecastTimeType T>
+constexpr std::string_view forecastTimeTypeName();
 
 #define DEF(T,NAME) \
-    template<> constexpr std::string_view waveTypeName<T>() { return NAME; }
+    template<> constexpr std::string_view forecastTimeTypeName<T>() { return NAME; }
 
-    DEF(WaveType::Spectra, "spectra");
-    DEF(WaveType::Period, "period");
-    DEF(WaveType::Default, "default");
+    DEF(ForecastTimeType::Default, "default");
 
 #undef DEF
 

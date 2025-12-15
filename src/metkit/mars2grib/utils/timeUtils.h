@@ -269,6 +269,8 @@ inline void prettyPrint(const std::vector<StatTypeBlock>& blocks)
     }
 }
 
+
+// If unit is missing default is hours!!!
 inline long toSeconds_or_throw(std::string_view step)
 {
     using metkit::mars2grib::utils::exceptions::Mars2GribGenericException;
