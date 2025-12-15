@@ -156,8 +156,8 @@ template<
     class OutDict_t
 >
 constexpr auto makeConceptTable() {
-    using Fn_t    = Fn<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>;
-    using Table_t = std::array<std::array<Fn_t, NUM_SECTIONS>, NUM_STAGES>;
+    // using Fn_t    = Fn<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>;
+    // using Table_t = std::array<std::array<Fn_t, NUM_SECTIONS>, NUM_STAGES>;
 
     return makeTable<
         ConceptInfo,

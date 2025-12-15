@@ -3,16 +3,20 @@
 #include <string>
 #include <string_view>
 
-#include "../concept_core.h"
-#include "representation_enum.h"
-#include "representation_encoding.h"
+// Core concept includes
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+#include "metkit/mars2grib/backend/concepts/representation/representation_enum.h"
+#include "metkit/mars2grib/backend/concepts/representation/representation_encoding.h"
+
+
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // ConceptInfo
 // ======================================================
 struct RepresentationConceptInfo
 {
-    static constexpr const char* name = "representation";
+    static constexpr const char* name = representationName.data();
 
     template<
         int Stage, int Sec,
@@ -31,7 +35,7 @@ struct RepresentationConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( representationApplicable(Stage, Sec, Variant) ) {
+        if constexpr ( representationApplicable<Stage, Sec, Variant>() ) {
             return &RepresentationOp<
                 Stage, Sec, Variant,
                 MarsDict_t,
@@ -44,8 +48,9 @@ struct RepresentationConceptInfo
             return nullptr;
         }
 
-        // Remove compiler warning
-        return nullptr;
+        // Avoid compile warnings
+        __builtin_unreachable();
+
     }
 
     template<auto Variant>
@@ -58,3 +63,5 @@ struct RepresentationConceptInfo
         );
     }
 };
+
+} // namespace metkit::mars2grib::backend::cnpts

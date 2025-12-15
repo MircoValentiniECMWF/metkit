@@ -18,7 +18,7 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 struct ForecastTimeConceptInfo
 {
-    static constexpr const char* name = "forecastTime";
+    static constexpr const char* name = forecastTimeName.data();
 
     template<
         std::size_t Stage,

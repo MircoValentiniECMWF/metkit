@@ -22,11 +22,11 @@
 #include "./statistics/statistics.h"
 #include "./wave/wave.h"
 #include "./forecast-time/forecast_time.h"
+#include "./representation/representation.h"
 
 #if 0
 
 
-#include "./representation/representation.h"
 #include "./generating-process/generating_process.h"
 
 
@@ -134,11 +134,11 @@ make_concept_registry()
     RegisterVariants<ForecastTimeConceptInfo, ForecastTimeList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-#if 0
-
-
     RegisterVariants<RepresentationConceptInfo, RepresentationList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+#if 0
+
 
     RegisterVariants<GeneratingProcessConceptInfo, GeneratingProcessList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);

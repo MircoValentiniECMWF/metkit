@@ -6,14 +6,24 @@
 #include <cstdint>
 #include <iostream>
 
-#include "../concept_core.h"
+// Core concept includes
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+
+
+namespace metkit::mars2grib::backend::cnpts {
+
+// ======================================================
+// NAME OF THE CONCEPT
+// ======================================================
+inline constexpr std::string_view representationName{"representation"};
 
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
 enum class RepresentationType : int {
     Latlon = 0,
-    Gaussian,
+    RegularGaussian,
+    ReducedGaussian,
     SphericalHarmonics,
     GeneralUnstructured,
     Healpix,
@@ -27,7 +37,8 @@ enum class RepresentationType : int {
 // ======================================================
 using RepresentationList = ValueList<
     RepresentationType::Latlon,
-    RepresentationType::Gaussian,
+    RepresentationType::RegularGaussian,
+    RepresentationType::ReducedGaussian,
     RepresentationType::SphericalHarmonics,
     RepresentationType::GeneralUnstructured,
     RepresentationType::Healpix,
@@ -46,7 +57,8 @@ constexpr std::string_view representationTypeName();
     template<> constexpr std::string_view representationTypeName<T>() { return NAME; }
 
     DEF(RepresentationType::Latlon, "latlon");
-    DEF(RepresentationType::Gaussian, "gaussian");
+    DEF(RepresentationType::RegularGaussian, "gaussian");
+    DEF(RepresentationType::ReducedGaussian, "reducedGaussian");
     DEF(RepresentationType::SphericalHarmonics, "sphericalHarmonics");
     DEF(RepresentationType::GeneralUnstructured, "generalUnstructured");
     DEF(RepresentationType::Healpix, "healpix");
@@ -55,3 +67,5 @@ constexpr std::string_view representationTypeName();
     DEF(RepresentationType::Default, "default");
 
 #undef DEF
+
+} // namespace metkit::mars2grib::backend::cnpts
