@@ -25,7 +25,12 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 // DEFAULT APPLICABILITY (user will override manually)
 // ======================================================
-constexpr bool paramApplicable(std::size_t Stage, std::size_t Section, ParamType Variant)
+template<
+    std::size_t Stage,
+    std::size_t Section,
+    ParamType Variant
+>
+constexpr bool paramApplicable()
 {
 
     // Confitions to apply concept
@@ -58,7 +63,7 @@ void ParamOp(
     using metkit::mars2grib::utils::dict_traits::set_or_throw;
     using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
 
-    if constexpr ( paramApplicable(Stage, Section, Variant) ) {
+    if constexpr ( paramApplicable<Stage, Section, Variant>() ) {
 
         try {
 

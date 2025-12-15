@@ -26,7 +26,12 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 // DEFAULT APPLICABILITY (user will override manually)
 // ======================================================
-constexpr bool tablesApplicable(std::size_t Stage, std::size_t Section, TablesType Variant)
+template<
+    std::size_t Stage,
+    std::size_t Section,
+    TablesType Variant
+>
+constexpr bool tablesApplicable()
 {
 
     // Conditions to apply concept
@@ -60,7 +65,7 @@ void TablesOp(
     using metkit::mars2grib::utils::dict_traits::set_or_throw;
     using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
 
-    if constexpr ( tablesApplicable(Stage, Section, Variant) ) {
+    if constexpr ( tablesApplicable<Stage, Section, Variant>() ) {
 
         try {
 

@@ -17,7 +17,7 @@
 
 // Deductions
 #include "metkit/mars2grib/backend/deductions/significanceOfReferenceTime.h"
-#include "metkit/mars2grib/backend/deductions/forecastDateTime.h"
+#include "metkit/mars2grib/backend/deductions/referenceDateTime.h"
 #include "metkit/mars2grib/backend/deductions/hindcastDateTime.h"
 
 // Checks
@@ -31,7 +31,12 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 // DEFAULT APPLICABILITY (user will override manually)
 // ======================================================
-constexpr bool referenceTimeApplicable( std::size_t Stage, std::size_t Section, ReferenceTimeType Variant)
+template<
+    std::size_t Stage,
+    std::size_t Section,
+    ReferenceTimeType Variant
+>
+constexpr bool referenceTimeApplicable()
 {
 
     // Compile time conditions to apply this concept
@@ -74,7 +79,7 @@ void ReferenceTimeOp(
     using metkit::mars2grib::utils::dict_traits::get_opt;
     using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
 
-    if constexpr ( referenceTimeApplicable(Stage, Section, Variant) ) {
+    if constexpr ( referenceTimeApplicable<Stage, Section, Variant>() ) {
 
         try {
 
@@ -110,7 +115,7 @@ void ReferenceTimeOp(
                            (Variant == ReferenceTimeType::Standard) ) {
 
                 // Deduce date and time components from dateTime deduction
-                auto dateTime = deductions::forecastDateTime( mars, par );
+                auto dateTime = deductions::referenceDateTime( mars, par );
 
                 // Set date and time components in output dictionary
                 set_or_throw<long>( out, "year",   dateTime.date().year() );
@@ -155,7 +160,7 @@ void ReferenceTimeOp(
 
 
                 // Deduce date and time components from dateTime deduction
-                auto dateTime = deductions::forecastDateTime( mars, par );
+                auto dateTime = deductions::referenceDateTime( mars, par );
 
                 // Set date and time components in output dictionary
                 set_or_throw<long>( out, "YearOfModelVersion",   dateTime.date().year() );

@@ -1,5 +1,5 @@
 #pragma once
 
-#include "statistics_enum.h"
-#include "statistics_encoding.h"
-#include "statistics_info.h"
+#include "metkit/mars2grib/backend/concepts/statistics/statistics_enum.h"
+#include "metkit/mars2grib/backend/concepts/statistics/statistics_encoding.h"
+#include "metkit/mars2grib/backend/concepts/statistics/statistics_info.h"

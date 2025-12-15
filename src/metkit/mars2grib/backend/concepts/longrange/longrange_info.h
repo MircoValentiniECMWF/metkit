@@ -34,7 +34,7 @@ struct LongrangeConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( longrangeApplicable(Stage, Sec, Variant) ) {
+        if constexpr ( longrangeApplicable<Stage, Sec, Variant>() ) {
             return &LongrangeOp<
                 Stage, Sec, Variant,
                 MarsDict_t,

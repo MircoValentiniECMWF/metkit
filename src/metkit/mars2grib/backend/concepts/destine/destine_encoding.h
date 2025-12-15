@@ -28,7 +28,12 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 // DEFAULT APPLICABILITY (user will override manually)
 // ======================================================
-constexpr bool destineApplicable(std::size_t Stage, std::size_t Section, DestineType Variant)
+template<
+    std::size_t Stage,
+    std::size_t Section,
+    DestineType Variant
+>
+constexpr bool destineApplicable()
 {
     // Confitions to apply concept
     return ((Variant == DestineType::ClimateDT || Variant == DestineType::ExtremesDT) &&
@@ -60,7 +65,7 @@ void DestineOp(
     using metkit::mars2grib::utils::dict_traits::set_or_throw;
     using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
 
-    if constexpr ( destineApplicable(Stage, Section, Variant) ) {
+    if constexpr ( destineApplicable<Stage, Section, Variant>() ) {
 
         try {
 

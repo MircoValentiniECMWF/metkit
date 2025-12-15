@@ -36,7 +36,7 @@ struct MarsConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( marsApplicable(Stage, Sec, Variant) ) {
+        if constexpr ( marsApplicable<Stage, Sec, Variant>() ) {
             return &MarsOp<
                 Stage, Sec, Variant,
                 MarsDict_t,

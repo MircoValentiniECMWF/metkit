@@ -36,7 +36,7 @@ struct ReferenceTimeConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( referenceTimeApplicable(Stage, Sec, Variant) ) {
+        if constexpr ( referenceTimeApplicable<Stage, Sec, Variant>() ) {
             return &ReferenceTimeOp<
                 Stage, Sec, Variant,
                 MarsDict_t,

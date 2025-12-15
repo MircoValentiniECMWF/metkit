@@ -25,7 +25,12 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 // DEFAULT APPLICABILITY (user will override manually)
 // ======================================================
-constexpr bool analysisApplicable(std::size_t Stage, std::size_t Section, AnalysisType Variant)
+template<
+    std::size_t Stage,
+    std::size_t Section,
+    AnalysisType Variant
+>
+constexpr bool analysisApplicable()
 {
 
     // Conditions to apply concept
@@ -59,7 +64,7 @@ void AnalysisOp(
     using metkit::mars2grib::utils::dict_traits::set_or_throw;
     using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
 
-    if constexpr ( analysisApplicable(Stage, Section, Variant) ) {
+    if constexpr ( analysisApplicable<Stage, Section, Variant>() ) {
 
         try {
 

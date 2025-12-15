@@ -35,7 +35,7 @@ struct DestineConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( destineApplicable(Stage, Sec, Variant) ) {
+        if constexpr ( destineApplicable<Stage, Sec, Variant>() ) {
             return &DestineOp<
                 Stage, Sec, Variant,
                 MarsDict_t,

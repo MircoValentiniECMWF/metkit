@@ -37,7 +37,7 @@ struct TablesConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( tablesApplicable(Stage, Sec, Variant) ) {
+        if constexpr ( tablesApplicable<Stage, Sec, Variant>() ) {
             return &TablesOp<
                 Stage, Sec, Variant,
                 MarsDict_t,

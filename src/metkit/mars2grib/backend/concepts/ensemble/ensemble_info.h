@@ -14,7 +14,7 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 struct EnsembleConceptInfo
 {
-    static constexpr const char* name = "ensemble";
+    static constexpr const char* name = ensembleName.data();
 
     template<
         std::size_t Stage,
@@ -34,7 +34,7 @@ struct EnsembleConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( ensembleApplicable(Stage, Sec, Variant) ) {
+        if constexpr ( ensembleApplicable<Stage, Sec, Variant>() ) {
             return &EnsembleOp<
                 Stage, Sec, Variant,
                 MarsDict_t,

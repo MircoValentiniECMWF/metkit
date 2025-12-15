@@ -35,7 +35,7 @@ struct NilConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( nilApplicable(Stage, Sec, Variant) ) {
+        if constexpr ( nilApplicable<Stage, Sec, Variant>() ) {
             return &NilOp<
                 Stage, Sec, Variant,
                 MarsDict_t,

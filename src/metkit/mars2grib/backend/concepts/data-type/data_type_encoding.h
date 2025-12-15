@@ -26,7 +26,12 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 // DEFAULT APPLICABILITY (user will override manually)
 // ======================================================
-constexpr bool data_typeApplicable(std::size_t Stage, std::size_t Section, DataTypeType Variant)
+template<
+    std::size_t Stage,
+    std::size_t Section,
+    DataTypeType Variant
+>
+constexpr bool data_typeApplicable()
 {
 
     return ( (Variant == DataTypeType::Default) &&
@@ -59,7 +64,7 @@ void DataTypeOp(
     using metkit::mars2grib::utils::dict_traits::get_opt;
     using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
 
-    if constexpr ( data_typeApplicable(Stage, Section, Variant) ) {
+    if constexpr ( data_typeApplicable<Stage, Section, Variant>() ) {
 
         // =============================================================
         // Logging

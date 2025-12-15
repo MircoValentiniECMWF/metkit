@@ -18,7 +18,12 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 // DEFAULT APPLICABILITY (user will override manually)
 // ======================================================
-constexpr bool nilApplicable(std::size_t Stage, std::size_t Section, NilType Variant)
+template<
+    std::size_t Stage,
+    std::size_t Section,
+    NilType Variant
+>
+constexpr bool nilApplicable()
 {
     return true;
 }
@@ -45,15 +50,17 @@ void NilOp(
 {
 
 
-    using metkit::mars2grib::utils::dict_traits::set_or_throw;
+    if constexpr ( nilApplicable<Stage, Section, Variant>() ) {
 
-    // Debug output
-    LOG_DEBUG_LIB(LibMetkit)
-        << "[Concept Nil] Op called: "
-        << "Stage="   << Stage
-        << ", Section=" << Section
-        << ", Variant=" << std::string(nilTypeName<Variant>())
-        << std::endl;
+        // Debug output
+        LOG_DEBUG_LIB(LibMetkit)
+            << "[Concept Nil] Op called: "
+            << "Stage="   << Stage
+            << ", Section=" << Section
+            << ", Variant=" << std::string(nilTypeName<Variant>())
+            << std::endl;
+        // No operation for Nil concept
+    }
 
     // Successful no-op
     return;

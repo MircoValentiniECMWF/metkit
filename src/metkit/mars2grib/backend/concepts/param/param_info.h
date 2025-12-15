@@ -36,7 +36,7 @@ struct ParamConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( paramApplicable(Stage, Sec, Variant) ) {
+        if constexpr ( paramApplicable<Stage, Sec, Variant>() ) {
             return &ParamOp<
                 Stage, Sec, Variant,
                 MarsDict_t,

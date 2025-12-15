@@ -25,7 +25,12 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 // DEFAULT APPLICABILITY (user will override manually)
 // ======================================================
-constexpr bool marsApplicable(std::size_t Stage, std::size_t Section, MarsType Variant)
+template<
+    std::size_t Stage,
+    std::size_t Section,
+    MarsType Variant
+>
+constexpr bool marsApplicable()
 {
 
     // Confitions to apply concept
@@ -62,7 +67,7 @@ void MarsOp(
     using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
 
     // eccodes/definitions/grib2/local.98.36.def
-    if constexpr ( marsApplicable(Stage, Section, Variant) ) {
+    if constexpr ( marsApplicable<Stage, Section, Variant>() ) {
 
         try {
 

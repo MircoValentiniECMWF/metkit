@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <exception>
 
 #include "eckit/exception/Exceptions.h"
 #include "eckit/log/Log.h"

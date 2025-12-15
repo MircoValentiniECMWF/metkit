@@ -31,7 +31,12 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 // DEFAULT APPLICABILITY (user will override manually)
 // ======================================================
-constexpr bool longrangeApplicable(std::size_t Stage, std::size_t Section, LongrangeType Variant)
+template<
+    std::size_t Stage,
+    std::size_t Section,
+    LongrangeType Variant
+>
+constexpr bool longrangeApplicable()
 {
     return ( (Variant == LongrangeType::Default) &&
              (Stage == StagePreset) &&
@@ -64,7 +69,7 @@ void LongrangeOp(
     using metkit::mars2grib::utils::dict_traits::set_or_throw;
     using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
 
-    if constexpr ( longrangeApplicable(Stage, Section, Variant) ) {
+    if constexpr ( longrangeApplicable<Stage, Section, Variant>() ) {
 
 
         try {

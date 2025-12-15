@@ -18,25 +18,24 @@
 #include "metkit/mars2grib/backend/concepts/analysis/analysis.h"
 #include "metkit/mars2grib/backend/concepts/destine/destine.h"
 #include "metkit/mars2grib/backend/concepts/ensemble/ensemble.h"
+#include "./level/level.h"
+#include "./statistics/statistics.h"
 
 #if 0
-#include "./satellite/satellite.h"
-#include "./level/level.h"
 
 
 #include "./point-in-time/point_in_time.h"
-
-
-#include "./representation/representation.h"
-
-
-#include "./generating-process/generating_process.h"
 #include "./wave/wave.h"
-#include "./statistics/statistics.h"
-#include "./composition/composition.h"
+#include "./representation/representation.h"
+#include "./generating-process/generating_process.h"
 
+
+
+#include "./satellite/satellite.h"
 #include "./shape-of-the-earth/shape_of_the_earth.h"
 #include "./packing/packing.h"
+#include "./composition/composition.h"
+
 #endif
 
 namespace metkit::mars2grib::backend::cnpts {
@@ -123,30 +122,16 @@ make_concept_registry()
     RegisterVariants<EnsembleConceptInfo, EnsembleList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-
-#if 0
-
     RegisterVariants<LevelConceptInfo, LevelList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-    RegisterVariants<ShapeOfTheEarthConceptInfo, ShapeOfTheEarthList,
+    RegisterVariants<StatisticsConceptInfo, StatisticsList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-    RegisterVariants<PackingConceptInfo, PackingList,
-                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+#if 0
 
     RegisterVariants<PointInTimeConceptInfo, PointInTimeList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
-
-
-
-
-    RegisterVariants<GeneratingProcessConceptInfo, GeneratingProcessList,
-                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
-
-    RegisterVariants<SatelliteConceptInfo, SatelliteList,
-                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
-
 
     RegisterVariants<WaveConceptInfo, WaveList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
@@ -154,12 +139,27 @@ make_concept_registry()
     RegisterVariants<RepresentationConceptInfo, RepresentationList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-
-
-
-
-    RegisterVariants<StatisticsConceptInfo, StatisticsList,
+    RegisterVariants<GeneratingProcessConceptInfo, GeneratingProcessList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+
+
+
+    RegisterVariants<ShapeOfTheEarthConceptInfo, ShapeOfTheEarthList,
+                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+    RegisterVariants<PackingConceptInfo, PackingList,
+                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+    RegisterVariants<SatelliteConceptInfo, SatelliteList,
+                     MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+
+
+
+
+
+
 
     RegisterVariants<CompositionConceptInfo, CompositionList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);

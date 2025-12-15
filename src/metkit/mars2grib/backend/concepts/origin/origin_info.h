@@ -35,7 +35,7 @@ struct OriginConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( originApplicable(Stage, Sec, Variant) ) {
+        if constexpr ( originApplicable<Stage, Sec, Variant>() ) {
             return &OriginOp<
                 Stage, Sec, Variant,
                 MarsDict_t,

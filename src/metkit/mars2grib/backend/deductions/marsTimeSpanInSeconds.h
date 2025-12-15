@@ -5,9 +5,9 @@
 #include <string>
 #include <string_view>
 #include <algorithm>
+#include <exception>
 
 
-#include <eckit/types/DateTime.h>
 #include "eckit/exception/Exceptions.h"
 #include "eckit/log/Log.h"
 
@@ -21,7 +21,7 @@
 namespace metkit::mars2grib::backend::deductions {
 
 template<class MarsDict_t, class ParDict_t>
-eckit::DateTime forecastDateTime_or_throw(
+long marsTimespanInSeconds_or_throw(
     const MarsDict_t& mars, const ParDict_t& par){
 
     using metkit::mars2grib::utils::dict_traits::get_or_throw;
@@ -30,28 +30,22 @@ eckit::DateTime forecastDateTime_or_throw(
 
     try {
 
-        // TODO MIVAL. A lot of assumptions here!!!!!
+        // Get the mars.timespan
+        std::string marsTimespanVal = get_or_throw<std::string>( mars, "timespan" );
 
-        // Get the mars.date, mars.time, mars.step
-        long marsDate = get_or_throw<long>( mars, "date" );
-        long marsTime = get_or_throw<long>( mars, "time" );
-        std::string marsStep = get_or_throw<std::string>( mars, "step" );
+        // Convert to seconds
+        long marsTimespanInSecondsVal = toSeconds_or_throw( marsTimespanVal );
 
-        // Convert step in seconds
-        long marsStepInSecondsVal = toSeconds_or_throw( marsStep );
+        // TODO MIVAL: Validate
 
-        // Compute forecast time in seconds since reference time
-        eckit::Date Date{marsDate};
-        eckit::Time Time{marsTime};
-        eckit::DateTime referenceTime{Date, Time};
-        return referenceTime + static_cast<eckit::Second>(marsStepInSecondsVal);
+        return marsTimespanInSecondsVal;
 
     } catch ( ... ) {
 
         // Rethrow nested exceptions
         std::throw_with_nested(
             Mars2GribDeductionException(
-                "Unable to compute forecast time",
+                "Unable to get `timespan` from Mars dictionary",
                 Here()
             )
         );

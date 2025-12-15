@@ -34,7 +34,7 @@ struct AnalysisConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( analysisApplicable(Stage, Sec, Variant) ) {
+        if constexpr ( analysisApplicable<Stage, Sec, Variant>() ) {
             return &AnalysisOp<
                 Stage, Sec, Variant,
                 MarsDict_t,

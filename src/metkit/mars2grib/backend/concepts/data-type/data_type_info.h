@@ -35,7 +35,7 @@ struct DataTypeConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( data_typeApplicable(Stage, Sec, Variant) ) {
+        if constexpr ( data_typeApplicable<Stage, Sec, Variant>() ) {
             return &DataTypeOp<
                 Stage, Sec, Variant,
                 MarsDict_t,

@@ -6,12 +6,21 @@
 #include <cstdint>
 #include <iostream>
 
-#include "../concept_core.h"
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+
+
+namespace metkit::mars2grib::backend::cnpts {
+
+// ======================================================
+// NAME OF THE CONCEPT
+// ======================================================
+inline constexpr std::string_view levelName{"level"};
+
 
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class LevelType : int {
+enum class LevelType : std::size_t {
     Surface = 0,
     EntireAtmosphere,
     EntireLake,
@@ -136,3 +145,5 @@ constexpr std::string_view levelTypeName();
     DEF(LevelType::Default, "default");
 
 #undef DEF
+
+}

@@ -17,7 +17,7 @@
 namespace metkit::mars2grib::backend::deductions {
 
 template<class MarsDict_t, class ParDict_t>
-long marsAnoffset(
+long marsLevelist(
     const MarsDict_t& mars, const ParDict_t& par){
 
     using metkit::mars2grib::utils::dict_traits::get_or_throw;
@@ -25,19 +25,19 @@ long marsAnoffset(
 
     try {
 
-        // Get the mars.anoffset
-        auto marsAnoffsetVal = get_or_throw<long>( mars, "anoffset" );
+        // Get the mars.levelist
+        auto marsLevelistVal = get_or_throw<long>( mars, "levelist" );
 
         // TODO MIVAL: Validate
 
-        return marsAnoffsetVal;
+        return marsLevelistVal;
 
     } catch ( ... ) {
 
         // Rethrow nested exceptions
         std::throw_with_nested(
             Mars2GribDeductionException(
-                "Unable to get `anoffset` from Mars dictionary",
+                "Unable to get `levelist` from Mars dictionary",
                 Here()
             )
         );

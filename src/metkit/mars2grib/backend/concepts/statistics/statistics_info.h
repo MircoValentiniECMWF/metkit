@@ -3,19 +3,23 @@
 #include <string>
 #include <string_view>
 
-#include "../concept_core.h"
-#include "statistics_enum.h"
-#include "statistics_encoding.h"
+// Core concept includes
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+#include "metkit/mars2grib/backend/concepts/statistics/statistics_enum.h"
+#include "metkit/mars2grib/backend/concepts/statistics/statistics_encoding.h"
+
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // ConceptInfo
 // ======================================================
 struct StatisticsConceptInfo
 {
-    static constexpr const char* name = "statistics";
+    static constexpr const char* name = statisticsName.data();
 
     template<
-        int Stage, int Sec,
+        std::size_t Stage,
+        std::size_t Sec,
         StatisticsType Variant,
         class MarsDict_t,
         class GeoDict_t,
@@ -31,7 +35,7 @@ struct StatisticsConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( statisticsApplicable(Stage, Sec, Variant) ) {
+        if constexpr ( statisticsApplicable<Stage, Sec, Variant>() ) {
             return &StatisticsOp<
                 Stage, Sec, Variant,
                 MarsDict_t,
@@ -44,8 +48,8 @@ struct StatisticsConceptInfo
             return nullptr;
         }
 
-        // Remove compiler warning
-        return nullptr;
+        // Avoid compile warnings
+        __builtin_unreachable();
     }
 
     template<auto Variant>
@@ -58,3 +62,5 @@ struct StatisticsConceptInfo
         );
     }
 };
+
+} // namespace metkit::mars2grib::backend::cnpts

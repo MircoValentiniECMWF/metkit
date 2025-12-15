@@ -6,12 +6,20 @@
 #include <cstdint>
 #include <iostream>
 
-#include "../concept_core.h"
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+
+namespace metkit::mars2grib::backend::cnpts {
+
+// ======================================================
+// NAME OF THE CONCEPT
+// ======================================================
+inline constexpr std::string_view statisticsName{"statistics"};
+
 
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class StatisticsType : int {
+enum class StatisticsType : std::size_t {
     Average = 0,
     Accumulation,
     Maximum,
@@ -85,3 +93,5 @@ constexpr std::string_view statisticsTypeName();
     DEF(StatisticsType::Default, "default");
 
 #undef DEF
+
+} // namespace metkit::mars2grib::backend::cnpts

@@ -5,9 +5,11 @@
 #include <string>
 #include <string_view>
 #include <algorithm>
-#include <exception>
 
 
+#include "eckit/types/Date.h"
+#include "eckit/types/Time.h"
+#include "eckit/types/DateTime.h"
 #include "eckit/exception/Exceptions.h"
 #include "eckit/log/Log.h"
 
@@ -17,7 +19,7 @@
 namespace metkit::mars2grib::backend::deductions {
 
 template<class MarsDict_t, class ParDict_t>
-long marsAnoffset(
+eckit::DateTime referenceDateTime(
     const MarsDict_t& mars, const ParDict_t& par){
 
     using metkit::mars2grib::utils::dict_traits::get_or_throw;
@@ -25,19 +27,21 @@ long marsAnoffset(
 
     try {
 
-        // Get the mars.anoffset
-        auto marsAnoffsetVal = get_or_throw<long>( mars, "anoffset" );
+       // TODO MIVAL: get as string and parse/normalize with metkit utilities
 
-        // TODO MIVAL: Validate
+       // Get the mars.date and mars.time
+       auto marsDate = get_or_throw<long>( mars, "date" );
 
-        return marsAnoffsetVal;
+       auto marsTime = get_or_throw<long>( mars, "time" );
+
+       return eckit::DateTime(marsDate, marsTime);
 
     } catch ( ... ) {
 
         // Rethrow nested exceptions
         std::throw_with_nested(
             Mars2GribDeductionException(
-                "Unable to get `anoffset` from Mars dictionary",
+                "Unable to get `date` and `time` from Mars dictionary to deduce `dateTime`",
                 Here()
             )
         );
