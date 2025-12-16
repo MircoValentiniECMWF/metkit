@@ -21,34 +21,18 @@ using metkit::mars2grib::utils::dict_traits::set_or_throw;
 
 namespace metkit::mars2grib::frontend {
 
-// TODO : Replace all calls to setPDT?
-inline void setPDT(eckit::LocalConfiguration& sections, const std::string& key, const std::string& value) ;
-inline void setPointInTime(eckit::LocalConfiguration& sections);
-inline void setSinceLastPostProcessingStep(eckit::LocalConfiguration& sections);
-inline void setFixedTimeRange(eckit::LocalConfiguration& sections, const std::string& length);
-inline void setTypeOfStatisticalProcessing(eckit::LocalConfiguration& sections,
-                                           const std::string& typeOfStatisticalProcessing);
-inline void setTypeOfLevel(eckit::LocalConfiguration& sections, const std::string& type);
-inline void setFixedLevel(eckit::LocalConfiguration& sections, const std::int64_t level);
-inline void setRecursiveDefault(eckit::LocalConfiguration& config, const std::string& key, const std::string& value);
-
-
 //============================ Recursive Setters =============================//
 
-template <typename T,
-          std::enable_if_t<!std::is_same_v<std::decay_t<T>, const char*>, int> = 0>
+template <typename T, std::enable_if_t<!std::is_same_v<std::decay_t<T>, const char*>, int> = 0>
 void setRecursive(eckit::LocalConfiguration&,
                   const std::string&,
                   T,
                   bool);
 
-template <typename T,
-          std::enable_if_t<!std::is_same_v<std::decay_t<T>, const char*>, int> = 0>
+template <typename T, std::enable_if_t<!std::is_same_v<std::decay_t<T>, const char*>, int> = 0>
 void setRecursive(eckit::LocalConfiguration&,
                   const std::string&,
                   T);
-
-
 
 inline void setRecursive(eckit::LocalConfiguration& config,
                          const std::string& key,
@@ -65,13 +49,12 @@ inline void setRecursive(eckit::LocalConfiguration& config,
     setRecursive(config, key, std::string{value}, false );
 }
 
-
-template <typename T,std::enable_if_t<!std::is_same_v<std::decay_t<T>, const char*>, int>>
+template <typename T, std::enable_if_t<!std::is_same_v<std::decay_t<T>, const char*>, int>>
 void setRecursive(eckit::LocalConfiguration& config, const std::string& key, T value ) {
     setRecursive(config, key, value, false);
 }
 
-template <typename T,std::enable_if_t<!std::is_same_v<std::decay_t<T>, const char*>, int>>
+template <typename T, std::enable_if_t<!std::is_same_v<std::decay_t<T>, const char*>, int>>
 void setRecursive(eckit::LocalConfiguration& config, const std::string& key, T value, bool ignoreIfAlreadySet) {
     const auto pos = key.find('.');
     if (pos == std::string::npos) {
@@ -89,7 +72,9 @@ void setRecursive(eckit::LocalConfiguration& config, const std::string& key, T v
     }
 }
 
-
+inline void setRecursiveDefault(eckit::LocalConfiguration& config, const std::string& key, const std::string& value) {
+    setRecursive(config, key, value, true);
+}
 
 //================================= Matchers =================================//
 
@@ -103,15 +88,12 @@ inline Range range(int first, int last) {
     return {first, last};
 }
 
-template <typename T>
-bool matchSingle(int x, const T& arg) {
-    if constexpr (std::is_same_v<T, Range>) {
-        return arg.contains(x);
-    }
-    else {
-        return arg == x;
-    }
-    __builtin_unreachable();
+inline bool matchSingle(int x, const Range& arg) {
+    return arg.contains(x);
+}
+
+inline bool matchSingle(int x, int y) {
+    return x == y;
 }
 
 template <typename... T>
@@ -119,14 +101,7 @@ bool matchAny(int value, T... arg) {
     return (matchSingle(value, arg) || ...);
 }
 
-
-inline void setRecursiveDefault(eckit::LocalConfiguration& config, const std::string& key, const std::string& value) {
-    setRecursive(config, key, value, true);
-}
-
 //============================= Special Setters ==============================//
-
-
 
 // TODO : Replace all calls to setPDT?
 inline void setPDT(eckit::LocalConfiguration& sections, const std::string& key, const std::string& value) {
@@ -162,7 +137,7 @@ inline void setTypeOfLevel(eckit::LocalConfiguration& sections, const std::strin
 }
 
 inline void setFixedLevel(eckit::LocalConfiguration& sections, const std::int64_t level) {
-    // TODO : Make sure level-configurator.type is set_or_throw?
+    // TODO : Make sure level-configurator.type is set?
     setRecursive(sections, "product-definition-section.level-configurator.fixed-level", level);
 }
 
