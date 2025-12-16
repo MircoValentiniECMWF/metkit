@@ -54,11 +54,11 @@ void ShapeOfTheEarthOp(
             // =============================================================
             // Logging
             LOG_DEBUG_LIB(LibMetkit)
-    std::cout << "[Concept ShapeOfTheEarth] Op called: "
-              << "Stage="   << Stage
-              << ", Section=" << Section
-              << ", Variant=" << std::string(shape_of_the_earthTypeName<Variant>())
-              << std::endl;
+                << "[Concept ShapeOfTheEarth] Op called: "
+                << "Stage="   << Stage
+                << ", Section=" << Section
+                << ", Variant=" << std::string(shape_of_the_earthTypeName<Variant>())
+                << std::endl;
 
             // Just do nothing for the moment
             return;

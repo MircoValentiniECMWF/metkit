@@ -29,18 +29,4 @@ template<
 >
 using Entry = std::pair<std::size_t, Fn<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>>;
 
-// ======================================================
-// Forward declaration of allocator
-// ======================================================
-template<
-    std::size_t Section,
-    std::size_t TemplateNumber,
-    class MarsDict_t,
-    class GeoDict_t,
-    class ParDict_t,
-    class OptDict_t,
-    class OutDict_t
->
-void allocateTemplateNumber(const MarsDict_t&, const GeoDict_t&, const ParDict_t&, const OptDict_t&, OutDict_t&);
-
-} // namespace
+} // namespace metkit::mars2grib::backend::sections

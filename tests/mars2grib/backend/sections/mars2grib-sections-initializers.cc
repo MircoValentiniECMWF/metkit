@@ -8,8 +8,15 @@
 #include "eckit/config/LocalConfiguration.h"
 
 #include "metkit/codes/api/CodesAPI.h"
-#include "metkit/mars2grib/backend/sections/section_registry.h"
 
+
+// dictionary traits
+#include "metkit/mars2grib/utils/dictionary_traits/dictionary_access_traits.h"
+#include "metkit/mars2grib/utils/dictionary_traits/dictaccess_codes_handle.h"
+#include "metkit/mars2grib/utils/dictionary_traits/dictaccess_eckit_configuration.h"
+
+// section registry
+#include "metkit/mars2grib/backend/sections/section_registry.h"
 
 int main(int argc, char** argv) {
 
