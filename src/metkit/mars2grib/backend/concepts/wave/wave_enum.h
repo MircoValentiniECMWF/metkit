@@ -19,7 +19,7 @@ inline constexpr std::string_view waveName{"wave"};
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class WaveType : int {
+enum class WaveType : std::size_t {
     Spectra = 0,
     Period,
     Default

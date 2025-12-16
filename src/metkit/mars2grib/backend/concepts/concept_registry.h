@@ -18,18 +18,18 @@
 #include "metkit/mars2grib/backend/concepts/analysis/analysis.h"
 #include "metkit/mars2grib/backend/concepts/destine/destine.h"
 #include "metkit/mars2grib/backend/concepts/ensemble/ensemble.h"
-#include "./level/level.h"
-#include "./statistics/statistics.h"
-#include "./wave/wave.h"
-#include "./forecast-time/forecast_time.h"
-#include "./representation/representation.h"
-#include "./generating-process/generating_process.h"
+#include "metkit/mars2grib/backend/concepts/level/level.h"
+#include "metkit/mars2grib/backend/concepts/statistics/statistics.h"
+#include "metkit/mars2grib/backend/concepts/wave/wave.h"
+#include "metkit/mars2grib/backend/concepts/forecast-time/forecast_time.h"
+#include "metkit/mars2grib/backend/concepts/representation/representation.h"
+#include "metkit/mars2grib/backend/concepts/generating-process/generating_process.h"
+#include "metkit/mars2grib/backend/concepts/shape-of-the-earth/shape_of_the_earth.h"
+#include "metkit/mars2grib/backend/concepts/packing/packing.h"
+#include "metkit/mars2grib/backend/concepts/satellite/satellite.h"
 
 
 #if 0
-#include "./satellite/satellite.h"
-#include "./shape-of-the-earth/shape_of_the_earth.h"
-#include "./packing/packing.h"
 #include "./composition/composition.h"
 #endif
 
@@ -135,8 +135,6 @@ make_concept_registry()
     RegisterVariants<GeneratingProcessConceptInfo, GeneratingProcessList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-#if 0
-
     RegisterVariants<ShapeOfTheEarthConceptInfo, ShapeOfTheEarthList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
@@ -145,6 +143,8 @@ make_concept_registry()
 
     RegisterVariants<SatelliteConceptInfo, SatelliteList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
+
+#if 0
 
 
 

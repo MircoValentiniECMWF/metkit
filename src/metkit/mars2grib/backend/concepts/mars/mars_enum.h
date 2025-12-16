@@ -19,7 +19,7 @@ inline constexpr std::string_view marsName{"mars"};
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class MarsType : int {
+enum class MarsType : std::size_t {
     Default = 0
 };
 

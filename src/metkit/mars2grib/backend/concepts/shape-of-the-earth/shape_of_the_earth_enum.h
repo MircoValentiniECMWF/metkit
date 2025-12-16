@@ -6,12 +6,19 @@
 #include <cstdint>
 #include <iostream>
 
-#include "../concept_core.h"
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+
+namespace metkit::mars2grib::backend::cnpts {
+
+// ======================================================
+// NAME OF THE CONCEPT
+// ======================================================
+inline constexpr std::string_view shapeOfTheEarthName{"shapeOfTheEarth"};
 
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class ShapeOfTheEarthType : int {
+enum class ShapeOfTheEarthType : std::size_t {
     Default = 0
 };
 
@@ -34,3 +41,5 @@ constexpr std::string_view shape_of_the_earthTypeName();
     DEF(ShapeOfTheEarthType::Default, "default");
 
 #undef DEF
+
+} // namespace metkit::mars2grib::backend::cnpts

@@ -19,7 +19,7 @@ inline constexpr std::string_view ensembleName{"ensemble"};
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class EnsembleType : int {
+enum class EnsembleType : std::size_t {
     Individual = 0,
     PerturbedParameters,
     RandomPatterns

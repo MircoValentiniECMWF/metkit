@@ -3,9 +3,14 @@
 #include <string>
 #include <string_view>
 
-#include "../concept_core.h"
-#include "packing_enum.h"
-#include "packing_encoding.h"
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+#include "metkit/mars2grib/backend/concepts/packing/packing_enum.h"
+#include "metkit/mars2grib/backend/concepts/packing/packing_encoding.h"
+
+// Exceptions
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
+
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // ConceptInfo
@@ -15,7 +20,8 @@ struct PackingConceptInfo
     static constexpr const char* name = "packing";
 
     template<
-        int Stage, int Sec,
+        std::size_t Stage,
+        std::size_t Section,
         PackingType Variant,
         class MarsDict_t,
         class GeoDict_t,
@@ -31,9 +37,9 @@ struct PackingConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( packingApplicable(Stage, Sec, Variant) ) {
+        if constexpr ( packingApplicable<Stage, Section, Variant>() ) {
             return &PackingOp<
-                Stage, Sec, Variant,
+                Stage, Section, Variant,
                 MarsDict_t,
                 GeoDict_t,
                 ParDict_t,
@@ -45,7 +51,8 @@ struct PackingConceptInfo
         }
 
         // Remove compiler warning
-        return nullptr;
+        __builtin_unreachable();
+
     }
 
     template<auto Variant>
@@ -58,3 +65,5 @@ struct PackingConceptInfo
         );
     }
 };
+
+} // namespace metkit::mars2grib::backend::cnpts

@@ -4,22 +4,34 @@
 #include <string_view>
 #include <iostream>
 
-#include "../concept_core.h"
-#include "shape_of_the_earth_enum.h"
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+#include "metkit/mars2grib/backend/concepts/shape-of-the-earth/shape_of_the_earth_enum.h"
+
+// Exceptions
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
+
+
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // DEFAULT APPLICABILITY (user will override manually)
 // ======================================================
-constexpr bool shape_of_the_earthApplicable(int Stage, int Section, ShapeOfTheEarthType Variant)
+template<
+    std::size_t Stage,
+    std::size_t Section,
+    ShapeOfTheEarthType Variant
+>
+constexpr bool shape_of_the_earthApplicable()
 {
-    return true;
+    return false;
 }
 
 // ======================================================
 // MAIN OPERATION
 // ======================================================
 template<
-    int Stage, int Section,
+    std::size_t Stage,
+    std::size_t Section,
     ShapeOfTheEarthType Variant,
     class MarsDict_t,
     class GeoDict_t,
@@ -27,17 +39,64 @@ template<
     class OptDict_t,
     class OutDict_t
 >
-uint8_t ShapeOfTheEarthOp(
+void ShapeOfTheEarthOp(
     const MarsDict_t&  mars,
     const GeoDict_t&   geo,
     const ParDict_t&   par,
     const OptDict_t&   opt,
     OutDict_t&         out)
 {
+
+    if constexpr ( shape_of_the_earthApplicable<Stage, Section, Variant>() ) {
+
+        try {
+
+            // =============================================================
+            // Logging
+            LOG_DEBUG_LIB(LibMetkit)
     std::cout << "[Concept ShapeOfTheEarth] Op called: "
               << "Stage="   << Stage
               << ", Section=" << Section
               << ", Variant=" << std::string(shape_of_the_earthTypeName<Variant>())
               << std::endl;
-    return 0;
+
+            // Just do nothing for the moment
+            return;
+
+        }
+        catch ( ... ){
+            // Rethrow nested exceptions
+            std::throw_with_nested(
+                Mars2GribConceptException(
+                    std::string( shapeOfTheEarthName ),
+                    std::string( shape_of_the_earthTypeName<Variant>() ),
+                    std::to_string(Stage),
+                    std::to_string(Section),
+                    "Unable to set `ensemble` concept...",
+                    Here()
+                )
+            );
+
+        }
+
+        // Successful operation
+        return;
+
+    } // if constexpr ( longrangeApplicable(Stage, Section, Variant) )
+
+    // Paranoid check. Should never arrive here
+    throw Mars2GribConceptException(
+            std::string( shapeOfTheEarthName ),
+            std::string( shape_of_the_earthTypeName<Variant>() ),
+            std::to_string(Stage),
+            std::to_string(Section),
+            "Concept called when not applicable...",
+            Here()
+        );
+
+    // Remove compiler warning
+    __builtin_unreachable();
+
 }
+
+} // namespace metkit::mars2grib::backend::cnpts

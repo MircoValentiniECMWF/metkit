@@ -3,19 +3,25 @@
 #include <string>
 #include <string_view>
 
-#include "../concept_core.h"
-#include "satellite_enum.h"
-#include "satellite_encoding.h"
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+#include "metkit/mars2grib/backend/concepts/satellite/satellite_enum.h"
+#include "metkit/mars2grib/backend/concepts/satellite/satellite_encoding.h"
+
+// Exceptions
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
+
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // ConceptInfo
 // ======================================================
 struct SatelliteConceptInfo
 {
-    static constexpr const char* name = "satellite";
+    static constexpr const char* name = satelliteName.data();
 
     template<
-        int Stage, int Sec,
+        std::size_t Stage,
+        std::size_t Section,
         SatelliteType Variant,
         class MarsDict_t,
         class GeoDict_t,
@@ -31,9 +37,9 @@ struct SatelliteConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( satelliteApplicable(Stage, Sec, Variant) ) {
+        if constexpr ( satelliteApplicable<Stage, Section, Variant>() ) {
             return &SatelliteOp<
-                Stage, Sec, Variant,
+                Stage, Section, Variant,
                 MarsDict_t,
                 GeoDict_t,
                 ParDict_t,
@@ -44,8 +50,9 @@ struct SatelliteConceptInfo
             return nullptr;
         }
 
-        // Remove compiler warning
-        return nullptr;
+        // Avoid compile warnings
+        __builtin_unreachable();
+
     }
 
     template<auto Variant>
@@ -58,3 +65,5 @@ struct SatelliteConceptInfo
         );
     }
 };
+
+} // namespace metkit::mars2grib::backend::cnpts

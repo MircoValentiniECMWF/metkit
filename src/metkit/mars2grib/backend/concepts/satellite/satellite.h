@@ -1,5 +1,5 @@
 #pragma once
 
-#include "satellite_enum.h"
-#include "satellite_encoding.h"
-#include "satellite_info.h"
+#include "metkit/mars2grib/backend/concepts/satellite/satellite_enum.h"
+#include "metkit/mars2grib/backend/concepts/satellite/satellite_encoding.h"
+#include "metkit/mars2grib/backend/concepts/satellite/satellite_info.h"
