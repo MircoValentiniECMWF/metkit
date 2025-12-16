@@ -11,6 +11,7 @@
 // Header only helpers for frozen encoder
 #include "metkit/mars2grib/backend/sections/sections_recipes.h"
 #include "metkit/mars2grib/backend/concepts/concept_registry.h"
+#include "metkit/mars2grib/backend/sections/section_registry.h"
 #include "metkit/mars2grib/utils/encoder_cfg.h"
 
 namespace metkit::mars2grib::backend {
@@ -27,8 +28,8 @@ template<
     class OptDict_t,
     class OutDict_t
 >
-inline std::array<std::array<std::vector<Fn<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>>, NUM_SECTIONS>, NUM_STAGES>
-make_callbacks( std::array<std::vector<std::pair<std::string_view,std::string_view>>, NUM_SECTIONS> conceptsArr )
+inline std::array<std::array<std::vector<Fn<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>>, NUM_SECTIONS>, NUM_STAGES+1>
+make_callbacks( std::array<std::vector<std::pair<std::string_view,std::string_view>>, NUM_SECTIONS> conceptsArr, const utils::EncoderCfg& cfg )
 {
 
     // NOTE FOR MAINTAINERS:
@@ -50,33 +51,47 @@ make_callbacks( std::array<std::vector<std::pair<std::string_view,std::string_vi
     // Do not simplify or refactor this section without verifying behavior
     // across all supported compilers and language modes.
     using metkit::mars2grib::backend::cnpts::concept_registry_instance;
+    using metkit::mars2grib::backend::sections::getTemplateFn;
 
     // Get the concept registry instance
     const auto& registry = concept_registry_instance<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>();
 
     // Prepare callback table
-    std::array<std::array<std::vector<Fn<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>>, NUM_SECTIONS>, NUM_STAGES> table;
+    std::array<std::array<std::vector<Fn<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>>, NUM_SECTIONS>, NUM_STAGES+1> table;
+
+    // Initialization of callback table
+    for ( uint16_t sid=0; sid<NUM_SECTIONS; ++sid ) {
+        for ( std::size_t stage=0; stage<NUM_STAGES+1; ++stage ) {
+            table[stage][sid].clear();
+        }
+    }
 
     // Populate callback table
     for ( uint16_t sid=0; sid<NUM_SECTIONS; ++sid ) {
-      for ( const auto& cs : conceptsArr[sid] ) {
 
-          auto it = registry.map.find(cs);
-          if ( it == registry.map.end()) {
-              std::cout << "ERROR: Concept not found: " << cs.first << " / " << cs.second << std::endl;
-              throw std::runtime_error("Concept not found in registry");
-          }
-          auto fnTable = it->second;
+        // Section allocators
+        long templateNumber = cfg.sec_[sid].templateNumber_;
+        auto Fcn = getTemplateFn<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>( sid, templateNumber );
+        table[0][sid].push_back(Fcn);
 
-          // Append functions to callbacks if relevant
-          for (std::size_t stage = 0; stage < NUM_STAGES; ++stage) {
-              auto f = fnTable[stage][sid];
-              std::cout << "Register Callbacks :: Stage: " << stage << ", Section: " << sid << ", isValid: " << (f ? "true" : "false") << std::endl;
-              if (f) {
-                  table[stage][sid].push_back(f);
-              }
-          }
-      }
+        for ( const auto& cs : conceptsArr[sid] ) {
+
+            auto it = registry.map.find(cs);
+            if ( it == registry.map.end()) {
+                std::cout << "ERROR: Concept not found: " << cs.first << " / " << cs.second << std::endl;
+                throw std::runtime_error("Concept not found in registry");
+            }
+            auto fnTable = it->second;
+
+            // Append functions to callbacks if relevant
+            for (std::size_t stage = 1; stage < NUM_STAGES+1; ++stage) {
+                auto f = fnTable[stage-1][sid];
+                std::cout << "Register Callbacks :: Stage: " << stage << ", Section: " << sid << ", isValid: " << (f ? "true" : "false") << std::endl;
+                if (f) {
+                    table[stage][sid].push_back(f);
+                }
+            }
+        }
     }
 
     return table;
@@ -100,14 +115,14 @@ public:
     // Definition of callbacks container
     using Callbacks = std::array<
         std::array<std::vector<Fn_t>, NUM_SECTIONS>,  // sections
-        NUM_STAGES                                    // stages
+        NUM_STAGES+1                                  // stages
     >;
 
 public:
 
     explicit GenericFrozenEncoder(const utils::EncoderCfg& cfg)
         : cfg_{cfg},callbacks_{make_callbacks<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>(
-              make_section_concepts(cfg))}
+              make_section_concepts(cfg),cfg)}
     {}
 
     void debug_print() const {
@@ -188,7 +203,7 @@ public:
         sample.safeReload();
 #endif
 
-        for (std::size_t stage = 0; stage < NUM_STAGES; ++stage) {
+        for (std::size_t stage = 0; stage < NUM_STAGES+1; ++stage) {
             const auto& stageVecs = callbacks_[stage];
             std::cout << std::endl << " + Stage: " << stage << std::endl;
             for (std::size_t secIdx = 0; secIdx < NUM_SECTIONS; ++secIdx) {
