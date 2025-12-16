@@ -12,6 +12,7 @@
 
 #include <cstdint>
 #include "eckit/config/LocalConfiguration.h"
+#include "metkit/mars2grib/frontend/common.h"
 
 namespace metkit::mars2grib::frontend {
 

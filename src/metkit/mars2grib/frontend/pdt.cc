@@ -14,10 +14,10 @@
 #include <unordered_map>
 #include "eckit/config/LocalConfiguration.h"
 #include "eckit/exception/Exceptions.h"
-#include "metkit/mars2grib/utils/dictaccess_eckit_configuration.h"
-#include "metkit/mars2grib/utils/generic_dict_utils.h"
+#include "metkit/mars2grib/utils/dictionary_traits/dictaccess_eckit_configuration.h"
+#include "metkit/mars2grib/utils/dictionary_traits/dictionary_access_traits.h"
 
-using metkit::mars2grib::utils::get;
+using metkit::mars2grib::utils::dict_traits::get_opt;
 
 namespace metkit::mars2grib::frontend {
 
@@ -300,13 +300,13 @@ struct std::hash<metkit::mars2grib::frontend::PDTCat> {
 namespace metkit::mars2grib::frontend {
 
 PDTCat parsePDTCat(const eckit::LocalConfiguration& pdt) {
-    return {parseTimeExtent(*get<std::string>(pdt, "timeExtent")),
-            parseTimeFormat(*get<std::string>(pdt, "timeFormat")),
-            parseSpatialExtent(*get<std::string>(pdt, "spatialExtent")),
-            parseProcessType(*get<std::string>(pdt, "processType")),
-            parseProcessSubType(*get<std::string>(pdt, "processSubType")),
-            parseProductCategory(*get<std::string>(pdt, "productCategory")),
-            parseProductSubCategory(*get<std::string>(pdt, "productSubCategory"))};
+    return {parseTimeExtent(*get_opt<std::string>(pdt, "timeExtent")),
+            parseTimeFormat(*get_opt<std::string>(pdt, "timeFormat")),
+            parseSpatialExtent(*get_opt<std::string>(pdt, "spatialExtent")),
+            parseProcessType(*get_opt<std::string>(pdt, "processType")),
+            parseProcessSubType(*get_opt<std::string>(pdt, "processSubType")),
+            parseProductCategory(*get_opt<std::string>(pdt, "productCategory")),
+            parseProductSubCategory(*get_opt<std::string>(pdt, "productSubCategory"))};
 }
 
 using DecisionMap = std::unordered_map<PDTCat, std::int64_t>;

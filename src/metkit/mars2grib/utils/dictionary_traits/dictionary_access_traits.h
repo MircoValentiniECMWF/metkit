@@ -203,4 +203,4 @@ inline void set_or_ignore(Dict& dict, std::string_view key, const T& value) {
 }
 
 
-} // namespace metkit::mars2grib::utils::dict
+} // namespace metkit::mars2grib::utils::dict_traits

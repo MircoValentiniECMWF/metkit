@@ -13,17 +13,17 @@
 #include "statistical.h"
 
 #include "eckit/config/LocalConfiguration.h"
-#include "metkit/mars2grib/utils/dictaccess_eckit_configuration.h"
-#include "metkit/mars2grib/utils/generic_dict_utils.h"
+#include "metkit/mars2grib/utils/dictionary_traits/dictaccess_eckit_configuration.h"
+#include "metkit/mars2grib/utils/dictionary_traits/dictionary_access_traits.h"
 
 #include "common.h"
 
-using metkit::mars2grib::utils::get;
+using metkit::mars2grib::utils::dict_traits::get_opt;
 
 namespace metkit::mars2grib::frontend {
 
 void setStatistical(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& sections) {
-    const auto param = *get<std::int64_t>(mars, "param");
+    const auto param = *get_opt<std::int64_t>(mars, "param");
     if (matchAny(param, 8, 9, 20, 44, 45, 47, 50, 57, 58, range(142, 147), 169, range(175, 182), 189, range(195, 197),
                  205, range(208, 213), 228, 239, 240, 3062, 3099, range(162100, 162113), range(222001, 222256), 228021,
                  228022, 228129, 228130, 228143, 228144, 228216, 228228, 228251, range(231001, 231003), 231005, 231010,

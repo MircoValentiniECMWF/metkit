@@ -14,8 +14,8 @@
 #include "eckit/config/LocalConfiguration.h"
 #include "eckit/exception/Exceptions.h"
 #include "eckit/log/CodeLocation.h"
-#include "metkit/mars2grib/utils/dictaccess_eckit_configuration.h"
-#include "metkit/mars2grib/utils/generic_dict_utils.h"
+#include "metkit/mars2grib/utils/dictionary_traits/dictaccess_eckit_configuration.h"
+#include "metkit/mars2grib/utils/dictionary_traits/dictionary_access_traits.h"
 
 #include "common.h"
 #include "level.h"
@@ -23,8 +23,8 @@
 #include "statistical.h"
 #include "time.h"
 
-using metkit::mars2grib::utils::get;
-using metkit::mars2grib::utils::has;
+using metkit::mars2grib::utils::dict_traits::get_opt;
+using metkit::mars2grib::utils::dict_traits::has;
 
 namespace metkit::mars2grib::frontend {
 
@@ -71,7 +71,7 @@ void setDefaults(eckit::LocalConfiguration& sections) {
 //========================= Grid Definition Section ==========================//
 
 void setGridDefinitionSection(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& sections) {
-    if (const auto& grid = get<std::string>(mars, "grid"); grid.has_value()) {
+    if (const auto& grid = get_opt<std::string>(mars, "grid"); grid.has_value()) {
         switch ((*grid)[0]) {
             case 'F':
             case 'O':
@@ -104,7 +104,7 @@ void setGridDefinitionSection(const eckit::LocalConfiguration& mars, eckit::Loca
 
 void setLocalUseSection(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& sections) {
     if (has(mars, "anoffset")) {
-        if (get<std::string>(mars, "class") == "d1") {
+        if (get_opt<std::string>(mars, "class") == "d1") {
             setRecursive(sections, "local-use-section.template-number", 1036);
         }
         else {  // class != d1
@@ -112,7 +112,7 @@ void setLocalUseSection(const eckit::LocalConfiguration& mars, eckit::LocalConfi
         }
     }
     else {  // anoffset missing
-        if (get<std::string>(mars, "class") == "d1") {
+        if (get_opt<std::string>(mars, "class") == "d1") {
             setRecursive(sections, "local-use-section.template-number", 1001);
         }
         else {  // class != d1
@@ -121,7 +121,7 @@ void setLocalUseSection(const eckit::LocalConfiguration& mars, eckit::LocalConfi
             }
             else {  // method missing
                 if (has(mars, "channel")) {
-                    const auto& type = get<std::string>(mars, "type").value_or("None");
+                    const auto& type = get_opt<std::string>(mars, "type").value_or("None");
                     if (type == "em" || type == "es") {
                         setRecursive(sections, "local-use-section.template-number", 14);
                     }
@@ -140,7 +140,7 @@ void setLocalUseSection(const eckit::LocalConfiguration& mars, eckit::LocalConfi
 //=============================== Process Type ===============================//
 
 void setProcessType(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& sections) {
-    if (*get<std::string>(mars, "levtype") == "al") {
+    if (*get_opt<std::string>(mars, "levtype") == "al") {
         // Large ensemble
         if (!has(mars, "number")) {
             throw eckit::Exception{"Expected mars keyword \"number\"", Here()};
@@ -164,7 +164,7 @@ void setProcessType(const eckit::LocalConfiguration& mars, eckit::LocalConfigura
             if (has(mars, "hdate")) {
                 throw eckit::Exception{"unexpected mars keyword \"hdate\"", Here()};
             }
-            if (const auto& type = get<std::string>(mars, "type"); type && (*type == "em" || *type == "es")) {
+            if (const auto& type = get_opt<std::string>(mars, "type"); type && (*type == "em" || *type == "es")) {
                 // Derived ensemble forecast
                 setPDT(sections, "processType", "derivedForecast");
                 setPDT(sections, "processSubType", "ensemble");
@@ -178,7 +178,7 @@ void setProcessType(const eckit::LocalConfiguration& mars, eckit::LocalConfigura
 //================================ Horizontal ================================//
 
 bool matchChemical(const eckit::LocalConfiguration& mars) {
-    return (has(mars, "chem") && !has(mars, "wavelength") && *get<std::int64_t>(mars, "chem") < 900);
+    return (has(mars, "chem") && !has(mars, "wavelength") && *get_opt<std::int64_t>(mars, "chem") < 900);
 }
 
 void setChemical(eckit::LocalConfiguration& sections) {
@@ -188,9 +188,9 @@ void setChemical(eckit::LocalConfiguration& sections) {
 
 // These rules had to be ported manually as they don't follow the same pattern as most level/time/statistical rules
 bool setMiscHorizontal(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& sections) {
-    const auto param = *get<std::int64_t>(mars, "param");
+    const auto param = *get_opt<std::int64_t>(mars, "param");
 
-    if (*get<std::string>(mars, "levtype") == "sfc") {
+    if (*get_opt<std::string>(mars, "levtype") == "sfc") {
         if (matchChemical(mars)) {
             if (matchAny(param, range(228080, 228082), range(233032, 233035), range(235062, 235064))) {
                 setTypeOfLevel(sections, "surface");
@@ -235,9 +235,9 @@ bool setMiscHorizontal(const eckit::LocalConfiguration& mars, eckit::LocalConfig
         return false;  // Not a satellite field
     }
 
-    if (const auto& type = get<std::string>(mars, "type"); type && (*type == "em" || *type == "es")) {
+    if (const auto& type = get_opt<std::string>(mars, "type"); type && (*type == "em" || *type == "es")) {
         // Derived ensemble forecast satellite
-        if (const auto param = *get<std::int64_t>(mars, "param"); matchAny(param, 194)) {
+        if (const auto param = *get_opt<std::int64_t>(mars, "param"); matchAny(param, 194)) {
             setTypeOfLevel(sections, "surface");
             setPointInTime(sections);
             return true;
@@ -245,7 +245,7 @@ bool setMiscHorizontal(const eckit::LocalConfiguration& mars, eckit::LocalConfig
     }
     else {
         // Single satellite
-        if (const auto param = *get<std::int64_t>(mars, "param"); matchAny(param, range(260510, 260512))) {
+        if (const auto param = *get_opt<std::int64_t>(mars, "param"); matchAny(param, range(260510, 260512))) {
             setPointInTime(sections);
             setRecursiveDefault(sections, "product-definition-section.satellite-configurator.type", "default");
             setPDT(sections, "productCategory", "satellite");
@@ -268,7 +268,7 @@ void setHorizontal(const eckit::LocalConfiguration& mars, eckit::LocalConfigurat
 //======================= Data Representation Section ========================//
 
 void setDataRepresentationSection(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& sections) {
-    const auto& packing = get<std::string>(mars, "packing");
+    const auto& packing = get_opt<std::string>(mars, "packing");
     if (!packing) {
         throw eckit::Exception{"Mars keyword \"packing\" is missing!", Here()};
     }
@@ -299,7 +299,7 @@ void setAll(const eckit::LocalConfiguration& mars, eckit::LocalConfiguration& se
 
     setRecursive(sections, "product-definition-section.template-number",
                  templateNumberFromPDT(
-                     *get<eckit::LocalConfiguration>(sections, "product-definition-section.product-categories")));
+                     *get_opt<eckit::LocalConfiguration>(sections, "product-definition-section.product-categories")));
 }
 
 eckit::LocalConfiguration buildEncoderConfig(const eckit::LocalConfiguration& mars) {

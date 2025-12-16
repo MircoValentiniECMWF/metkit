@@ -335,4 +335,4 @@ M2G_DEFINE_LOCALCONFIG_DICT_GET_OPT(std::vector<eckit::LocalConfiguration>,
 M2G_DEFINE_LOCALCONFIG_DICT_SET_OR_THROW(std::vector<eckit::LocalConfiguration>, set)
 M2G_DEFINE_LOCALCONFIG_DICT_SET_OR_IGNORE(std::vector<eckit::LocalConfiguration>, set)
 
-} // namespace metkit::mars2grib::utils::dict
+} // namespace metkit::mars2grib::utils::dict_traits
