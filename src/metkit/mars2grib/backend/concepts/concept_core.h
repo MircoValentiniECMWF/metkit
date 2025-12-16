@@ -10,6 +10,7 @@
 #include "eckit/log/Log.h"
 
 #include "metkit/config/LibMetkit.h"
+
 namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================

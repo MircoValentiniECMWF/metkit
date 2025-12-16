@@ -21,7 +21,7 @@ inline constexpr std::string_view forecastTimeName{"forecastTime"};
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class ForecastTimeType : int {
+enum class ForecastTimeType : std::size_t {
     Default = 0
 };
 

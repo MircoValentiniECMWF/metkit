@@ -23,19 +23,14 @@
 #include "./wave/wave.h"
 #include "./forecast-time/forecast_time.h"
 #include "./representation/representation.h"
-
-#if 0
-
-
 #include "./generating-process/generating_process.h"
 
 
-
+#if 0
 #include "./satellite/satellite.h"
 #include "./shape-of-the-earth/shape_of_the_earth.h"
 #include "./packing/packing.h"
 #include "./composition/composition.h"
-
 #endif
 
 namespace metkit::mars2grib::backend::cnpts {
@@ -137,14 +132,10 @@ make_concept_registry()
     RegisterVariants<RepresentationConceptInfo, RepresentationList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-#if 0
-
-
     RegisterVariants<GeneratingProcessConceptInfo, GeneratingProcessList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-
-
+#if 0
 
     RegisterVariants<ShapeOfTheEarthConceptInfo, ShapeOfTheEarthList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);

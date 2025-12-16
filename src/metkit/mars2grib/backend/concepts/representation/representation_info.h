@@ -19,7 +19,8 @@ struct RepresentationConceptInfo
     static constexpr const char* name = representationName.data();
 
     template<
-        int Stage, int Sec,
+        std::size_t Stage,
+        std::size_t Section,
         RepresentationType Variant,
         class MarsDict_t,
         class GeoDict_t,
@@ -35,9 +36,9 @@ struct RepresentationConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( representationApplicable<Stage, Sec, Variant>() ) {
+        if constexpr ( representationApplicable<Stage, Section, Variant>() ) {
             return &RepresentationOp<
-                Stage, Sec, Variant,
+                Stage, Section, Variant,
                 MarsDict_t,
                 GeoDict_t,
                 ParDict_t,

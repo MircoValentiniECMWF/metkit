@@ -3,10 +3,15 @@
 #include <string>
 #include <string_view>
 
-#include "../concept_core.h"
-#include "generating_process_enum.h"
-#include "generating_process_encoding.h"
+// Core concept includes
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+#include "metkit/mars2grib/backend/concepts/generating-process/generating_process_enum.h"
+#include "metkit/mars2grib/backend/concepts/generating-process/generating_process_encoding.h"
 
+// Exceptions
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
+
+namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 // ConceptInfo
 // ======================================================
@@ -15,7 +20,8 @@ struct GeneratingProcessConceptInfo
     static constexpr const char* name = "generatingProcess";
 
     template<
-        int Stage, int Sec,
+        std::size_t Stage,
+        std::size_t Sec,
         GeneratingProcessType Variant,
         class MarsDict_t,
         class GeoDict_t,
@@ -31,7 +37,7 @@ struct GeneratingProcessConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( generating_processApplicable(Stage, Sec, Variant) ) {
+        if constexpr ( generating_processApplicable<Stage, Sec, Variant>() ) {
             return &GeneratingProcessOp<
                 Stage, Sec, Variant,
                 MarsDict_t,
@@ -58,3 +64,5 @@ struct GeneratingProcessConceptInfo
         );
     }
 };
+
+} // namespace metkit::mars2grib::backend::cnpts

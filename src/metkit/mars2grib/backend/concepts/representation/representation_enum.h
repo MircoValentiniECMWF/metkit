@@ -20,7 +20,7 @@ inline constexpr std::string_view representationName{"representation"};
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class RepresentationType : int {
+enum class RepresentationType : std::size_t {
     Latlon = 0,
     RegularGaussian,
     ReducedGaussian,
