@@ -11,7 +11,7 @@
 // Header only helpers for frozen encoder
 #include "metkit/mars2grib/backend/sections/sections_recipes.h"
 #include "metkit/mars2grib/backend/concepts/concept_registry.h"
-#include "metkit/mars2grib/backend/sections/section_registry.h"
+#include "metkit/mars2grib/backend/sections/initializers/section_registry.h"
 #include "metkit/mars2grib/utils/encoder_cfg.h"
 
 namespace metkit::mars2grib::backend {
@@ -51,7 +51,7 @@ make_callbacks( std::array<std::vector<std::pair<std::string_view,std::string_vi
     // Do not simplify or refactor this section without verifying behavior
     // across all supported compilers and language modes.
     using metkit::mars2grib::backend::cnpts::concept_registry_instance;
-    using metkit::mars2grib::backend::sections::getTemplateFn;
+    using metkit::mars2grib::backend::sections::initializers::getTemplateFn;
 
     // Get the concept registry instance
     const auto& registry = concept_registry_instance<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>();

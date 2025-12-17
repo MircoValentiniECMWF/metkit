@@ -2,15 +2,15 @@
 
 #include <cstddef>
 
-#include "section_initializer_core.h"
-#include "section_initializer_0.h"
-#include "section_initializer_1.h"
-#include "section_initializer_2.h"
-#include "section_initializer_3.h"
-#include "section_initializer_4.h"
-#include "section_initializer_5.h"
+#include "metkit/mars2grib/backend/sections/initializers/section_initializer_core.h"
+#include "metkit/mars2grib/backend/sections/initializers/section_initializer_0.h"
+#include "metkit/mars2grib/backend/sections/initializers/section_initializer_1.h"
+#include "metkit/mars2grib/backend/sections/initializers/section_initializer_2.h"
+#include "metkit/mars2grib/backend/sections/initializers/section_initializer_3.h"
+#include "metkit/mars2grib/backend/sections/initializers/section_initializer_4.h"
+#include "metkit/mars2grib/backend/sections/initializers/section_initializer_5.h"
 
-namespace metkit::mars2grib::backend::sections {
+namespace metkit::mars2grib::backend::sections::initializers {
 
 // ======================================================
 // Section registries (sorted by TemplateNumber)
@@ -165,4 +165,4 @@ getTemplateFn(std::size_t section, std::size_t templ)
     }
 }
 
-} // namespace
+} // namespace metkit::mars2grib::backend::sections::initializers

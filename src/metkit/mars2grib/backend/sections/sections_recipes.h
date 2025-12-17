@@ -72,83 +72,83 @@ std::pair<uint16_t, ConceptList> Sec4Recipes[] = {
 //
 // Base products
     // TEMPLATE 4.0, Analysis or forecast at a horizontal level or in a horizontal layer at a point in time
-    { 0,   {{"generatingProcess"}, {"referenceTime"}, {"pointInTime"}, {"level"},     {"param"} } },
+    { 0,   {{"generatingProcess"}, {"pointInTime"}, {"level"},     {"param"} } },
     // TEMPLATE 4.1, Individual ensemble forecast, control and perturbed, at a horizontal level or in a horizontal layer at a point in time
-    { 1,   {{"generatingProcess"}, {"referenceTime"}, {"pointInTime"}, {"level"},     {"param"}, {"ensemble"} } },
+    { 1,   {{"generatingProcess"}, {"pointInTime"}, {"level"},     {"param"}, {"ensemble", "individual"} } },
     // TEMPLATE 4.2, Derived forecast based on all ensemble members at a horizontal level or in a horizontal layer at a point in time
-    { 2,   {{"generatingProcess"}, {"referenceTime"}, {"pointInTime"}, {"level"},     {"param"}, {"derived"} } },
+    { 2,   {{"generatingProcess"}, {"pointInTime"}, {"level"},     {"param"}, {"derived"} } },
 //
 // Base Time statistics
     // TEMPLATE 4.8, Average, accumulation, and/or extreme values or other statistically processed values at a horizontal level or in a horizontal layer in a continuous or non-continuous time interval
-    { 8,   {{"generatingProcess"}, {"referenceTime"}, {"statistics"},  {"level"},     {"param"} } },
+    { 8,   {{"generatingProcess"}, {"statistics"},  {"level"},     {"param"} } },
     // TEMPLATE 4.11, Individual ensemble forecast, control and perturbed, at a horizontal level or in a horizontal layer in a continuous or non-continuous time interval
-    { 11,  {{"generatingProcess"}, {"referenceTime"}, {"statistics"},  {"level"},     {"param"}, {"ensemble"}} },
+    { 11,  {{"generatingProcess"}, {"statistics"},  {"level"},     {"param"}, {"ensemble", "individual"}} },
     // TEMPLATE 4.12, Derived forecasts based on all ensemble members at a horizontal level or in a horizontal layer in a continuous or non-continuous time interval
-    { 12,  {{"generatingProcess"}, {"referenceTime"}, {"statistics"},  {"level"},     {"param"}, {"derived"}} },
+    { 12,  {{"generatingProcess"}, {"statistics"},  {"level"},     {"param"}, {"derived"}} },
 //
 // Satellite data
     // TEMPLATE 4.32, Analysis or forecast at a horizontal level or in a horizontal layer at a point in time for simulated (synthetic) satellite data
-    { 32,  {{"generatingProcess"}, {"referenceTime"}, {"pointInTime"}, {"satellite"}, {"param"} } },
+    { 32,  {{"generatingProcess"}, {"pointInTime"}, {"satellite"}, {"param"} } },
     // TEMPLATE 4.33, Individual ensemble forecast, control and perturbed, at a horizontal level or in a horizontal layer at a point in time for simulated (synthetic) satellite data
-    { 33,  {{"generatingProcess"}, {"referenceTime"}, {"pointInTime"}, {"satellite"}, {"param"}, {"ensemble"} } },
+    { 33,  {{"generatingProcess"},{"pointInTime"}, {"satellite"}, {"param"}, {"ensemble", "individual"} } },
 //
 // Chemical compositions
     // TEMPLATE 4.40, Analysis or forecast at a horizontal level or in a horizontal layer at a point in time for atmospheric chemical constituents
-    { 40,  {{"generatingProcess"}, {"referenceTime"}, {"pointInTime"}, {"level"},     {"composition","chem"},    {"param"} } },
+    { 40,  {{"generatingProcess"}, {"pointInTime"}, {"level"},     {"composition","chemical"},    {"param"} } },
     // TEMPLATE 4.41, Individual ensemble forecast, control and perturbed, at a horizontal level or in a horizontal layer at a point in time for atmospheric chemical constituents
-    { 41,  {{"generatingProcess"}, {"referenceTime"}, {"pointInTime"}, {"level"},     {"composition","chem"},    {"param"}, {"ensemble"} } },
+    { 41,  {{"generatingProcess"}, {"pointInTime"}, {"level"},     {"composition","chemical"},    {"param"}, {"ensemble", "individual"} } },
     // TEMPLATE 4.42, Average, accumulation and/or extreme values or other statistically processed values at a horizontal level or in a horizontal layer in a continuous or non-continuous time interval for atmospheric chemical constituents
-    { 42,  {{"generatingProcess"}, {"referenceTime"}, {"statistics"},  {"level"},     {"composition","chem"},    {"param"} } },
+    { 42,  {{"generatingProcess"}, {"statistics"},  {"level"},     {"composition","chemical"},    {"param"} } },
     // TEMPLATE 4.43, Individual ensemble forecast, control and perturbed, at a horizontal level or in a horizontal layer in a continuous or non-continuous time interval for atmospheric chemical constituents
-    { 43,  {{"generatingProcess"}, {"referenceTime"}, {"statistics"},  {"level"},     {"composition","chem"},    {"param"}, {"ensemble"} } },
+    { 43,  {{"generatingProcess"}, {"statistics"},  {"level"},     {"composition","chemical"},    {"param"}, {"ensemble", "individual"} } },
 //
 // Aerosols properties
     // TEMPLATE 4.50, Analysis or forecast at a horizontal level or in a horizontal layer at a point in time for aerosol
-    { 50,  {{"generatingProcess"}, {"referenceTime"}, {"pointInTime"}, {"level"},     {"composition","aerosol"}, {"param"} } },
+    { 50,  {{"generatingProcess"}, {"pointInTime"}, {"level"},     {"composition","aerosol"}, {"param"} } },
     // TEMPLATE 4.45, Individual ensemble forecast, control and perturbed, at a horizontal level or in a horizontal layer at a point in time for aerosol
-    { 45,  {{"generatingProcess"}, {"referenceTime"}, {"pointInTime"}, {"level"},     {"composition","aerosol"}, {"param"}, {"ensemble"} } },
+    { 45,  {{"generatingProcess"}, {"pointInTime"}, {"level"},     {"composition","aerosol"}, {"param"}, {"ensemble", "individual"} } },
     // TEMPLATE 4.46, Average, accumulation, and/or extreme values or other statistically processed values at a horizontal level or in a horizontal layer in a continuous or non-continuous time interval for aerosol
-    { 46,  {{"generatingProcess"}, {"referenceTime"}, {"statistics"},  {"level"},     {"composition","aerosol"}, {"param"} } },
+    { 46,  {{"generatingProcess"}, {"statistics"},  {"level"},     {"composition","aerosol"}, {"param"} } },
     // TEMPLATE 4.85, individual ensemble forecast, control and perturbed, at a horizontal level or in a horizontal layer in a continuous or non-continuous time interval for aerosol
-    { 85,  {{"generatingProcess"}, {"referenceTime"}, {"statistics"},  {"level"},     {"composition","aerosol"}, {"param"}, {"ensemble"} } },
+    { 85,  {{"generatingProcess"}, {"statistics"},  {"level"},     {"composition","aerosol"}, {"param"}, {"ensemble", "individual"} } },
 //
 // Aerosol/Optical properties
     // TEMPLATE 4.48, Analysis or forecast at a horizontal level or in a horizontal layer at a point in time for optical properties of aerosol
-    { 48,  {{"generatingProcess"}, {"referenceTime"}, {"pointInTime"}, {"level"},     {"composition","aerosolOptical"}, {"param"} } },
+    { 48,  {{"generatingProcess"}, {"pointInTime"}, {"level"},     {"composition","aerosolOptical"}, {"param"} } },
     // TEMPLATE 4.49, Individual ensemble forecast, control and perturbed, at a horizontal level or in a horizontal layer at a point in time for optical properties of aerosol
-    { 49,  {{"generatingProcess"}, {"referenceTime"}, {"statistics"},  {"level"},     {"composition","aerosolOptical"}, {"param"}, {"ensemble"} } },
+    { 49,  {{"generatingProcess"},{"statistics"},  {"level"},     {"composition","aerosolOptical"}, {"param"}, {"ensemble", "individual"} } },
 //
 // ?? Reforecast I don't have any idea what these are
     // TEMPLATE 4.60, Individual ensemble re-forecast, control and perturbed, at a horizontal level or in a horizontal layer at a point in time
-    { 60,  {{"generatingProcess"}, {"referenceTime"}, {"pointInTime"}, {"level"},     {"param"}, {"reforecast"}} },
+    { 60,  {{"generatingProcess"}, {"referenceTime","reforecast"}, {"pointInTime"}, {"level"},     {"param"}} },
     // TEMPLATE 4.61, Individual ensemble re-forecast, control and perturbed, at a horizontal level or in a horizontal layer in a continuous or non-continuous time interval
-    { 61,  {{"generatingProcess"}, {"referenceTime"}, {"statistics"},  {"level"},     {"param"}, {"reforecast"}} },
+    { 61,  {{"generatingProcess"}, {"referenceTime","reforecast"}, {"statistics"},  {"level"},     {"param"}} },
 //
 // Chemical source
     // TEMPLATE 4.76, Analysis or forecast at a horizontal level or in a horizontal layer at a point in time for atmospheric chemical constituents with source/sink
-    { 76,  {{"generatingProcess"}, {"referenceTime"}, {"pointInTime"}, {"level"},     {"composition","chemicalSource"},    {"param"} } },
+    { 76,  {{"generatingProcess"}, {"pointInTime"}, {"level"},     {"composition","chemicalSource"},    {"param"} } },
     // TEMPLATE 4.77, Individual ensemble forecast, control and perturbed, at a horizontal level or in a horizontal layer at a point in time for atmospheric chemical constituents with a source/sink
-    { 77,  {{"generatingProcess"}, {"referenceTime"}, {"pointInTime"}, {"level"},     {"composition","chemicalSource"},    {"param"}, {"ensemble"} } },
+    { 77,  {{"generatingProcess"}, {"pointInTime"}, {"level"},     {"composition","chemicalSource"},    {"param"}, {"ensemble", "individual"} } },
     // TEMPLATE 4.78, Average, accumulation and/or extreme values or other statistically processed values at a horizontal level or in a horizontal layer in a continuous or non-continuous time interval for atmospheric chemical constituents with source/sink
-    { 78,  {{"generatingProcess"}, {"referenceTime"}, {"statistics"},  {"level"},     {"composition","chemicalSource"},    {"param"} } },
+    { 78,  {{"generatingProcess"},{"statistics"},  {"level"},     {"composition","chemicalSource"},    {"param"} } },
     //  TEMPLATE 4.79, Individual ensemble forecast, control and perturbed, at a horizontal level or in a horizontal layer in a continuous or non-continuous time interval for atmospheric chemical constituents with source/sink
-    { 79,  {{"generatingProcess"}, {"referenceTime"}, {"statistics"},  {"level"},     {"composition","chemicalSource"},    {"param"}, {"ensemble"} } },
+    { 79,  {{"generatingProcess"}, {"statistics"},  {"level"},     {"composition","chemicalSource"},    {"param"}, {"ensemble", "individual"} } },
 //
 // Waves
     // TEMPLATE 4.99, Analysis or forecast at a horizontal level or in a horizontal layer at a point in time for wave 2D spectra with explicit list of frequencies and directions
-    { 99,  {{"generatingProcess"}, {"referenceTime"}, {"pointInTime"}, {"param"},     {"wave", "Spectra"}} },
+    { 99,  {{"generatingProcess"}, {"pointInTime"}, {"param"},     {"wave", "spectra"}} },
     // TEMPLATE 4.100, Individual ensemble forecast, control and perturbed, at a horizontal level or in a horizontal layer at a point in time for wave 2D spectra with explicit list of frequencies and directions
-    { 100, {{"generatingProcess"}, {"referenceTime"}, {"pointInTime"}, {"param"},     {"wave", "Spectra"}, {"ensemble"} } },
+    { 100, {{"generatingProcess"}, {"pointInTime"}, {"param"},     {"wave", "spectra"}, {"ensemble", "individual"} } },
     // TEMPLATE 4.103, Analysis or forecast at a horizontal level or in a horizontal layer at a point in time for waves selected by period range.
-    { 103, {{"generatingProcess"}, {"referenceTime"}, {"pointInTime"}, {"param"},     {"wave", "Period"}} },
+    { 103, {{"generatingProcess"},{"pointInTime"}, {"param"},     {"wave", "period"}} },
     // TEMPLATE 4.104, Individual ensemble forecast, control and perturbed, at a horizontal level or in a horizontal layer at a point in time for waves selected by period range.
-    { 104, {{"generatingProcess"}, {"referenceTime"}, {"pointInTime"}, {"param"},     {"wave", "Period"},  {"ensemble"} } },
+    { 104, {{"generatingProcess"}, {"pointInTime"}, {"param"},     {"wave", "period"},  {"ensemble", "individual"} } },
 //
 // ??? -> I don't have any idea of what these could be
     // TEMPLATE 4.142, Individual ensemble reforecast, control and perturbed, at a horizontal level or in a horizontal layer at a point in time for wave 2D spectra with explicit list of frequencies and directions
-    { 142, {{"generatingProcess"}, {"referenceTime"}, {"pointInTime"}, {"param"},     {"ensemble", "perturbedParameters"} } },
+    { 142, {{"generatingProcess"}, {"pointInTime"}, {"param"},     {"ensemble", "perturbedParameters"} } },
     // TEMPLATE 4.143, Random fields used in an ensemble forecast, at a horizontal level or in a horizontal layer at a point in time
-    { 143, {{"generatingProcess"}, {"referenceTime"}, {"pointInTime"}, {"param"},     {"ensemble", "randomPatterns"} } }
+    { 143, {{"generatingProcess"}, {"pointInTime"}, {"param"},     {"ensemble", "randomPatterns"} } }
 };
 
 

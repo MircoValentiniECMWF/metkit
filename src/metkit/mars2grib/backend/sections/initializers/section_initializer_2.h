@@ -2,10 +2,9 @@
 
 #include <iostream>
 
-// #include "metkit/mars2grib/utils/dictionary_traits/dictaccess_codes_handle.h"
-#include "metkit/mars2grib/backend/sections/section_initializer_core.h"
+#include "metkit/mars2grib/backend/sections/initializers/section_initializer_core.h"
 
-namespace metkit::mars2grib::backend::sections {
+namespace metkit::mars2grib::backend::sections::initializers {
 
 template<
     std::size_t SectionNumber,
@@ -52,4 +51,4 @@ void allocateTemplateNumber2(
 
 }
 
-} // namespace
+} // namespace metkit::mars2grib::backend::sections::initializers

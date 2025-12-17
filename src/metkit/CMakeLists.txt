@@ -194,21 +194,21 @@ if ( HAVE_MARS2GRIB )
         mars2grib/backend/LocalConfigurationFrozenEncoder.cc
         mars2grib/backend/LocalConfigurationFrozenEncoder.h
         mars2grib/backend/GenericFrozenEncoder.h
-
-        mars2grib/frontend/encoderConfig.cc
-        mars2grib/frontend/encoderConfig.h
-        mars2grib/frontend/common.h
-        mars2grib/frontend/pdt.cc
-        mars2grib/frontend/pdt.h
-        mars2grib/frontend/level.cc
-        mars2grib/frontend/level.h
-        mars2grib/frontend/time.cc
-        mars2grib/frontend/time.h
-        mars2grib/frontend/statistical.cc
-        mars2grib/frontend/statistical.h
-
-        mars2grib/api/Grib2Encoder.cc
-        mars2grib/api/Grib2Encoder.h
+#
+#        mars2grib/frontend/encoderConfig.cc
+#        mars2grib/frontend/encoderConfig.h
+#        mars2grib/frontend/common.h
+#        mars2grib/frontend/pdt.cc
+#        mars2grib/frontend/pdt.h
+#        mars2grib/frontend/level.cc
+#        mars2grib/frontend/level.h
+#        mars2grib/frontend/time.cc
+#        mars2grib/frontend/time.h
+#        mars2grib/frontend/statistical.cc
+#        mars2grib/frontend/statistical.h
+#
+#        mars2grib/api/Grib2Encoder.cc
+#        mars2grib/api/Grib2Encoder.h
     )
     list( APPEND grib_libs )
 endif()

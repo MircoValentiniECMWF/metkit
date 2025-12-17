@@ -10,7 +10,6 @@
 #include "metkit/mars2grib/backend/sections/sections_recipes.h"
 
 
-
 namespace metkit::mars2grib::utils {
 
 // Namespaces shortcuts
@@ -78,6 +77,17 @@ make_section_concepts(const EncoderCfg& cfg){
     }
     return conceptsArr;
 };
+
+// void print_encoder_cfg(const EncoderCfg& cfg){
+// 
+// for ( uint32_t i=0; i<NUM_SECTIONS; ++i ) {
+//     std::cout << "Section " << i << " (template " << cfg.sec_[i].templateNumber_ << "):" << std::endl;
+//     for ( const auto& [key, type] : cfg.sec_[i].concepts_ ) {
+//         std::cout << "  Concept: " << key << ", Type: " << type << std::endl;
+//     }
+//   }
+// 
+// };
 
 
 } // namespace metkit::mars2grib::utils

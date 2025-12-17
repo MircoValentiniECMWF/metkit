@@ -3,15 +3,30 @@ add_subdirectory(concepts)
 
 
 ecbuild_add_test(
-  TARGET
-      test-encoder
+    TARGET
+        test-encoder
 
-  SOURCES
-      test_encoder.cc
+    SOURCES
+        test_encoder.cc
 
-  NO_AS_NEEDED
+    NO_AS_NEEDED
 
-  LIBS
-      eckit
-      metkit
+    LIBS
+        eckit
+        metkit
+)
+
+
+ecbuild_add_test(
+    TARGET
+        mars2grib-check-configuration-modifier
+
+    SOURCES
+        mars2grib-check-configuration-modifier.cc
+
+    NO_AS_NEEDED
+
+    LIBS
+        eckit
+        metkit
 )

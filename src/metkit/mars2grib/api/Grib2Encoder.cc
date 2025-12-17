@@ -33,6 +33,7 @@ std::unique_ptr<metkit::codes::CodesHandle> Grib2Encoder::encode(const eckit::Lo
     const auto conf = frontend::buildEncoderConfig(mars);
 
     auto sample = metkit::codes::codesHandleFromSample( "GRIB2" );
+
 #if 0
     auto sample = backend::LocalConfigurationFrozenEncoder{conf}.encode(mars, geom, misc, opts_);
 
@@ -51,7 +52,8 @@ std::unique_ptr<metkit::codes::CodesHandle> Grib2Encoder::encode(const eckit::Lo
     sample->set("values", values);
 #endif
 
-    return sample;
+
+    return {};
 }
 
 std::unique_ptr<metkit::codes::CodesHandle> Grib2Encoder::encode(const eckit::LocalConfiguration& mars,
