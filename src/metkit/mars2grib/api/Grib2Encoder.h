@@ -31,8 +31,8 @@ public:
     std::unique_ptr<metkit::codes::CodesHandle> encode(const eckit::LocalConfiguration& mars, const eckit::LocalConfiguration& misc, const eckit::LocalConfiguration& geom, const std::vector<double>& values);
     std::unique_ptr<metkit::codes::CodesHandle> encode(const eckit::LocalConfiguration& mars, const eckit::LocalConfiguration& misc, const eckit::LocalConfiguration& geom, const std::vector<float>& values);
 
-    std::unique_ptr<metkit::codes::CodesHandle> encode(const eckit::LocalConfiguration& mars, const eckit::LocalConfiguration& misc, const eckit::LocalConfiguration& geom, double* values, size_t length);
-    std::unique_ptr<metkit::codes::CodesHandle> encode(const eckit::LocalConfiguration& mars, const eckit::LocalConfiguration& misc, const eckit::LocalConfiguration& geom, float* values, size_t length);
+    std::unique_ptr<metkit::codes::CodesHandle> encode(const eckit::LocalConfiguration& mars, const eckit::LocalConfiguration& misc, const eckit::LocalConfiguration& geom, const double* values, size_t length);
+    std::unique_ptr<metkit::codes::CodesHandle> encode(const eckit::LocalConfiguration& mars, const eckit::LocalConfiguration& misc, const eckit::LocalConfiguration& geom, const float* values, size_t length);
 
     // TODO : variants of encode without geom?
     // TODO : variants of encode without values?

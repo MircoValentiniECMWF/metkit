@@ -20,7 +20,6 @@
 #include "metkit/mars2grib/utils/dictionary_traits/dictionary_access_traits.h"
 
 using metkit::mars2grib::utils::dict_traits::get_opt;
-using metkit::mars2grib::utils::dict_traits::get_or_throw;
 
 namespace metkit::mars2grib {
 
@@ -35,8 +34,8 @@ std::unique_ptr<metkit::codes::CodesHandle> Grib2Encoder::encode(const eckit::Lo
 
     auto sample = backend::LocalConfigurationFrozenEncoder{conf}.encode(mars, geom, misc, opts_);
 
-    auto bitmapPresent = get_or_throw<std::int64_t>(misc, "number-of-missing-values") > 0;
-    auto missingValue  = get_opt<double>(misc, "value-of-missing-values").value_or(std::numeric_limits<double>::max());
+    auto bitmapPresent = get_opt<bool>(misc, "bitmapPresent").value_or(false);
+    auto missingValue  = get_opt<double>(misc, "missingValue").value_or(std::numeric_limits<double>::max());
 
     sample->set("bitmapPresent", bitmapPresent);
     if (bitmapPresent) {
@@ -63,14 +62,14 @@ std::unique_ptr<metkit::codes::CodesHandle> Grib2Encoder::encode(const eckit::Lo
 std::unique_ptr<metkit::codes::CodesHandle> Grib2Encoder::encode(const eckit::LocalConfiguration& mars,
                                                                  const eckit::LocalConfiguration& misc,
                                                                  const eckit::LocalConfiguration& geom,
-                                                                 double* values, size_t length) {
+                                                                 const double* values, size_t length) {
     return encode(mars, misc, geom, std::vector<double>{values, values + length});
 }
 
 std::unique_ptr<metkit::codes::CodesHandle> Grib2Encoder::encode(const eckit::LocalConfiguration& mars,
                                                                  const eckit::LocalConfiguration& misc,
                                                                  const eckit::LocalConfiguration& geom,
-                                                                 float* values, size_t length) {
+                                                                 const float* values, size_t length) {
     return encode(mars, misc, geom, std::vector<float>{values, values + length});
 }
 
