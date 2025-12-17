@@ -23,6 +23,19 @@ public:
 
 
 // ==========================================================
+// Rules exception (no metadata)
+// ==========================================================
+class Mars2GribRulesException :
+        public eckit::Exception,
+        public std::nested_exception {
+public:
+    Mars2GribRulesException( std::string reason,
+                             const eckit::CodeLocation& loc = eckit::CodeLocation())
+        : eckit::Exception(reason, loc)
+    {}
+};
+
+// ==========================================================
 // Dict Layer Exception
 // ==========================================================
 class Mars2GribDictException :

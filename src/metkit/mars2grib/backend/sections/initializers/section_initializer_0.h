@@ -2,9 +2,9 @@
 
 #include <iostream>
 
-#include "section_initializer_core.h"
+#include "metkit/mars2grib/backend/sections/initializers/section_initializer_core.h"
 
-namespace metkit::mars2grib::backend::sections {
+namespace metkit::mars2grib::backend::sections::initializers {
 
 template<
     std::size_t SectionNumber,
@@ -22,4 +22,4 @@ void allocateTemplateNumber0(
     std::cout << "Allocating Section 0, Template " << TemplateNumber << std::endl;
 }
 
-} // namespace
+} // namespace metkit::mars2grib::backend::sections::initializers

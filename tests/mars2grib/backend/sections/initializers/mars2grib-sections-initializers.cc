@@ -16,13 +16,13 @@
 #include "metkit/mars2grib/utils/dictionary_traits/dictaccess_eckit_configuration.h"
 
 // section registry
-#include "metkit/mars2grib/backend/sections/section_registry.h"
+#include "metkit/mars2grib/backend/sections/initializers/section_registry.h"
 
 int main(int argc, char** argv) {
 
 
-    using metkit::mars2grib::backend::sections::Fn;
-    using metkit::mars2grib::backend::sections::getTemplateFn;
+    using metkit::mars2grib::backend::sections::initializers::Fn;
+    using metkit::mars2grib::backend::sections::initializers::getTemplateFn;
 
    const std::string yaml(R"json({
 step: 12,

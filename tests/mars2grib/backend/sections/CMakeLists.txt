@@ -1,27 +1,16 @@
-ecbuild_add_test(
-  TARGET
-      mars2grib-sections-recipe-resolver
+add_subdirectory(initializers)
+add_subdirectory(recipes)
 
-  SOURCES
-      mars2grib-sections-recipe-resolver.cc
-
-  NO_AS_NEEDED
-
-  LIBS
-      eckit
-      metkit
-)
-
-ecbuild_add_test(
-  TARGET
-      mars2grib-sections-initializers
-
-  SOURCES
-      mars2grib-sections-initializers.cc
-
-  NO_AS_NEEDED
-
-  LIBS
-      eckit
-      metkit
-)
+# ecbuild_add_test(
+#   TARGET
+#       mars2grib-sections-recipe-resolver
+# 
+#   SOURCES
+#       mars2grib-sections-recipe-resolver.cc
+# 
+#   NO_AS_NEEDED
+# 
+#   LIBS
+#       eckit
+#       metkit
+# )

@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <utility>
 
-namespace metkit::mars2grib::backend::sections {
+namespace metkit::mars2grib::backend::sections::initializers {
 
 // ======================================================
 // Function pointer type
@@ -29,4 +29,4 @@ template<
 >
 using Entry = std::pair<std::size_t, Fn<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>>;
 
-} // namespace metkit::mars2grib::backend::sections
+} // namespace metkit::mars2grib::backend::sections::initializers
