@@ -13,7 +13,7 @@
 #include "eckit/config/LocalConfiguration.h"
 #include "eckit/exception/Exceptions.h"
 #include "metkit/codes/api/CodesAPI.h"
-#include "metkit/mars2grib/backend/LocalConfigurationFrozenEncoder.h"
+// #include "metkit/mars2grib/backend/LocalConfigurationFrozenEncoder.h"
 #include "metkit/mars2grib/frontend/encoderConfig.h"
 
 #include "metkit/mars2grib/utils/dictionary_traits/dictaccess_eckit_configuration.h"
@@ -32,6 +32,8 @@ std::unique_ptr<metkit::codes::CodesHandle> Grib2Encoder::encode(const eckit::Lo
                                                                  const std::vector<double>& values) {
     const auto conf = frontend::buildEncoderConfig(mars);
 
+    auto sample = metkit::codes::codesHandleFromSample( "GRIB2" );
+#if 0
     auto sample = backend::LocalConfigurationFrozenEncoder{conf}.encode(mars, geom, misc, opts_);
 
     auto bitmapPresent = get_opt<bool>(misc, "bitmapPresent").value_or(false);
@@ -47,6 +49,7 @@ std::unique_ptr<metkit::codes::CodesHandle> Grib2Encoder::encode(const eckit::Lo
     }
 
     sample->set("values", values);
+#endif
 
     return sample;
 }
