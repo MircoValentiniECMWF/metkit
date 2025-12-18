@@ -12,7 +12,6 @@
 #include "eckit/config/LocalConfiguration.h"
 
 // Header only helpers for frozen encoder
-#include "metkit/mars2grib/backend/sections/sections_recipes.h"
 #include "metkit/mars2grib/backend/concepts/concept_registry.h"
 #include "metkit/mars2grib/backend/sections/initializers/section_registry.h"
 #include "metkit/mars2grib/backend/encoderConfiguration.h"

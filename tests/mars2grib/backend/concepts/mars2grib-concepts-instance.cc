@@ -1,15 +1,12 @@
 #include <iostream>
 #include <string>
 
-#include "metkit/mars2grib/backend/concepts/concept_registry.h"
-
 #include <eckit/config/LocalConfiguration.h>
-#include <metkit/codes/api/CodesAPI.h>
 
-// dictionary traits
-#include "metkit/mars2grib/utils/dictionary_traits/dictionary_access_traits.h"
+#include <metkit/codes/api/CodesAPI.h>
 #include "metkit/mars2grib/utils/dictionary_traits/dictaccess_codes_handle.h"
 #include "metkit/mars2grib/utils/dictionary_traits/dictaccess_eckit_configuration.h"
+#include "metkit/mars2grib/backend/concepts/concept_registry.h"
 
 int main()
 {

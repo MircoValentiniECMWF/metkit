@@ -12,26 +12,19 @@
 #include <sstream>
 #include <unordered_set>
 #include <vector>
+
 #include "eckit/config/LocalConfiguration.h"
 #include "eckit/config/YAMLConfiguration.h"
-
-
 #include "eckit/exception/Exceptions.h"
 #include "eckit/filesystem/LocalPathName.h"
 #include "eckit/filesystem/PathName.h"
 
 #include "metkit/codes/api/CodesAPI.h"
-
-
-#include "metkit/mars2grib/backend/encoderConfiguration.h"
-#include "metkit/mars2grib/utils/mars2grib-exception.h"
-
-#include "metkit/mars2grib/utils/dictionary_traits/dictionary_access_traits.h"
 #include "metkit/mars2grib/utils/dictionary_traits/dictaccess_codes_handle.h"
 #include "metkit/mars2grib/utils/dictionary_traits/dictaccess_eckit_configuration.h"
 
 #include "metkit/mars2grib/backend/SpecializedEncoder.h"
-
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
 
 int main(int argc, char** argv) {
 

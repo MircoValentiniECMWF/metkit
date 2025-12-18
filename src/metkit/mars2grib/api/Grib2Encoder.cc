@@ -10,18 +10,19 @@
 
 #include "Grib2Encoder.h"
 #include <limits>
+#include <iostream>
 #include "eckit/config/LocalConfiguration.h"
 #include "eckit/exception/Exceptions.h"
 #include "metkit/codes/api/CodesAPI.h"
 #include "metkit/mars2grib/frontend/encoderConfig.h"
 
+#include "metkit/mars2grib/utils/dictionary_traits/dictaccess_codes_handle.h"
 #include "metkit/mars2grib/utils/dictionary_traits/dictaccess_eckit_configuration.h"
-#include "metkit/mars2grib/utils/dictionary_traits/dictionary_access_traits.h"
 
 #include "metkit/mars2grib/backend/SpecializedEncoder.h"
 #include "metkit/mars2grib/utils/mars2grib-exception.h"
 
-using metkit::mars2grib::utils::dict_traits::get_opt;
+
 
 
 
@@ -35,13 +36,15 @@ std::unique_ptr<metkit::codes::CodesHandle> Grib2Encoder::encode(const eckit::Lo
                                                                  const eckit::LocalConfiguration& geom,
                                                                  const std::vector<double>& values) {
 
+    // The encoder is fully specialized here in place
     using encoder = metkit::mars2grib::backend::SpecializedEncoder<
-                    eckit::LocalConfiguration,
-                    eckit::LocalConfiguration,
-                    eckit::LocalConfiguration,
-                    eckit::LocalConfiguration,
-                    metkit::codes::CodesHandle
->
+                        eckit::LocalConfiguration,
+                        eckit::LocalConfiguration,
+                        eckit::LocalConfiguration,
+                        eckit::LocalConfiguration,
+                        metkit::codes::CodesHandle>;
+    using metkit::mars2grib::utils::dict_traits::get_opt;
+    using metkit::mars2grib::utils::exceptions::printExceptionStack;
 
 
     try {
@@ -65,8 +68,14 @@ std::unique_ptr<metkit::codes::CodesHandle> Grib2Encoder::encode(const eckit::Lo
 
         return {sample};
     }
-    catch {
+    catch ( const std::exception& e ){
         // TODO: do not rethrow through the API boundaries
+        printExceptionStack(e, std::cerr);
+        return nullptr;
+    }
+    catch ( ... ) {
+        std::cerr << "Unknown exception caught!" << std::endl;
+        return nullptr;
     }
 
 }

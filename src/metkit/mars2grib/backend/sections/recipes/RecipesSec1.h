@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "metkit/mars2grib/backend/sections/recipes/RecipesCore.h"

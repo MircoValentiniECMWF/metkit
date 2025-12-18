@@ -1,4 +1,3 @@
-
 #pragma once
 
 // Datatype to define a recipe
