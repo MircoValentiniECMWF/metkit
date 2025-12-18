@@ -28,6 +28,36 @@
 
 namespace metkit::mars2grib {
 
+namespace impl {
+
+std::unique_ptr<metkit::codes::CodesHandle> setValues(
+    const eckit::LocalConfiguration& misc,
+    const std::vector<double>& values,
+    std::unique_ptr<metkit::codes::CodesHandle> handle ){
+
+    using metkit::mars2grib::utils::dict_traits::get_opt;
+
+    auto bitmapPresent = get_opt<bool>(misc, "bitmapPresent").value_or(false);
+    auto missingValue  = get_opt<double>(misc, "missingValue").value_or(std::numeric_limits<double>::max());
+
+    handle->set("bitmapPresent", bitmapPresent);
+    if (bitmapPresent) {
+        handle->set("missingValue", missingValue);
+    }
+
+    if (get_opt<std::int64_t>(misc, "values-scale-factor").value_or(1.0) != 1.0) {
+        throw eckit::NotImplemented{"Handling scale factor is not implemented!", Here()};
+    }
+
+    handle->set("values", values);
+
+    return handle;
+};
+
+}  // namespace impl
+
+
+
 Grib2Encoder::Grib2Encoder() : opts_{} {}
 Grib2Encoder::Grib2Encoder(const eckit::LocalConfiguration& opts) : opts_{opts} {}
 
@@ -48,25 +78,15 @@ std::unique_ptr<metkit::codes::CodesHandle> Grib2Encoder::encode(const eckit::Lo
 
 
     try {
+        // Frontend
         const auto conf = frontend::buildEncoderConfig(mars);
 
+        // Backend
         auto sample = encoder{conf}.encode(mars, geom, misc, opts_);
 
-        auto bitmapPresent = get_opt<bool>(misc, "bitmapPresent").value_or(false);
-        auto missingValue  = get_opt<double>(misc, "missingValue").value_or(std::numeric_limits<double>::max());
+        // Values
+        return impl::setValues( misc, values, std::move(sample) );
 
-        sample->set("bitmapPresent", bitmapPresent);
-        if (bitmapPresent) {
-            sample->set("missingValue", missingValue);
-        }
-
-        if (get_opt<std::int64_t>(misc, "values-scale-factor").value_or(1.0) != 1.0) {
-            throw eckit::NotImplemented{"Handling scale factor is not implemented!", Here()};
-        }
-
-        sample->set("values", values);
-
-        return sample;
     }
     catch ( const std::exception& e ){
         // TODO: do not rethrow through the API boundaries
