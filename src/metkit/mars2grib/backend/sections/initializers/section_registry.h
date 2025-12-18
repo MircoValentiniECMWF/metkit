@@ -10,6 +10,8 @@
 #include "metkit/mars2grib/backend/sections/initializers/section_initializer_4.h"
 #include "metkit/mars2grib/backend/sections/initializers/section_initializer_5.h"
 
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
+
 namespace metkit::mars2grib::backend::sections::initializers {
 
 // ======================================================
@@ -154,14 +156,29 @@ template<
 Fn<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>
 getSectionInitializerFn(std::size_t section, std::size_t templ)
 {
-    switch (section) {
-        case 0: return lookup(Sec0Reg<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>, templ);
-        case 1: return lookup(Sec1Reg<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>, templ);
-        case 2: return lookup(Sec2Reg<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>, templ);
-        case 3: return lookup(Sec3Reg<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>, templ);
-        case 4: return lookup(Sec4Reg<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>, templ);
-        case 5: return lookup(Sec5Reg<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>, templ);
-        default: return nullptr;
+    using metkit::mars2grib::utils::exceptions::Mars2GribGenericException;
+
+    try {
+        switch (section) {
+            case 0: return lookup(Sec0Reg<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>, templ);
+            case 1: return lookup(Sec1Reg<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>, templ);
+            case 2: return lookup(Sec2Reg<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>, templ);
+            case 3: return lookup(Sec3Reg<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>, templ);
+            case 4: return lookup(Sec4Reg<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>, templ);
+            case 5: return lookup(Sec5Reg<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>, templ);
+            default: return nullptr;
+        }
+    }
+    catch ( ... ) {
+        std::throw_with_nested(
+            Mars2GribGenericException(
+                "Error getting section initializer function for section "
+                + std::to_string(section)
+                + " template "
+                + std::to_string(templ),
+                Here()
+            )
+        );
     }
 }
 

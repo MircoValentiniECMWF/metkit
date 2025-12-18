@@ -455,7 +455,6 @@ makeEncoderCallbacks(const EncoderCfg& cfg)
             >();
 
         CallbackTbl callbacks;
-        std::cout << "Concept Registry..." << std::endl;
 
         // -----------------------------------------------------------------------------------------
         // Build callbacks directly from EncoderCfg

@@ -4,6 +4,8 @@
 
 #include "metkit/mars2grib/backend/sections/initializers/section_initializer_core.h"
 
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
+
 namespace metkit::mars2grib::backend::sections::initializers {
 
 template<
@@ -18,8 +20,7 @@ template<
 void allocateTemplateNumber0(
     const MarsDict_t& mars, const GeoDict_t& geo, const ParDict_t& par, const OptDict_t& opt, OutDict_t& out )
 {
-    // Section 0: no-op
-    std::cout << "Allocating Section 0, Template " << TemplateNumber << std::endl;
+    // No-op for section 0 --> To be removed
 }
 
 } // namespace metkit::mars2grib::backend::sections::initializers
