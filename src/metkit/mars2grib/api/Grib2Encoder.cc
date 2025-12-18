@@ -13,13 +13,17 @@
 #include "eckit/config/LocalConfiguration.h"
 #include "eckit/exception/Exceptions.h"
 #include "metkit/codes/api/CodesAPI.h"
-// #include "metkit/mars2grib/backend/LocalConfigurationFrozenEncoder.h"
 #include "metkit/mars2grib/frontend/encoderConfig.h"
 
 #include "metkit/mars2grib/utils/dictionary_traits/dictaccess_eckit_configuration.h"
 #include "metkit/mars2grib/utils/dictionary_traits/dictionary_access_traits.h"
 
+#include "metkit/mars2grib/backend/SpecializedEncoder.h"
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
+
 using metkit::mars2grib::utils::dict_traits::get_opt;
+
+            >
 
 namespace metkit::mars2grib {
 
@@ -30,30 +34,39 @@ std::unique_ptr<metkit::codes::CodesHandle> Grib2Encoder::encode(const eckit::Lo
                                                                  const eckit::LocalConfiguration& misc,
                                                                  const eckit::LocalConfiguration& geom,
                                                                  const std::vector<double>& values) {
-    const auto conf = frontend::buildEncoderConfig(mars);
 
-    auto sample = metkit::codes::codesHandleFromSample( "GRIB2" );
+    using encoder = metkit::mars2grib::backend::SpecializedEncoder<
+                    eckit::LocalConfiguration,
+                    eckit::LocalConfiguration,
+                    eckit::LocalConfiguration,
+                    eckit::LocalConfiguration,
+                    metkit::codes::CodesHandle
 
-#if 0
-    auto sample = backend::LocalConfigurationFrozenEncoder{conf}.encode(mars, geom, misc, opts_);
+    try {
+        const auto conf = frontend::buildEncoderConfig(mars);
 
-    auto bitmapPresent = get_opt<bool>(misc, "bitmapPresent").value_or(false);
-    auto missingValue  = get_opt<double>(misc, "missingValue").value_or(std::numeric_limits<double>::max());
+        auto sample = encoder{conf}.encode(mars, geom, misc, opts_);
 
-    sample->set("bitmapPresent", bitmapPresent);
-    if (bitmapPresent) {
-        sample->set("missingValue", missingValue);
+        auto bitmapPresent = get_opt<bool>(misc, "bitmapPresent").value_or(false);
+        auto missingValue  = get_opt<double>(misc, "missingValue").value_or(std::numeric_limits<double>::max());
+
+        sample->set("bitmapPresent", bitmapPresent);
+        if (bitmapPresent) {
+            sample->set("missingValue", missingValue);
+        }
+
+        if (get_opt<std::int64_t>(misc, "values-scale-factor").value_or(1.0) != 1.0) {
+            throw eckit::NotImplemented{"Handling scale factor is not implemented!", Here()};
+        }
+
+        sample->set("values", values);
+
+        return {sample};
+    }
+    catch {
+        // TODO: do not rethrow through the API boundaries
     }
 
-    if (get_opt<std::int64_t>(misc, "values-scale-factor").value_or(1.0) != 1.0) {
-        throw eckit::NotImplemented{"Handling scale factor is not implemented!", Here()};
-    }
-
-    sample->set("values", values);
-#endif
-
-
-    return {};
 }
 
 std::unique_ptr<metkit::codes::CodesHandle> Grib2Encoder::encode(const eckit::LocalConfiguration& mars,
