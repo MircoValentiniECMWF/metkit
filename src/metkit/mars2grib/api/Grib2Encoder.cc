@@ -66,7 +66,7 @@ std::unique_ptr<metkit::codes::CodesHandle> Grib2Encoder::encode(const eckit::Lo
 
         sample->set("values", values);
 
-        return {sample};
+        return sample;
     }
     catch ( const std::exception& e ){
         // TODO: do not rethrow through the API boundaries
