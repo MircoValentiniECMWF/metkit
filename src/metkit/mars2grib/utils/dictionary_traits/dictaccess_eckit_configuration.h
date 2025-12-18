@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sstream>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -8,6 +9,7 @@
 #include <cstdint>
 #include <exception>
 #include <stdexcept>
+#include <memory>
 
 #include "eckit/config/LocalConfiguration.h"
 
@@ -183,6 +185,47 @@ constexpr std::string_view type_name<std::vector<eckit::LocalConfiguration>>() {
 namespace metkit::mars2grib::utils::dict_traits {
 
 using std::operator""s;
+
+
+
+// -----------------------------------------------------------------------------
+// to_json
+// -----------------------------------------------------------------------------
+template <>
+struct DictToJsonTraits<eckit::LocalConfiguration> {
+
+    static std::string to_json(const eckit::LocalConfiguration& cfg) noexcept(true){
+        try {
+            std::ostringstream os;
+            os << cfg;
+            return os.str();
+        } catch (...) {
+            return "[to_json failed for eckit::LocalConfiguration]";
+        }
+    }
+};
+
+// -----------------------------------------------------------------------------
+// DictCreateFromSample / Clone / NeedsChecks
+// -----------------------------------------------------------------------------
+template <>
+struct DictTraits<eckit::LocalConfiguration> {
+
+    static constexpr bool support_checks = false;
+
+    static std::unique_ptr<eckit::LocalConfiguration>
+    make_from_sample_or_throw(std::string_view name) {
+
+        auto cfg = std::make_unique<eckit::LocalConfiguration>();
+        cfg->set("SampleName", std::string(name));
+        return cfg;
+    }
+
+    static std::unique_ptr<eckit::LocalConfiguration>
+    clone_or_throw(const eckit::LocalConfiguration& cfg) {
+        return std::make_unique<eckit::LocalConfiguration>(cfg);
+    }
+};
 
 // -----------------------------------------------------------------------------
 // DictHas

@@ -1,0 +1,131 @@
+#pragma once
+
+#include <array>
+#include <cstdint>
+#include <optional>
+#include <string_view>
+#include <utility>
+#include <vector>
+#include <stdexcept>
+#include <memory>
+
+#include "eckit/config/LocalConfiguration.h"
+
+// Header only helpers for frozen encoder
+#include "metkit/mars2grib/backend/sections/sections_recipes.h"
+#include "metkit/mars2grib/backend/concepts/concept_registry.h"
+#include "metkit/mars2grib/backend/sections/initializers/section_registry.h"
+#include "metkit/mars2grib/backend/encoderConfiguration.h"
+
+namespace metkit::mars2grib::backend {
+
+using metkit::mars2grib::backend::cnpts::Fn;
+using metkit::mars2grib::backend::cnpts::NUM_SECTIONS;
+using metkit::mars2grib::backend::cnpts::NUM_STAGES;
+using metkit::mars2grib::backend::config::makeEncoderConfiguration;
+using metkit::mars2grib::backend::config::EncoderCfg;
+using metkit::mars2grib::backend::config::makeEncoderCallbacks;
+
+
+// This is an generic encoder fully templated on all the dictionaries
+template<
+    class MarsDict_t,
+    class GeoDict_t,
+    class ParDict_t,
+    class OptDict_t,
+    class OutDict_t
+>
+class SpecializedEncoder
+{
+public:
+
+    // Definition of a callback
+    using Setter_t = Fn<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>;
+
+    // Definition of callbacks container
+    using ConceptSettersTable = std::array<
+        std::array<std::vector<Setter_t>, NUM_SECTIONS>,  // sections
+        NUM_STAGES+1                                      // stages
+    >;
+
+public:
+
+
+    explicit SpecializedEncoder(const config::EncoderCfg& cfg):
+        cfg_{cfg},
+        settersTable_{makeEncoderCallbacks<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>(cfg)}
+    {}
+
+    explicit SpecializedEncoder(const eckit::LocalConfiguration& cfg):
+        SpecializedEncoder<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>(
+            makeEncoderConfiguration(cfg))
+    {}
+
+    SpecializedEncoder(const SpecializedEncoder&) = delete;
+    SpecializedEncoder& operator=(const SpecializedEncoder&) = delete;
+
+    SpecializedEncoder(SpecializedEncoder&&) = delete;
+    SpecializedEncoder& operator=(SpecializedEncoder&&) = delete;
+
+    ~SpecializedEncoder() = default;
+
+    // =================================================================
+    // Encode ALL STAGES
+    // =================================================================
+    std::unique_ptr<OutDict_t>  encode( const MarsDict_t& mars,
+                                        const GeoDict_t&  geo,
+                                        const ParDict_t&  par,
+                                        const OptDict_t&  opt ) const
+    {
+
+        using metkit::mars2grib::utils::dict_traits::dict_to_json;
+        using metkit::mars2grib::utils::dict_traits::make_from_sample_or_throw;
+        using metkit::mars2grib::utils::dict_traits::clone_or_throw;
+        using metkit::mars2grib::utils::exceptions::Mars2GribEncoderException;
+        using metkit::mars2grib::backend::config::encoderConfiguration_to_json;
+
+        try {
+            // Create an initial sample
+            std::unique_ptr<OutDict_t> samplePtr =
+                            make_from_sample_or_throw<OutDict_t>("GRIB2");
+            for ( const auto& stage : settersTable_ ) {
+                for ( const auto& section : stage ) {
+                    for ( const auto& conceptSetter : section ) {
+                        if ( conceptSetter != nullptr ) {
+                            conceptSetter( mars, geo, par, opt, *samplePtr );
+                        }
+                    }
+                }
+
+                // The clone is required to force materialization and commit
+                // in-memory modifications that may still be deferred due to
+                // internal ecCodes optimizations.
+                samplePtr = clone_or_throw<OutDict_t>( *samplePtr );
+            }
+            return samplePtr;
+        }
+        catch ( ... ) {
+            std::throw_with_nested(
+                Mars2GribEncoderException(
+                    "Error during SpecializedEncoder::encode",
+                    dict_to_json<MarsDict_t>(mars), // marsDict_json_
+                    dict_to_json<GeoDict_t>(geo), // geoDict_json_
+                    dict_to_json<ParDict_t>(par), // parDict_json_
+                    dict_to_json<OptDict_t>(opt), // optDict_json_
+                    encoderConfiguration_to_json(cfg_), // encoderCfg_json_
+                    Here()
+                )
+            );
+        }
+
+    }
+
+private:
+
+    const config::EncoderCfg cfg_;
+    const ConceptSettersTable settersTable_;
+
+};
+
+
+}

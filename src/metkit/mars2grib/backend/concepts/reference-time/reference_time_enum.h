@@ -14,7 +14,7 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 // NAME OF THE CONCEPT
 // ======================================================
-inline constexpr std::string_view referenceTimeName{"reference-time"};
+inline constexpr std::string_view referenceTimeName{"referenceTime"};
 
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT

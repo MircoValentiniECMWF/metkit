@@ -46,6 +46,7 @@ void ShapeOfTheEarthOp(
     const OptDict_t&   opt,
     OutDict_t&         out)
 {
+    using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
 
     if constexpr ( shape_of_the_earthApplicable<Stage, Section, Variant>() ) {
 

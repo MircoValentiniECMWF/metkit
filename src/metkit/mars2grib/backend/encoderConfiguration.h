@@ -12,6 +12,7 @@
 
 #include "metkit/mars2grib/utils/mars2grib-exception.h"
 #include "metkit/mars2grib/backend/concepts/concept_registry.h"
+#include "metkit/mars2grib/backend/sections/initializers/section_registry.h"
 
 // Ordered recipes (vector-based)
 #include "metkit/mars2grib/backend/sections/recipes/Recipes.h"
@@ -220,6 +221,9 @@ populateConceptsFromYaml(const eckit::LocalConfiguration& cfg,
             else if (key == "ensemble") {
                 out["ensemble"] = "individual";
             }
+            else if (key == "random-patterns") {
+                out["ensemble"] = "randomPatterns";
+            }
             else if (key == "point-in-time") {
                 out["pointInTime"] = type;
             }
@@ -312,7 +316,9 @@ buildSection(const eckit::LocalConfiguration& cfg, uint16_t secId)
                 else if (it->second != spec.type) {
                     throw Mars2GribGenericException(
                         "Concept type mismatch for concept " +
-                        std::string(spec.name),
+                        std::string(spec.name) + " - expected " +
+                        std::string(spec.type) + ", got " +
+                        it->second,
                         Here()
                     );
                 }
@@ -429,12 +435,14 @@ makeEncoderCallbacks(const EncoderCfg& cfg)
     // ---------------------------------------------------------------------------------------------
     // Type aliases (readability)
     // ---------------------------------------------------------------------------------------------
-    using Fn_t        = Fn<MarsDict_t, GeoDict_t, ParDict_t, OptDict_t, OutDict_t>;
+    using Fn_t        = metkit::mars2grib::backend::cnpts::Fn<MarsDict_t, GeoDict_t, ParDict_t, OptDict_t, OutDict_t>;
+    using metkit::mars2grib::backend::cnpts::NUM_SECTIONS;
+    using metkit::mars2grib::backend::cnpts::NUM_STAGES;
     using StageTable  = std::array<std::vector<Fn_t>, NUM_SECTIONS>;
     using CallbackTbl = std::array<StageTable, NUM_STAGES + 1>;
 
     using metkit::mars2grib::backend::cnpts::concept_registry_instance;
-    using metkit::mars2grib::backend::sections::initializers::getTemplateFn;
+    using metkit::mars2grib::backend::sections::initializers::getSectionInitializerFn;
 
     try {
 
@@ -447,6 +455,7 @@ makeEncoderCallbacks(const EncoderCfg& cfg)
             >();
 
         CallbackTbl callbacks;
+        std::cout << "Concept Registry..." << std::endl;
 
         // -----------------------------------------------------------------------------------------
         // Build callbacks directly from EncoderCfg
@@ -454,38 +463,61 @@ makeEncoderCallbacks(const EncoderCfg& cfg)
         for (uint16_t sid = 0; sid < NUM_SECTIONS; ++sid) {
 
             // ---- Stage 0: section initializer (exactly one) ----
-            {
+            try {
                 const long tmpl = cfg.sections_[sid].templateNumber;
                 callbacks[0][sid].push_back(
-                    getTemplateFn<
+                    getSectionInitializerFn<
                         MarsDict_t, GeoDict_t, ParDict_t, OptDict_t, OutDict_t
                     >(sid, tmpl)
                 );
             }
+            catch ( ... ) {
+                std::throw_with_nested(
+                    Mars2GribGenericException(
+                        "Error getting section initializer for section "
+                        + std::to_string(sid)
+                        + " template "
+                        + std::to_string(cfg.sections_[sid].templateNumber),
+                        Here()
+                    )
+                );
+            }
 
             // ---- Stage >=1: concept callbacks (ORDER PRESERVED) ----
-            for (const auto& concept : cfg.sections_[sid].concepts) {
+            for (const auto& cs : cfg.sections_[sid].concepts) {
 
                 const auto key =
                     std::make_pair(
-                        std::string(concept.name),
-                        std::string(concept.type)
+                        std::string(cs.name),
+                        std::string(cs.type)
                     );
 
                 auto it = registry.map.find(key);
                 if (it == registry.map.end()) {
-                    throw std::runtime_error(
+                    throw Mars2GribGenericException(
                         "Concept not found in registry: " +
-                        concept.name + " / " + concept.type
+                        cs.name + " / " + cs.type +
+                        " (section " + std::to_string(sid) + ")",
+                        Here()
                     );
                 }
-
                 const auto& fnByStageAndSection = it->second;
 
-                for (std::size_t stage = 1; stage <= NUM_STAGES; ++stage) {
-                    if (auto fn = fnByStageAndSection[stage - 1][sid]) {
-                        callbacks[stage][sid].push_back(fn);
+                try {
+                    for (std::size_t stage = 1; stage <= NUM_STAGES; ++stage) {
+                        if (auto fn = fnByStageAndSection[stage - 1][sid]) {
+                            callbacks[stage][sid].push_back(fn);
+                        }
                     }
+                } catch ( ... ) {
+                    std::throw_with_nested(
+                        Mars2GribGenericException(
+                            "Error populating callbacks for concept: " +
+                            cs.name + " / " + cs.type +
+                            " (section " + std::to_string(sid) + ")",
+                            Here()
+                        )
+                    );
                 }
             }
         }
@@ -527,11 +559,11 @@ printEncoderConfiguration(const EncoderCfg& cfg,
                 continue;
             }
 
-            for (const auto& concept : section.concepts) {
+            for (const auto& cs : section.concepts) {
                 os << "    - "
-                   << concept.name
+                   << cs.name
                    << " : "
-                   << concept.type
+                   << cs.type
                    << "\n";
             }
         }
@@ -552,5 +584,67 @@ printEncoderConfiguration(const EncoderCfg& cfg,
     __builtin_unreachable();
 }
 
+inline std::string
+encoderConfiguration_to_json(const EncoderCfg& cfg) noexcept(true)
+{
+    try {
+        std::ostringstream os;
+
+        os << "{\n";
+        os << "  \"encoderConfiguration\": {\n";
+        os << "    \"sections\": [\n";
+
+        for (uint16_t sid = 0; sid < NUM_SECTIONS; ++sid) {
+
+            const auto& section = cfg.sections_[sid];
+
+            os << "      {\n";
+            os << "        \"id\": " << sid << ",\n";
+            os << "        \"templateNumber\": " << section.templateNumber << ",\n";
+            os << "        \"concepts\": [";
+
+            if (section.concepts.empty()) {
+                os << "]";
+            }
+            else {
+                os << "\n";
+                for (size_t i = 0; i < section.concepts.size(); ++i) {
+                    const auto& cs = section.concepts[i];
+
+                    os << "          {\n";
+                    os << "            \"name\": \"" << cs.name << "\",\n";
+                    os << "            \"type\": \"" << cs.type << "\"\n";
+                    os << "          }";
+
+                    if (i + 1 < section.concepts.size()) {
+                        os << ",";
+                    }
+                    os << "\n";
+                }
+                os << "        ]";
+            }
+
+            os << "\n      }";
+
+            if (sid + 1 < NUM_SECTIONS) {
+                os << ",";
+            }
+            os << "\n";
+        }
+
+        os << "    ]\n";
+        os << "  }\n";
+        os << "}\n";
+
+        return os.str();
+    }
+    catch (...) {
+        return R"({
+  "encoderConfiguration": {
+    "warning": "Failed to serialize encoder configuration to JSON"
+  }
+})";
+    }
+}
 
 } // namespace metkit::mars2grib::backend::config

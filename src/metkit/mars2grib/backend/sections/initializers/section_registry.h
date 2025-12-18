@@ -152,7 +152,7 @@ template<
     class OutDict_t
 >
 Fn<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>
-getTemplateFn(std::size_t section, std::size_t templ)
+getSectionInitializerFn(std::size_t section, std::size_t templ)
 {
     switch (section) {
         case 0: return lookup(Sec0Reg<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>, templ);

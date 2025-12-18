@@ -118,7 +118,7 @@ constexpr std::string_view levelTypeName();
     DEF(LevelType::MixedLayerParcel, "mixedLayerParcel");
     DEF(LevelType::Isothermal, "isothermal");
     DEF(LevelType::IsobaricInPa, "isobaricInPa");
-    DEF(LevelType::IsobaricInHpa, "isobaricInHpa");
+    DEF(LevelType::IsobaricInHpa, "isobaricInhPa");
     DEF(LevelType::LowCloudLayer, "lowCloudLayer");
     DEF(LevelType::MediumCloudLayer, "mediumCloudLayer");
     DEF(LevelType::HighCloudLayer, "highCloudLayer");

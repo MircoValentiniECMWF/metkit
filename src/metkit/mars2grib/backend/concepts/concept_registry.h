@@ -21,7 +21,7 @@
 #include "metkit/mars2grib/backend/concepts/level/level.h"
 #include "metkit/mars2grib/backend/concepts/statistics/statistics.h"
 #include "metkit/mars2grib/backend/concepts/wave/wave.h"
-#include "metkit/mars2grib/backend/concepts/forecast-time/forecast_time.h"
+#include "metkit/mars2grib/backend/concepts/point-in-time/point_in_time.h"
 #include "metkit/mars2grib/backend/concepts/representation/representation.h"
 #include "metkit/mars2grib/backend/concepts/generating-process/generating_process.h"
 #include "metkit/mars2grib/backend/concepts/shape-of-the-earth/shape_of_the_earth.h"
@@ -126,7 +126,7 @@ make_concept_registry()
     RegisterVariants<WaveConceptInfo, WaveList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-    RegisterVariants<ForecastTimeConceptInfo, ForecastTimeList,
+    RegisterVariants<PointInTimeConceptInfo, PointInTimeList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
     RegisterVariants<RepresentationConceptInfo, RepresentationList,

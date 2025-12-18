@@ -13,7 +13,7 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 // NAME OF THE CONCEPT
 // ======================================================
-inline constexpr std::string_view dataTypeName{"data-type"};
+inline constexpr std::string_view dataTypeName{"dataType"};
 
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
