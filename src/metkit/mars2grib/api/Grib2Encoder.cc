@@ -23,7 +23,7 @@
 
 using metkit::mars2grib::utils::dict_traits::get_opt;
 
-            >
+
 
 namespace metkit::mars2grib {
 
@@ -41,6 +41,8 @@ std::unique_ptr<metkit::codes::CodesHandle> Grib2Encoder::encode(const eckit::Lo
                     eckit::LocalConfiguration,
                     eckit::LocalConfiguration,
                     metkit::codes::CodesHandle
+>
+
 
     try {
         const auto conf = frontend::buildEncoderConfig(mars);
