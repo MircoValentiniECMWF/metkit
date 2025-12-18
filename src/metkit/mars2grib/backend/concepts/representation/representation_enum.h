@@ -57,7 +57,7 @@ constexpr std::string_view representationTypeName();
     template<> constexpr std::string_view representationTypeName<T>() { return NAME; }
 
     DEF(RepresentationType::Latlon, "latlon");
-    DEF(RepresentationType::RegularGaussian, "gaussian");
+    DEF(RepresentationType::RegularGaussian, "regularGaussian");
     DEF(RepresentationType::ReducedGaussian, "reducedGaussian");
     DEF(RepresentationType::SphericalHarmonics, "sphericalHarmonics");
     DEF(RepresentationType::GeneralUnstructured, "generalUnstructured");

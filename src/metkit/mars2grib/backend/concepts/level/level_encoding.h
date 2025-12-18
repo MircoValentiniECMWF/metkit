@@ -136,14 +136,21 @@ void LevelOp(
 
             if constexpr ( Stage == StagePreset || Stage == StageRuntime ) {
 
-                // Set level type
-                set_or_throw<std::string>( out, "typeOfLevel", std::string(levelTypeName<Variant>()) );
-
-                if constexpr ( Variant == LevelType::HeightAboveGroundAt10M || Variant == LevelType::HeightAboveSeaAt10M ) {
-                    set_or_throw<long>( out, "level", 10L );
-                } else if constexpr ( Variant == LevelType::HeightAboveGroundAt2M || Variant == LevelType::HeightAboveSeaAt2M ) {
+                // Set level type (and level)
+                if constexpr ( Variant == LevelType::HeightAboveGroundAt2M ) {
+                    set_or_throw<std::string>( out, "typeOfLevel", "heightAboveGround");
                     set_or_throw<long>( out, "level", 2L );
+                } else if constexpr (Variant == LevelType::HeightAboveGroundAt10M) {
+                    set_or_throw<std::string>( out, "typeOfLevel", "heightAboveGround");
+                    set_or_throw<long>( out, "level", 10L );
+                } else if constexpr (Variant == LevelType::HeightAboveSeaAt2M) {
+                    set_or_throw<std::string>( out, "typeOfLevel", "heightAboveSea");
+                    set_or_throw<long>( out, "level", 2L );
+                } else if constexpr (Variant == LevelType::HeightAboveSeaAt10M) {
+                    set_or_throw<std::string>( out, "typeOfLevel", "heightAboveSea");
+                    set_or_throw<long>( out, "level", 10L );
                 } else {
+                    set_or_throw<std::string>( out, "typeOfLevel", std::string(levelTypeName<Variant>()) );
                     if constexpr ( needLevel<Variant>( ) ) {
                         long levelVal = deductions::marsLevelist( mars, par );
                         set_or_throw<long>( out, "level", levelVal );

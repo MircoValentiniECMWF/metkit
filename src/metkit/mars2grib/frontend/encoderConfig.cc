@@ -76,16 +76,16 @@ void setGridDefinitionSection(const eckit::LocalConfiguration& mars, eckit::Loca
         switch ((*grid)[0]) {
             case 'F':
                 setRecursive(sections, "grid-definition-section.template-number", 40);  // Gaussian grid (GG)
-                setRecursive(sections, "grid-definition-section.representation", "regularGaussian");
+                setRecursive(sections, "grid-definition-section.representation.type", "regularGaussian");
                 break;
             case 'O':
                 setRecursive(sections, "grid-definition-section.template-number", 40);  // Gaussian grid (GG)
-                setRecursive(sections, "grid-definition-section.representation", "reducedGaussian");
+                setRecursive(sections, "grid-definition-section.representation.type", "reducedGaussian");
                 break;
             case 'N':
                 if ((*grid).rfind("x") == std::string::npos) {
                     setRecursive(sections, "grid-definition-section.template-number", 40);  // Gaussian grid (GG)
-                    setRecursive(sections, "grid-definition-section.representation", "reducedGaussian");
+                    setRecursive(sections, "grid-definition-section.representation.type", "reducedGaussian");
                 }
                 else {
                     setRecursive(sections, "grid-definition-section.template-number", 0);  // Lat-long grid (LL)

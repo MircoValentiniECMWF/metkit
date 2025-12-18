@@ -56,6 +56,7 @@ void RepresentationOp(
 {
 
     using metkit::mars2grib::utils::dict_traits::setMissing_or_throw;
+    using metkit::mars2grib::utils::dict_traits::get_opt;
     using metkit::mars2grib::utils::dict_traits::get_or_throw;
     using metkit::mars2grib::utils::dict_traits::set_or_throw;
     using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
@@ -103,7 +104,7 @@ void RepresentationOp(
 
                     // Allocate the grib header
                     set_or_throw<std::string>( out, "gridType", "reduced_gg" );
-                    set_or_throw<long>( out, "interpretationOfNumberOfPointsl", 1L );
+                    set_or_throw<long>( out, "interpretationOfNumberOfPoints", 1L );
                     set_or_throw<std::vector<long>>( out, "pl", PlArray );
                 }
                 else if constexpr ( Variant == RepresentationType::SphericalHarmonics ) {
@@ -171,76 +172,80 @@ void RepresentationOp(
             // Preset data representation
             if constexpr (  Stage == StagePreset ) {
                 if constexpr ( Variant == RepresentationType::Latlon ) {
+                    std::cout << "RepresentationType::Latlon" << std::endl;
 
                     // Retrive information from geo dict
                     long Ni = get_or_throw<long>( geo, "numberOfPointsAlongAParallel" );
                     long Nj = get_or_throw<long>( geo, "numberOfPointsAlongAMeridian" );
-                    long latitudeOfFirstGridPointInDegrees = get_or_throw<long>( geo, "latitudeOfFirstGridPointInDegrees" );
-                    long longitudeOfFirstGridPointInDegrees = get_or_throw<long>( geo, "longitudeOfFirstGridPointInDegrees" );
-                    long latitudeOfLastGridPointInDegrees = get_or_throw<long>( geo, "latitudeOfLastGridPointInDegrees" );
-                    long longitudeOfLastGridPointInDegrees = get_or_throw<long>( geo, "longitudeOfLastGridPointInDegrees" );
+                    const auto latitudeOfFirstGridPointInDegrees = get_or_throw<double>( geo, "latitudeOfFirstGridPointInDegrees" );
+                    const auto longitudeOfFirstGridPointInDegrees = get_or_throw<double>( geo, "longitudeOfFirstGridPointInDegrees" );
+                    const auto latitudeOfLastGridPointInDegrees = get_or_throw<double>( geo, "latitudeOfLastGridPointInDegrees" );
+                    const auto longitudeOfLastGridPointInDegrees = get_or_throw<double>( geo, "longitudeOfLastGridPointInDegrees" );
                     long iDirectionIncrementInDegrees = get_or_throw<long>( geo, "iDirectionIncrementInDegrees" );
                     long jDirectionIncrementInDegrees = get_or_throw<long>( geo, "jDirectionIncrementInDegrees" );
 
                     // Configure the grib header
                     set_or_throw<long>( out, "Ni", Ni );
                     set_or_throw<long>( out, "Nj", Nj );
-                    set_or_throw<long>( out, "latitudeOfFirstGridPointInDegrees", latitudeOfFirstGridPointInDegrees );
-                    set_or_throw<long>( out, "longitudeOfFirstGridPointInDegrees", longitudeOfFirstGridPointInDegrees );
-                    set_or_throw<long>( out, "latitudeOfLastGridPointInDegrees", latitudeOfLastGridPointInDegrees );
-                    set_or_throw<long>( out, "longitudeOfLastGridPointInDegrees", longitudeOfLastGridPointInDegrees );
+                    set_or_throw( out, "latitudeOfFirstGridPointInDegrees", latitudeOfFirstGridPointInDegrees );
+                    set_or_throw( out, "longitudeOfFirstGridPointInDegrees", longitudeOfFirstGridPointInDegrees );
+                    set_or_throw( out, "latitudeOfLastGridPointInDegrees", latitudeOfLastGridPointInDegrees );
+                    set_or_throw( out, "longitudeOfLastGridPointInDegrees", longitudeOfLastGridPointInDegrees );
                     set_or_throw<long>( out, "iDirectionIncrementInDegrees", iDirectionIncrementInDegrees );
                     set_or_throw<long>( out, "jDirectionIncrementInDegrees", jDirectionIncrementInDegrees );
 
                 }
                 else if constexpr ( Variant == RepresentationType::RegularGaussian ) {
+                    std::cout << "RepresentationType::RegularGaussian" << std::endl;
 
                     // Retrive information from geo dict
-                    long truncateDegrees = get_or_throw<long>( geo, "truncateDegrees" );
-                    long numberOfPointsAlongAMeridian = get_or_throw<long>( geo, "numberOfPointsAlongAMeridian" );
-                    long numberOfPointsAlongAParallel = get_or_throw<long>( geo, "numberOfPointsAlongAParallel" );
-                    long latitudeOfFirstGridPointInDegrees = get_or_throw<long>( geo, "latitudeOfFirstGridPointInDegrees" );
-                    long longitudeOfFirstGridPointInDegrees = get_or_throw<long>( geo, "longitudeOfFirstGridPointInDegrees" );
-                    long latitudeOfLastGridPointInDegrees = get_or_throw<long>( geo, "latitudeOfLastGridPointInDegrees" );
-                    long longitudeOfLastGridPointInDegrees = get_or_throw<long>( geo, "longitudeOfLastGridPointInDegrees" );
+                    const auto truncateDegrees = get_opt<long>( geo, "truncateDegrees" ).value_or(0);
+                    // long numberOfPointsAlongAMeridian = get_or_throw<long>( geo, "numberOfPointsAlongAMeridian" );  // TODO (knobel)
+                    // long numberOfPointsAlongAParallel = get_or_throw<long>( geo, "numberOfPointsAlongAParallel" );  // TODO (knobel)
+                    const auto latitudeOfFirstGridPointInDegrees = get_or_throw<double>( geo, "latitudeOfFirstGridPointInDegrees" );
+                    const auto longitudeOfFirstGridPointInDegrees = get_or_throw<double>( geo, "longitudeOfFirstGridPointInDegrees" );
+                    const auto latitudeOfLastGridPointInDegrees = get_or_throw<double>( geo, "latitudeOfLastGridPointInDegrees" );
+                    const auto longitudeOfLastGridPointInDegrees = get_or_throw<double>( geo, "longitudeOfLastGridPointInDegrees" );
                     long numberOfParallelsBetweenAPoleAndTheEquator = get_or_throw<long>( geo, "numberOfParallelsBetweenAPoleAndTheEquator" );
                     long iDirectionIncrementInDegrees = get_or_throw<long>( geo, "iDirectionIncrementInDegrees" );
 
                     // Configure grib header
-                    set_or_throw<long>( out, "truncateDegrees", truncateDegrees );
-                    set_or_throw<long>( out, "numberOfPointsAlongAMeridian", numberOfPointsAlongAMeridian );
-                    set_or_throw<long>( out, "numberOfPointsAlongAParallel", numberOfPointsAlongAParallel );
-                    set_or_throw<long>( out, "latitudeOfFirstGridPointInDegrees", latitudeOfFirstGridPointInDegrees );
-                    set_or_throw<long>( out, "longitudeOfFirstGridPointInDegrees", longitudeOfFirstGridPointInDegrees );
-                    set_or_throw<long>( out, "latitudeOfLastGridPointInDegrees", latitudeOfLastGridPointInDegrees );
-                    set_or_throw<long>( out, "longitudeOfLastGridPointInDegrees", longitudeOfLastGridPointInDegrees );
+                    set_or_throw( out, "truncateDegrees", truncateDegrees );
+                    // set_or_throw<long>( out, "numberOfPointsAlongAMeridian", numberOfPointsAlongAMeridian );  // TODO (knobel)
+                    // set_or_throw<long>( out, "numberOfPointsAlongAParallel", numberOfPointsAlongAParallel );  // TODO (knobel)
+                    set_or_throw( out, "latitudeOfFirstGridPointInDegrees", latitudeOfFirstGridPointInDegrees );
+                    set_or_throw( out, "longitudeOfFirstGridPointInDegrees", longitudeOfFirstGridPointInDegrees );
+                    set_or_throw( out, "latitudeOfLastGridPointInDegrees", latitudeOfLastGridPointInDegrees );
+                    set_or_throw( out, "longitudeOfLastGridPointInDegrees", longitudeOfLastGridPointInDegrees );
                     set_or_throw<long>( out, "numberOfParallelsBetweenAPoleAndTheEquator", numberOfParallelsBetweenAPoleAndTheEquator );
                     set_or_throw<long>( out, "iDirectionIncrementInDegrees", iDirectionIncrementInDegrees );
 
                 }
                 else if constexpr ( Variant == RepresentationType::ReducedGaussian ) {
+                    std::cout << "RepresentationType::ReducedGaussian" << std::endl;
 
                     // Retrive information from geo dict
-                    long truncateDegrees = get_or_throw<long>( geo, "truncateDegrees" );
-                    long numberOfPointsAlongAMeridian = get_or_throw<long>( geo, "numberOfPointsAlongAMeridian" );
-                    long latitudeOfFirstGridPointInDegrees = get_or_throw<long>( geo, "latitudeOfFirstGridPointInDegrees" );
-                    long longitudeOfFirstGridPointInDegrees = get_or_throw<long>( geo, "longitudeOfFirstGridPointInDegrees" );
-                    long latitudeOfLastGridPointInDegrees = get_or_throw<long>( geo, "latitudeOfLastGridPointInDegrees" );
-                    long longitudeOfLastGridPointInDegrees = get_or_throw<long>( geo, "longitudeOfLastGridPointInDegrees" );
+                    const auto truncateDegrees = get_opt<long>( geo, "truncateDegrees" ).value_or(0);
+                    // long numberOfPointsAlongAMeridian = get_or_throw<long>( geo, "numberOfPointsAlongAMeridian" );  // TODO (knobel)
+                    const auto latitudeOfFirstGridPointInDegrees = get_or_throw<double>( geo, "latitudeOfFirstGridPointInDegrees" );
+                    const auto longitudeOfFirstGridPointInDegrees = get_or_throw<double>( geo, "longitudeOfFirstGridPointInDegrees" );
+                    const auto latitudeOfLastGridPointInDegrees = get_or_throw<double>( geo, "latitudeOfLastGridPointInDegrees" );
+                    const auto  longitudeOfLastGridPointInDegrees = get_or_throw<double>( geo, "longitudeOfLastGridPointInDegrees" );
                     long numberOfParallelsBetweenAPoleAndTheEquator = get_or_throw<long>( geo, "numberOfParallelsBetweenAPoleAndTheEquator" );
 
                     // Configure grib header
                     set_or_throw<long>( out, "truncateDegrees", truncateDegrees );
-                    set_or_throw<long>( out, "numberOfPointsAlongAMeridian", numberOfPointsAlongAMeridian );
-                    set_or_throw<long>( out, "latitudeOfFirstGridPointInDegrees", latitudeOfFirstGridPointInDegrees );
-                    set_or_throw<long>( out, "longitudeOfFirstGridPointInDegrees", longitudeOfFirstGridPointInDegrees );
-                    set_or_throw<long>( out, "latitudeOfLastGridPointInDegrees", latitudeOfLastGridPointInDegrees );
-                    set_or_throw<long>( out, "longitudeOfLastGridPointInDegrees", longitudeOfLastGridPointInDegrees );
+                    // set_or_throw<long>( out, "numberOfPointsAlongAMeridian", numberOfPointsAlongAMeridian );  // TODO (knobel)
+                    set_or_throw( out, "latitudeOfFirstGridPointInDegrees", latitudeOfFirstGridPointInDegrees );
+                    set_or_throw( out, "longitudeOfFirstGridPointInDegrees", longitudeOfFirstGridPointInDegrees );
+                    set_or_throw( out, "latitudeOfLastGridPointInDegrees", latitudeOfLastGridPointInDegrees );
+                    set_or_throw( out, "longitudeOfLastGridPointInDegrees", longitudeOfLastGridPointInDegrees );
                     set_or_throw<long>( out, "numberOfParallelsBetweenAPoleAndTheEquator", numberOfParallelsBetweenAPoleAndTheEquator );
                     setMissing_or_throw( out, "iDirectionIncrement" );
 
                 }
                 else if constexpr ( Variant == RepresentationType::SphericalHarmonics ) {
+                    std::cout << "RepresentationType::SphericalHarmonics" << std::endl;
 
                     // Retrive information from geo dict
                     long pentagonalResolutionParameterJ = get_or_throw<long>( geo, "pentagonalResolutionParameterJ" );
@@ -254,19 +259,21 @@ void RepresentationOp(
 
                 }
                 else if constexpr ( Variant == RepresentationType::Healpix ) {
+                    std::cout << "RepresentationType::Healpix" << std::endl;
 
                     // Retrive information from geo dict
                     long nside = get_or_throw<long>( geo, "nside" );
                     long orderingConvention = get_or_throw<long>( geo, "orderingConvention" );
-                    long longitudeOfFirstGridPointInDegrees = get_or_throw<long>( geo, "longitudeOfFirstGridPointInDegrees" );
+                    const auto longitudeOfFirstGridPointInDegrees = get_or_throw<double>( geo, "longitudeOfFirstGridPointInDegrees" );
 
                     // Configure grib header
                     set_or_throw<long>( out, "nside", nside );
                     set_or_throw<long>( out, "orderingConvention", orderingConvention );
-                    set_or_throw<long>( out, "longitudeOfFirstGridPointInDegrees", longitudeOfFirstGridPointInDegrees );
+                    set_or_throw( out, "longitudeOfFirstGridPointInDegrees", longitudeOfFirstGridPointInDegrees );
 
                 }
                 else if constexpr ( Variant == RepresentationType::Orca ) {
+                    std::cout << "RepresentationType::Orca" << std::endl;
 
                     // throw exceptions
                     throw Mars2GribConceptException(
@@ -280,6 +287,7 @@ void RepresentationOp(
 
                 }
                 else if constexpr ( Variant == RepresentationType::Fesom ) {
+                    std::cout << "RepresentationType::Fesom" << std::endl;
 
                     // throw exceptions
                     throw Mars2GribConceptException(

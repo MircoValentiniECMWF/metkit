@@ -79,7 +79,7 @@ void ParamOp(
             long paramId = deductions::paramId( mars, par );
 
             // Set values in output dictionary (grib sample)
-            set_or_throw<long>( out, "param", paramId );
+            set_or_throw<long>( out, "paramId", paramId );
 
         }
         catch ( ... ) {

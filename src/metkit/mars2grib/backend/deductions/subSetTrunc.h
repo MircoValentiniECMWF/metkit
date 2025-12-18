@@ -19,15 +19,13 @@ template<class MarsDict_t, class ParDict_t>
 long subSetTrunc_or_throw(
     const MarsDict_t& mars, const ParDict_t& par){
 
-    using metkit::mars2grib::utils::dict_traits::get_or_throw;
+    using metkit::mars2grib::utils::dict_traits::get_opt;
     using metkit::mars2grib::utils::exceptions::Mars2GribDeductionException;
 
     try {
 
-        // Get bits per value
-        long subSetTrunc = get_or_throw<long>( par, "subSetTrunc" );
+        long subSetTrunc = get_opt<long>( par, "subSetTrunc" ).value_or(20);
 
-        // Get the mars.freq
         return subSetTrunc;
 
     } catch ( ... ) {

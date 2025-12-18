@@ -104,13 +104,13 @@ void PackingOp(
 
                 // Get bits per value
                 long bitsPerValue = deductions::bitsPerValue_or_throw(mars, par);
-                long laplacianOperator = deductions::laplacianOperator_or_throw(mars, par);
+                const auto laplacianOperator = deductions::laplacianOperator_or_throw(mars, par);
                 long trunc = deductions::subSetTrunc_or_throw(mars, par);
 
 
                 // Set bits per value
                 set_or_throw<long>( out, "bitsPerValue", bitsPerValue );
-                set_or_throw<long>( out, "laplacianOperator", laplacianOperator );
+                set_or_throw(out, "laplacianOperator", laplacianOperator);
                 set_or_throw<long>( out, "subSetJ", trunc );
                 set_or_throw<long>( out, "subSetK", trunc );
                 set_or_throw<long>( out, "subSetM", trunc );

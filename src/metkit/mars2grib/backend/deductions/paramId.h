@@ -42,13 +42,17 @@ long paramId( const MarsDict_t& mars, const ParDict_t& par){
 
     try {
 
-        // Lookup origin from the mars dictionary
-        auto paramId = get_or_throw<std::string>( mars, "param" );
+        // // Lookup origin from the mars dictionary
+        // auto paramId = get_or_throw<std::string>( mars, "param" );
 
-        // TODO MIVAL: validate paramId format
+        // // TODO MIVAL: validate paramId format
 
-        // Return validated origin
-        return to_long_or_throw( paramId );
+        // // Return validated origin
+        // return to_long_or_throw( paramId );
+
+        // TODO : Implement proper string -> long parsing
+        return get_or_throw<long>(mars, "param");
+
     }
     catch ( ... ) {
 

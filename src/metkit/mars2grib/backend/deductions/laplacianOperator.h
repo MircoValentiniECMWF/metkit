@@ -16,7 +16,7 @@
 namespace metkit::mars2grib::backend::deductions {
 
 template<class MarsDict_t, class ParDict_t>
-long laplacianOperator_or_throw(
+auto laplacianOperator_or_throw(
     const MarsDict_t& mars, const ParDict_t& par){
 
     using metkit::mars2grib::utils::dict_traits::get_or_throw;
@@ -24,11 +24,13 @@ long laplacianOperator_or_throw(
 
     try {
 
-        // Get bits per value
-        long laplacianOperator = get_or_throw<long>( par, "laplacianOperator" );
+        // // Get bits per value
+        // const auto laplacianOperator = get_or_throw<double>( par, "laplacianOperator" );
 
-        // Get the mars.freq
-        return laplacianOperator;
+        // // Get the mars.freq
+        // return laplacianOperator;
+
+        return get_or_throw<double>( par, "laplacianOperator" );
 
     } catch ( ... ) {
 

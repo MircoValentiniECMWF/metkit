@@ -31,10 +31,11 @@ long marsStepInSeconds_or_throw(
     try {
 
         // Get the mars.step
-        std::string marsStepVal = get_or_throw<std::string>( mars, "step" );
+        long marsStepVal = get_or_throw<long>( mars, "step" );
 
         // Convert to seconds
-        long marsStepInSecondsVal = toSeconds_or_throw( marsStepVal );
+        // long marsStepInSecondsVal = toSeconds_or_throw( marsStepVal );
+        long marsStepInSecondsVal = marsStepVal * 3600;  // TODO: Multiply by timestep instead
 
         // TODO MIVAL: Validate
 

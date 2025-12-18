@@ -94,4 +94,39 @@ constexpr std::string_view statisticsTypeName();
 
 #undef DEF
 
+
+// ======================================================
+// VARIANT -> STRING MAPPING
+// ======================================================
+template<StatisticsType T>
+constexpr long typeOfStatisticalProcessing();
+
+#define DEF(T,NAME) \
+    template<> constexpr long typeOfStatisticalProcessing<T>() { return NAME; }
+
+    DEF(StatisticsType::Average, 0);
+    DEF(StatisticsType::Accumulation, 1);
+    DEF(StatisticsType::Maximum, 2);
+    DEF(StatisticsType::Minimum, 3);
+    DEF(StatisticsType::DifferenceFromStart, 4);
+    DEF(StatisticsType::RootMeanSquare, 5);
+    DEF(StatisticsType::StandardDeviation, 6);
+    DEF(StatisticsType::Covariance, 7);
+    DEF(StatisticsType::DifferenceFromEnd, 8);
+    DEF(StatisticsType::Ratio, 9);
+    DEF(StatisticsType::StandardizedAnomaly, 10);
+    DEF(StatisticsType::Summation, 11);
+    DEF(StatisticsType::ReturnPeriod, 12);
+    DEF(StatisticsType::Median, 13);
+    DEF(StatisticsType::Severity, 100);
+    DEF(StatisticsType::Mode, 101);
+    DEF(StatisticsType::IndexProcessing, 102);
+    DEF(StatisticsType::Default, 255);
+
+#undef DEF
+
+
+
+
+
 } // namespace metkit::mars2grib::backend::cnpts

@@ -35,10 +35,11 @@ eckit::DateTime forecastDateTime_or_throw(
         // Get the mars.date, mars.time, mars.step
         long marsDate = get_or_throw<long>( mars, "date" );
         long marsTime = get_or_throw<long>( mars, "time" );
-        std::string marsStep = get_or_throw<std::string>( mars, "step" );
+        long marsStep = get_or_throw<long>( mars, "step" );
 
         // Convert step in seconds
-        long marsStepInSecondsVal = toSeconds_or_throw( marsStep );
+        // long marsStepInSecondsVal = toSeconds_or_throw( marsStep );
+        long marsStepInSecondsVal = marsStep * 3600;  // TODO: Multiply by timestep
 
         // Compute forecast time in seconds since reference time
         eckit::Date Date{marsDate};

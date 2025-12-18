@@ -23,7 +23,7 @@ void isStatisticsProductDefinitionTemplateNumber_or_throw( const OptDict_t& opt,
 
     try {
 
-        if (bool applyChecks = get_opt<bool>( opt, "applyChecks" ).value_or( false ); applyChecks) {
+        if (bool applyChecks = get_opt<bool>( opt, "applyChecks" ).value_or( true ); applyChecks) {
 
             // Get the mars.date and mars.time
             bool hasNumberOfTimeRanges = has( out, "numberOfTimeRanges" );

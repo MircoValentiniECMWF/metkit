@@ -101,7 +101,7 @@ void StatisticsOp(
                 // HACK: handle special case for MUL-227
                 if ( numberOfTimeRangesVal==1 && !timeIncrementInSecondsOpt.has_value() ) {
 
-                    set_or_throw<std::string>( out, "typeOfStatisticalProcessing", std::string( statisticsTypeName<Variant>() ) );
+                    set_or_throw<long>( out, "typeOfStatisticalProcessing", typeOfStatisticalProcessing<Variant>() );
                     set_or_throw<long>( out, "indicatorOfUnitForTimeRange",
                         static_cast<long>( utils::time::TimeUnit::Hour ) );
                     set_or_throw<long>( out, "typeOfTimeIncrement", 2L ); // CodeTable 4.11
@@ -116,8 +116,7 @@ void StatisticsOp(
                     deductions::StatisticalProcessing stat =
                         deductions::getTimeDescriptorFromMars_orThrow( mars, par, static_cast<long>( Variant ) );
 
-
-
+                    set_or_throw<long>( out, "typeOfStatisticalProcessing", typeOfStatisticalProcessing<Variant>() );
 
                 }
 
@@ -131,7 +130,7 @@ void StatisticsOp(
 
                 // HACK: handle special case for MUL-227
                 if ( numberOfTimeRangesVal==1 && !timeIncrementInSecondsOpt.has_value() ) {
-                    set_or_throw<std::string>( out, "typeOfStatisticalProcessing", std::string( statisticsTypeName<Variant>() ) );
+                    set_or_throw<long>( out, "typeOfStatisticalProcessing", typeOfStatisticalProcessing<Variant>() );
                     set_or_throw<long>( out, "indicatorOfUnitForTimeRange",
                         static_cast<long>( utils::time::TimeUnit::Hour ) );
                     set_or_throw<long>( out, "typeOfTimeIncrement", 2L ); // CodeTable 4.11
@@ -145,6 +144,7 @@ void StatisticsOp(
                     deductions::StatisticalProcessing stat =
                         deductions::getTimeDescriptorFromMars_orThrow( mars, par, static_cast<long>( Variant ) );
 
+                    set_or_throw<long>( out, "typeOfStatisticalProcessing", typeOfStatisticalProcessing<Variant>() );
 
                 }
 

@@ -184,7 +184,7 @@ populateConceptsFromYaml(const eckit::LocalConfiguration& cfg,
     try {
         for (const auto& name : sectionCfg.keys()) {
 
-            if (name == "template-number") {
+            if (name == "template-number" || name == "product-categories") {
                 continue;
             }
 

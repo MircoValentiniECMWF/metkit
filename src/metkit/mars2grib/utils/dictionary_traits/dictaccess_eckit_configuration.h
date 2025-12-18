@@ -45,7 +45,7 @@ struct DictGetOrThrow<eckit::LocalConfiguration, CTYPE> {                       
             }                                                                          \
                                                                                        \
             /* Check type */                                                           \
-            if ( cfg.ISFUNC(k) ) {                                                     \
+            if ( hacks::ISFUNC(cfg, k) ) {                                             \
                 return cfg.GETFUNC(k);                                                 \
             }                                                                          \
             else {                                                                     \
@@ -93,7 +93,7 @@ struct DictGetOpt<eckit::LocalConfiguration, CTYPE> {                           
                 return std::nullopt;                                                   \
             }                                                                          \
                                                                                        \
-            if ( cfg.ISFUNC(k) ) {                                                     \
+            if ( hacks::ISFUNC(cfg, k) ) {                                             \
                 return cfg.GETFUNC(k);                                                 \
             }                                                                          \
             else {                                                                     \
@@ -186,7 +186,45 @@ namespace metkit::mars2grib::utils::dict_traits {
 
 using std::operator""s;
 
+namespace hacks {
 
+inline bool isIntegral(const eckit::LocalConfiguration& conf, std::string_view key) {
+    return conf.isIntegral(std::string{key});
+}
+
+inline bool isFloatingPoint(const eckit::LocalConfiguration& conf, std::string_view key) {
+    return conf.isFloatingPoint(std::string{key}) || conf.isIntegral(std::string{key});
+}
+
+inline bool isBoolean(const eckit::LocalConfiguration& conf, std::string_view key) {
+    return conf.isBoolean(std::string{key});
+}
+
+inline bool isString(const eckit::LocalConfiguration& conf, std::string_view key) {
+    return conf.isString(std::string{key});
+}
+
+inline bool isSubConfiguration(const eckit::LocalConfiguration& conf, std::string_view key) {
+    return conf.isSubConfiguration(std::string{key});
+}
+
+inline bool isIntegralList(const eckit::LocalConfiguration& conf, std::string_view key) {
+    return conf.isIntegralList(std::string{key});
+}
+
+inline bool isFloatingPointList(const eckit::LocalConfiguration& conf, std::string_view key) {
+    return conf.isFloatingPointList(std::string{key}) || conf.isIntegralList(std::string{key});
+}
+
+inline bool isStringList(const eckit::LocalConfiguration& conf, std::string_view key) {
+    return conf.isStringList(std::string{key});
+}
+
+inline bool isSubConfigurationList(const eckit::LocalConfiguration& conf, std::string_view key) {
+    return conf.isSubConfigurationList(std::string{key});
+}
+
+}
 
 // -----------------------------------------------------------------------------
 // to_json
