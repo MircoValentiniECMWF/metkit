@@ -10,10 +10,12 @@
 
 #include <exception>
 #include <string>
+#include <vector>
 #include "eckit/config/LocalConfiguration.h"
 #include "eckit/config/YAMLConfiguration.h"
 #include "eckit/filesystem/LocalPathName.h"
 #include "eckit/filesystem/PathName.h"
+#include "eckit/log/JSON.h"
 #include "eckit/log/Log.h"
 #include "eckit/option/CmdArgs.h"
 #include "eckit/runtime/Tool.h"
@@ -35,7 +37,7 @@ public:
         eckit::option::CmdArgs args{usage, 1, -1};
 
         const eckit::LocalConfiguration testCases{eckit::YAMLConfiguration{eckit::PathName(args(0))}};
-        eckit::Log::info() << "Loaded " << testCases.getSubConfigurations().size() << " test cases!" << std::endl;
+        eckit::Log::info() << "Loaded " << testCases.getSubConfigurations().size() << " test cases!" << std::endl << std::endl;
 
         size_t count = 0;
         size_t failed = 0;
@@ -47,11 +49,14 @@ public:
             const auto& geom = testCase.getSubConfiguration("geom");
 
             try {
-                const auto& grib = metkit::mars2grib::Grib2Encoder{}.encode(mars, misc, geom, std::vector<double>{});
+                std::vector<double> values(1639680, 0.0);
+                const auto& grib = metkit::mars2grib::Grib2Encoder{}.encode(mars, misc, geom, values);
             }
             catch(std::exception e) {
                 eckit::Log::error() << "Failure occured when API was called in test case " << count << std::endl;
-                eckit::Log::error() << "Exception: " << e.what() << std::endl;
+                eckit::JSON json{eckit::Log::error()};
+                json << testCase;
+                eckit::Log::error() << std::endl << std::endl;
                 failed++;
                 break;  // TODO: Remove this to keep running after the first failure!
             }

@@ -77,7 +77,7 @@ std::unique_ptr<metkit::codes::CodesHandle> Grib2Encoder::encode(const eckit::Lo
     using metkit::mars2grib::utils::exceptions::printExceptionStack;
 
 
-    try {
+    // try {
         // Frontend
         const auto conf = frontend::buildEncoderConfig(mars);
 
@@ -87,16 +87,16 @@ std::unique_ptr<metkit::codes::CodesHandle> Grib2Encoder::encode(const eckit::Lo
         // Values
         return impl::setValues( misc, values, std::move(sample) );
 
-    }
-    catch ( const std::exception& e ){
-        // TODO: do not rethrow through the API boundaries
-        printExceptionStack(e, std::cerr);
-        return nullptr;
-    }
-    catch ( ... ) {
-        std::cerr << "Unknown exception caught!" << std::endl;
-        return nullptr;
-    }
+    // }
+    // catch ( const std::exception& e ){
+    //     // TODO: do not rethrow through the API boundaries
+    //     printExceptionStack(e, std::cerr);
+    //     return nullptr;
+    // }
+    // catch ( ... ) {
+    //     std::cerr << "Unknown exception caught!" << std::endl;
+    //     return nullptr;
+    // }
 
 }
 
