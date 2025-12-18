@@ -3,6 +3,7 @@
 #include <string>
 #include <optional>
 #include <exception>
+#include <typeinfo>
 
 #include "eckit/exception/Exceptions.h"
 
@@ -129,6 +130,32 @@ private:
     const std::string optDict_json_;
     const std::string encoderCfg_json_;
 
+};
+
+// ==========================================================
+// Print exception stack
+// ==========================================================
+inline void printExceptionStack(
+    const std::exception& e,
+    std::ostream& os,
+    std::size_t level = 0
+) {
+    const std::string indent(level * 2, ' ');
+
+    // stampa tipo + messaggio
+    os << indent
+       << "- [" << typeid(e).name() << "] "
+       << e.what()
+       << '\n';
+
+    // verifica eccezione annidata
+    try {
+        std::rethrow_if_nested(e);
+    } catch (const std::exception& nested) {
+        printExceptionStack(nested, os, level + 1);
+    } catch (...) {
+        os << indent << "  - [unknown non-std exception]\n";
+    }
 };
 
 } // namespace metkit::mars2grib::utils::exceptions

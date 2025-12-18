@@ -17,9 +17,8 @@ template<
 void allocateTemplateNumber1(
     const MarsDict_t& mars, const GeoDict_t& geo, const ParDict_t& par, const OptDict_t& opt, OutDict_t& out )
 {
-    // Section 1: reserved
-    // Section 0: no-op
-    std::cout << "Allocating Section 1, Template " << TemplateNumber << std::endl;
+    // No-op for section 0
+
 }
 
 } // namespace metkit::mars2grib::backend::sections::initializers

@@ -1,7 +1,10 @@
 #pragma once
 
 #include <iostream>
+
 #include "metkit/mars2grib/backend/sections/initializers/section_initializer_core.h"
+
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
 
 namespace metkit::mars2grib::backend::sections::initializers {
 
@@ -17,10 +20,26 @@ template<
 void allocateTemplateNumber4(
     const MarsDict_t& mars, const GeoDict_t& geo, const ParDict_t& par, const OptDict_t& opt, OutDict_t& out )
 {
-    // out.setLong("productDefinitionTemplateNumber", T);
+    // Dictionary traits
+    using metkit::mars2grib::utils::exceptions::Mars2GribGenericException;
+    using metkit::mars2grib::utils::dict_traits::set_or_throw;
 
-    // Section 0: no-op
-    std::cout << "Allocating Section 4, Template " << TemplateNumber << std::endl;
+    try {
+        long pdt = static_cast<long>(TemplateNumber);
+        set_or_throw<long>( out, "productDefinitionTemplateNumber", pdt );
+
+        return;
+    }
+    catch ( ... ) {
+        std::throw_with_nested(
+            Mars2GribGenericException(
+                "Error preparing section 4 with template number",
+                Here()
+            )
+        );
+    }
+    // Remove compiler warning
+    __builtin_unreachable();
 }
 
 } // namespace metkit::mars2grib::backend::sections::initializers

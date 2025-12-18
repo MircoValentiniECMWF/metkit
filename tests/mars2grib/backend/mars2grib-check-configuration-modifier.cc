@@ -40,6 +40,7 @@ int main(int argc, char** argv) {
     using metkit::mars2grib::backend::config::makeEncoderConfiguration;
     using metkit::mars2grib::backend::config::printEncoderConfiguration;
     using metkit::mars2grib::backend::SpecializedEncoder;
+    using metkit::mars2grib::utils::exceptions::printExceptionStack;
 
     if (argc != 2) {
         std::cerr << "Usage: " << argv[0] << " <test-cases-file>" << std::endl;
@@ -88,8 +89,10 @@ int main(int argc, char** argv) {
 
         }
         catch (const std::exception& e) {
-            failed++;
-            std::cout << "Test case " << count << " FAILED: " << e.what() << std::endl;
+            // failed++;
+            // std::cout << "Test case " << count << " FAILED: " << e.what() << std::endl;
+            printExceptionStack(e, std::cerr);
+            return 1;
         }
 
     }
