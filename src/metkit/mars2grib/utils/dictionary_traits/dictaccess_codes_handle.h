@@ -7,6 +7,7 @@
 #include <type_traits>
 #include <cstdint>
 #include <exception>
+#include <memory>
 
 #include "metkit/codes/api/CodesTypes.h"
 #include "metkit/codes/api/CodesAPI.h"
@@ -172,6 +173,30 @@ constexpr std::string_view type_name<metkit::codes::CodesHandle>() {
 namespace metkit::mars2grib::utils::dict_traits {
 
 using std::operator""s;
+
+// -----------------------------------------------------------------------------
+// DictCreateFromSample / Clone / NeedsChecks
+// -----------------------------------------------------------------------------
+template <>
+struct DictTraits<metkit::codes::CodesHandle> {
+
+    static constexpr bool support_checks = true;
+
+    static std::unique_ptr<metkit::codes::CodesHandle>
+    make_from_sample_or_throw(std::string_view name) {
+
+        auto h = metkit::codes::codesHandleFromSample(std::string(name));
+        if (!h) {
+            throw eckit::SeriousBug("codesHandleFromSample failed", Here());
+        }
+        return h;
+    }
+
+    static std::unique_ptr<metkit::codes::CodesHandle>
+    clone_or_throw(const metkit::codes::CodesHandle& h) {
+        return h.clone();
+    }
+};
 
 // -----------------------------------------------------------------------------
 // DictHas

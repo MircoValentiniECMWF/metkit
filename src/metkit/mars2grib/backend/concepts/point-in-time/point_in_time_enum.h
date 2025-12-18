@@ -16,32 +16,32 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 // NAME OF THE CONCEPT
 // ======================================================
-inline constexpr std::string_view forecastTimeName{"forecastTime"};
+inline constexpr std::string_view pointInTimeName{"pointInTime"};
 
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class ForecastTimeType : std::size_t {
+enum class PointInTimeType : std::size_t {
     Default = 0
 };
 
 // ======================================================
 // COMPILE-TIME TYPELIST
 // ======================================================
-using ForecastTimeList = ValueList<
-    ForecastTimeType::Default
+using PointInTimeList = ValueList<
+    PointInTimeType::Default
 >;
 
 // ======================================================
 // VARIANT -> STRING MAPPING
 // ======================================================
-template<ForecastTimeType T>
-constexpr std::string_view forecastTimeTypeName();
+template<PointInTimeType T>
+constexpr std::string_view pointInTimeTypeName();
 
 #define DEF(T,NAME) \
-    template<> constexpr std::string_view forecastTimeTypeName<T>() { return NAME; }
+    template<> constexpr std::string_view pointInTimeTypeName<T>() { return NAME; }
 
-    DEF(ForecastTimeType::Default, "default");
+    DEF(PointInTimeType::Default, "default");
 
 #undef DEF
 

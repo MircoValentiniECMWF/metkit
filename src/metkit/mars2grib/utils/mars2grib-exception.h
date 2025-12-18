@@ -95,15 +95,40 @@ private:
 
 
 // ==========================================================
-// Encoder Layer Exception (no metadata for now)
+// Encoder Layer Exception
 // ==========================================================
 class Mars2GribEncoderException :
         public Mars2GribGenericException {
 public:
-    Mars2GribEncoderException(std::string reason,
-                              const eckit::CodeLocation& loc = eckit::CodeLocation())
-        : Mars2GribGenericException(reason, loc)
+    Mars2GribEncoderException(  std::string reason,
+                                std::string marsDict_json,
+                                std::string geoDict_json,
+                                std::string parDict_json,
+                                std::string optDict_json,
+                                std::string encoderCfg_json,
+                                const eckit::CodeLocation& loc = eckit::CodeLocation()):
+            Mars2GribGenericException(reason, loc),
+            marsDict_json_(std::move(marsDict_json)),
+            geoDict_json_(std::move(geoDict_json)),
+            parDict_json_(std::move(parDict_json)),
+            optDict_json_(std::move(optDict_json)),
+            encoderCfg_json_(std::move(encoderCfg_json))
     {}
+
+    const std::string& marsDict_json() const { return marsDict_json_; }
+    const std::string& geoDict_json() const { return geoDict_json_; }
+    const std::string& parDict_json() const { return parDict_json_; }
+    const std::string& optDict_json() const { return optDict_json_; }
+    const std::string& encoderCfg_json() const { return encoderCfg_json_; }
+
+private:
+
+    const std::string marsDict_json_;
+    const std::string geoDict_json_;
+    const std::string parDict_json_;
+    const std::string optDict_json_;
+    const std::string encoderCfg_json_;
+
 };
 
 } // namespace metkit::mars2grib::utils::exceptions

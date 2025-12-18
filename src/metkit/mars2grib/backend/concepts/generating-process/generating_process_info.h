@@ -50,8 +50,9 @@ struct GeneratingProcessConceptInfo
             return nullptr;
         }
 
-        // Remove compiler warning
-        return nullptr;
+        // Avoid compile warnings
+        __builtin_unreachable();
+
     }
 
     template<auto Variant>

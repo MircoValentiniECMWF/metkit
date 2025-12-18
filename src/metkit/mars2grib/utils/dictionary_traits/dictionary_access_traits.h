@@ -7,6 +7,7 @@
 #include <utility>
 #include <exception>
 #include <cstdint>
+#include <memory>
 
 #include "eckit/exception/Exceptions.h"
 
@@ -22,6 +23,33 @@ using std::operator""s;
 template<typename>
 struct dependent_false : std::false_type {};
 
+
+template <typename Dict>
+struct DictToJsonTraits {
+
+    static std::string to_json(const Dict&) {
+        return std::string{
+            "[to_json not supported for this dictionary type]"
+        };
+    }
+};
+
+template <typename Dict>
+struct DictTraits {
+    static constexpr bool support_checks = false;
+
+    static std::unique_ptr<Dict>
+    make_from_sample_or_throw(std::string_view) {
+        static_assert(dependent_false<Dict>::value,
+                      "DictTraits::make_from_sample_or_throw not specialized");
+    }
+
+    static std::unique_ptr<Dict>
+    clone_or_throw(const Dict&) {
+        static_assert(dependent_false<Dict>::value,
+                      "DictTraits::clone_or_throw not specialized");
+    }
+};
 
 template<class Dict>
 struct DictHas {
@@ -91,6 +119,34 @@ struct DictSetOrThrow {
 };
 
 
+
+// ============================================================
+//  dict_to_json
+// ============================================================
+template <typename Dict>
+std::string dict_to_json(const Dict& d) noexcept(true) {
+    return DictToJsonTraits<Dict>::to_json(d);
+}
+
+// ============================================================
+//  clone / make_from_sample / needs_checks
+// ============================================================
+
+template <typename Dict>
+inline constexpr bool dict_supports_checks_v =
+    DictTraits<Dict>::support_checks;
+
+template <typename Dict>
+std::unique_ptr<Dict>
+make_from_sample_or_throw(std::string_view name) {
+    return DictTraits<Dict>::make_from_sample_or_throw(name);
+}
+
+template <typename Dict>
+std::unique_ptr<Dict>
+clone_or_throw(const Dict& d) {
+    return DictTraits<Dict>::clone_or_throw(d);
+}
 
 // ============================================================
 //  has / isMissing / setMissing

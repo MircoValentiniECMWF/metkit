@@ -10,7 +10,7 @@
 #include "eckit/log/Log.h"
 
 #include "metkit/mars2grib/backend/concepts/concept_core.h"
-#include "metkit/mars2grib/backend/concepts/forecast-time/forecast_time_enum.h"
+#include "metkit/mars2grib/backend/concepts/point-in-time/point_in_time_enum.h"
 
 // Utils
 #include "metkit/mars2grib/utils/timeUtils.h"
@@ -29,9 +29,9 @@ namespace metkit::mars2grib::backend::cnpts {
 template<
     std::size_t Stage,
     std::size_t Section,
-    ForecastTimeType Variant
+    PointInTimeType Variant
 >
-constexpr bool forecastTimeApplicable()
+constexpr bool pointInTimeApplicable()
 {
     bool condition1 = Stage == StageAllocate && Section == SecProductDefinitionSection;
     bool condition2 = Stage == StagePreset   && Section == SecProductDefinitionSection;
@@ -46,14 +46,14 @@ constexpr bool forecastTimeApplicable()
 template<
     std::size_t Stage,
     std::size_t Section,
-    ForecastTimeType Variant,
+    PointInTimeType Variant,
     class MarsDict_t,
     class GeoDict_t,
     class ParDict_t,
     class OptDict_t,
     class OutDict_t
 >
-void ForecastTimeOp(
+void PointInTimeOp(
     const MarsDict_t&  mars,
     const GeoDict_t&   geo,
     const ParDict_t&   par,
@@ -66,7 +66,7 @@ void ForecastTimeOp(
     using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
     using metkit::mars2grib::utils::time::TimeUnit;
 
-    if constexpr ( forecastTimeApplicable<Stage, Section, Variant>() ) {
+    if constexpr ( pointInTimeApplicable<Stage, Section, Variant>() ) {
 
         try {
 
@@ -76,19 +76,19 @@ void ForecastTimeOp(
               << "[Concept PointInTime] Op called: "
               << "Stage="   << Stage
               << ", Section=" << Section
-              << ", Variant=" << std::string(forecastTimeTypeName<Variant>())
+              << ", Variant=" << std::string(pointInTimeTypeName<Variant>())
               << std::endl;
 
 
             // =============================================================
-            // Deduce the forecast time in seconds
+            // Deduce the point in time in seconds
             long marsStepInSeconds = deductions::marsStepInSeconds_or_throw( mars, par );
 
             // For the moment we don't support sub hourly steps
             if ( marsStepInSeconds % 3600 != 0 ) {
                 throw Mars2GribConceptException(
-                    std::string( forecastTimeName ),
-                    std::string( forecastTimeTypeName<Variant>() ),
+                    std::string( pointInTimeName ),
+                    std::string( pointInTimeTypeName<Variant>() ),
                     std::to_string(Stage),
                     std::to_string(Section),
                     "Only full hour steps are supported currently",
@@ -98,15 +98,15 @@ void ForecastTimeOp(
             long marsStepInHours = marsStepInSeconds / 3600;
 
             if constexpr ( Stage == StageAllocate ) {
-                // Set forecast time in hours since reference time
+                // Set point in time in hours since reference time
                 setMissing_or_throw( out, "hoursAfterDataCutoff" );
                 setMissing_or_throw( out, "minutesAfterDataCutoff" );
             }
 
             if constexpr ( Stage == StagePreset ) {
-                // Set forecast time in hours since reference time
+                // Set point in time in hours since reference time
                 // TODO MIVAL: Duplicated enum between eccodes and metkit!!!!
-                set_or_throw<long>( out, "forecastTimeInHours", static_cast<long>(TimeUnit::Hour) );
+                set_or_throw<long>( out, "indicatorOfUnitOfTimeRange", static_cast<long>(TimeUnit::Hour) );
             }
 
             if constexpr ( Stage == StageRuntime ) {
@@ -119,8 +119,8 @@ void ForecastTimeOp(
             // Rethrow nested exceptions
             std::throw_with_nested(
                 Mars2GribConceptException(
-                    std::string( forecastTimeName ),
-                    std::string( forecastTimeTypeName<Variant>() ),
+                    std::string( pointInTimeName ),
+                    std::string( pointInTimeTypeName<Variant>() ),
                     std::to_string(Stage),
                     std::to_string(Section),
                     "Unable to set `ensemble` concept...",
@@ -137,8 +137,8 @@ void ForecastTimeOp(
 
     // Paranoid check. Should never arrive here
     throw Mars2GribConceptException(
-            std::string( forecastTimeName ),
-            std::string( forecastTimeTypeName<Variant>() ),
+            std::string( pointInTimeName ),
+            std::string( pointInTimeTypeName<Variant>() ),
             std::to_string(Stage),
             std::to_string(Section),
             "Concept called when not applicable...",

@@ -38,7 +38,7 @@ constexpr std::string_view paramTypeName();
 #define DEF(T,NAME) \
     template<> constexpr std::string_view paramTypeName<T>() { return NAME; }
 
-    DEF(ParamType::ParamId, "paramId");
+    DEF(ParamType::ParamId, "default");
 
 #undef DEF
 

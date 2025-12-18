@@ -51,7 +51,7 @@ make_callbacks( std::array<std::vector<std::pair<std::string_view,std::string_vi
     // Do not simplify or refactor this section without verifying behavior
     // across all supported compilers and language modes.
     using metkit::mars2grib::backend::cnpts::concept_registry_instance;
-    using metkit::mars2grib::backend::sections::initializers::getTemplateFn;
+    using metkit::mars2grib::backend::sections::initializers::getSectionInitializerFn;
 
     // Get the concept registry instance
     const auto& registry = concept_registry_instance<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>();
@@ -71,7 +71,7 @@ make_callbacks( std::array<std::vector<std::pair<std::string_view,std::string_vi
 
         // Section allocators
         long templateNumber = cfg.sec_[sid].templateNumber_;
-        auto Fcn = getTemplateFn<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>( sid, templateNumber );
+        auto Fcn = getSectionInitializerFn<MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>( sid, templateNumber );
         table[0][sid].push_back(Fcn);
 
         for ( const auto& cs : conceptsArr[sid] ) {
@@ -131,9 +131,9 @@ public:
       int secId =0;
       for ( const auto& sec : cfg_.sec_ ) {
           std::cout << "Section " << secId << "." << sec.templateNumber_ << ":" << std::endl;
-          for ( const auto& concept : sec.concepts_ ) {
+          for ( const auto& cs : sec.concepts_ ) {
               std::cout << "Section " << secId << "." << sec.templateNumber_ <<
-              ": Concept " << concept.first << " / " << concept.second << std::endl;
+              ": Concept " << cs.first << " / " << cs.second << std::endl;
           }
           ++secId;
       }

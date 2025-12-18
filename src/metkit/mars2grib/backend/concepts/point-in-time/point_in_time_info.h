@@ -5,8 +5,8 @@
 
 // Core concept includes
 #include "metkit/mars2grib/backend/concepts/concept_core.h"
-#include "metkit/mars2grib/backend/concepts/forecast-time/forecast_time_enum.h"
-#include "metkit/mars2grib/backend/concepts/forecast-time/forecast_time_encoding.h"
+#include "metkit/mars2grib/backend/concepts/point-in-time/point_in_time_enum.h"
+#include "metkit/mars2grib/backend/concepts/point-in-time/point_in_time_encoding.h"
 
 // Exceptions
 #include "metkit/mars2grib/utils/mars2grib-exception.h"
@@ -16,14 +16,14 @@ namespace metkit::mars2grib::backend::cnpts {
 // ======================================================
 // ConceptInfo
 // ======================================================
-struct ForecastTimeConceptInfo
+struct PointInTimeConceptInfo
 {
-    static constexpr const char* name = forecastTimeName.data();
+    static constexpr const char* name = pointInTimeName.data();
 
     template<
         std::size_t Stage,
         std::size_t Sec,
-        ForecastTimeType Variant,
+        PointInTimeType Variant,
         class MarsDict_t,
         class GeoDict_t,
         class ParDict_t,
@@ -38,8 +38,8 @@ struct ForecastTimeConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( forecastTimeApplicable<Stage, Sec, Variant>() ) {
-            return &ForecastTimeOp<
+        if constexpr ( pointInTimeApplicable<Stage, Sec, Variant>() ) {
+            return &PointInTimeOp<
                 Stage, Sec, Variant,
                 MarsDict_t,
                 GeoDict_t,
@@ -60,8 +60,8 @@ struct ForecastTimeConceptInfo
     static std::string_view variantName()
     {
         return std::string_view(
-            forecastTimeTypeName<
-                static_cast<ForecastTimeType>(Variant)
+            pointInTimeTypeName<
+                static_cast<PointInTimeType>(Variant)
             >()
         );
     }

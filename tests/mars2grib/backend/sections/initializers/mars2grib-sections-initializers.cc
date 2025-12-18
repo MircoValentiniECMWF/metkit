@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
 
 
     using metkit::mars2grib::backend::sections::initializers::Fn;
-    using metkit::mars2grib::backend::sections::initializers::getTemplateFn;
+    using metkit::mars2grib::backend::sections::initializers::getSectionInitializerFn;
 
    const std::string yaml(R"json({
 step: 12,
@@ -41,7 +41,7 @@ name: test
     auto handlePtr = metkit::codes::codesHandleFromSample("GRIB2");
     auto& out_dict = *handlePtr;
 
-    auto Fcn = getTemplateFn<eckit::LocalConfiguration,eckit::LocalConfiguration,eckit::LocalConfiguration,eckit::LocalConfiguration,metkit::codes::CodesHandle>( 2,15);
+    auto Fcn = getSectionInitializerFn<eckit::LocalConfiguration,eckit::LocalConfiguration,eckit::LocalConfiguration,eckit::LocalConfiguration,metkit::codes::CodesHandle>( 2,15);
 
     Fcn( mars_dict, geo_dict, par_dict, opt_dict, out_dict );
 
