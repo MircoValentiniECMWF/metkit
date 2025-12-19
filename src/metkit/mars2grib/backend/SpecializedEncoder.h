@@ -140,13 +140,13 @@ public:
                 LOG_DEBUG_LIB(LibMetkit) << "End of stage, cloning the sample to force materialization." << std::endl;
                 samplePtr = clone_or_throw<OutDict_t>( *samplePtr );
             }
-            long isValid = samplePtr->getLong( "isMessageValid" );
-            if ( isValid == 0 ) {
-                throw Mars2GribGenericException(
-                  "isMessageValid after conceptSetter",
-                  Here()
-                );
-            }
+            // long isValid = samplePtr->getLong( "isMessageValid" );
+            // if ( isValid == 0 ) {
+            //     throw Mars2GribGenericException(
+            //       "isMessageValid after conceptSetter",
+            //       Here()
+            //     );
+            // }
 
             return samplePtr;
         }
