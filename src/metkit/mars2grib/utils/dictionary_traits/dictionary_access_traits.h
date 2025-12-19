@@ -32,6 +32,10 @@ struct DictToJsonTraits {
             "[to_json not supported for this dictionary type]"
         };
     }
+
+    static void dump_or_ignore( const Dict&, const std::string&  ) {
+        os << to_json( std::declval<Dict>() );
+    }
 };
 
 template <typename Dict>
@@ -124,7 +128,7 @@ struct DictSetOrThrow {
 //  dict_to_json
 // ============================================================
 template <typename Dict>
-std::string dict_to_json(const Dict& d) noexcept(true) {
+std::string dict_to_json(const Dict& d) {
     return DictToJsonTraits<Dict>::to_json(d);
 }
 
@@ -146,6 +150,12 @@ template <typename Dict>
 std::unique_ptr<Dict>
 clone_or_throw(const Dict& d) {
     return DictTraits<Dict>::clone_or_throw(d);
+}
+
+template <typename Dict>
+void
+dump_or_ignore(const Dict& d, const std::string& f) {
+    DictToJsonTraits<Dict>::dump_or_ignore(d, f);
 }
 
 // ============================================================

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <fstream>
 #include <string_view>
 #include <vector>
 #include <optional>
@@ -8,6 +9,8 @@
 #include <cstdint>
 #include <exception>
 #include <memory>
+
+#include "eckit/io/Buffer.h"
 
 #include "metkit/codes/api/CodesTypes.h"
 #include "metkit/codes/api/CodesAPI.h"
@@ -173,6 +176,41 @@ constexpr std::string_view type_name<metkit::codes::CodesHandle>() {
 namespace metkit::mars2grib::utils::dict_traits {
 
 using std::operator""s;
+
+// -----------------------------------------------------------------------------
+// DictToJsonTraits
+// -----------------------------------------------------------------------------
+template <>
+struct DictToJsonTraits<metkit::codes::CodesHandle> {
+
+    static std::string to_json(const metkit::codes::CodesHandle& sample) {
+        return std::string{
+            "[to_json not supported for codeHandle this dictionary type]"
+        };
+    }
+
+    static void dump_or_ignore( const metkit::codes::CodesHandle& sample,
+                  const std::string& fname ) {
+
+        try {
+            eckit::Buffer buf{ sample.messageSize() };
+            sample.copyInto(reinterpret_cast<uint8_t*>(buf.data()), buf.size());
+
+            std::ofstream out(fname, std::ios::binary | std::ios::out);
+            if (!out) {
+                return;  // fail silently
+            }
+
+            out.write(static_cast<const char*>(buf.data()), buf.size());
+            out.flush();
+            // ofstream destructor closes the file
+        }
+        catch (...) {
+            std::cout << "dump_or_ignore: unable to dump CodesHandle to file " << fname << std::endl;
+            // nothrow guarantee: swallow everything
+        }
+    }
+};
 
 // -----------------------------------------------------------------------------
 // DictCreateFromSample / Clone / NeedsChecks
