@@ -3,19 +3,26 @@
 #include <string>
 #include <string_view>
 
-#include "../concept_core.h"
-#include "composition_enum.h"
-#include "composition_encoding.h"
+// Core concept includes
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+#include "metkit/mars2grib/backend/concepts/composition/composition_enum.h"
+#include "metkit/mars2grib/backend/concepts/composition/composition_encoding.h"
+
+// Exceptions
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
+
+namespace metkit::mars2grib::backend::cnpts {
 
 // ======================================================
 // ConceptInfo
 // ======================================================
 struct CompositionConceptInfo
 {
-    static constexpr const char* name = "composition";
+    static constexpr const char* name = compositionName.data();
 
     template<
-        int Stage, int Sec,
+    std::size_t Stage,
+    std::size_t Sec,
         CompositionType Variant,
         class MarsDict_t,
         class GeoDict_t,
@@ -31,7 +38,7 @@ struct CompositionConceptInfo
         OutDict_t
     > entry()
     {
-        if constexpr ( compositionApplicable(Stage, Sec, Variant) ) {
+        if constexpr ( compositionApplicable<Stage, Sec, Variant>() ) {
             return &CompositionOp<
                 Stage, Sec, Variant,
                 MarsDict_t,
@@ -44,8 +51,9 @@ struct CompositionConceptInfo
             return nullptr;
         }
 
-        // Remove compiler warning
-        return nullptr;
+        // Avoid compile warnings
+        __builtin_unreachable();
+
     }
 
     template<auto Variant>
@@ -58,3 +66,5 @@ struct CompositionConceptInfo
         );
     }
 };
+
+} // namespace metkit::mars2grib::backend::cnpts

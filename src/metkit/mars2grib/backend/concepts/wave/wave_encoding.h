@@ -13,8 +13,8 @@
 #include "metkit/mars2grib/backend/deductions/waveSpectraInfo.h"
 #include "metkit/mars2grib/backend/deductions/periodItMin.h"
 #include "metkit/mars2grib/backend/deductions/periodItMax.h"
-#include "metkit/mars2grib/backend/deductions/marsDir.h"
-#include "metkit/mars2grib/backend/deductions/marsFreq.h"
+#include "metkit/mars2grib/backend/deductions/marsDirection.h"
+#include "metkit/mars2grib/backend/deductions/marsFrequency.h"
 
 // Checks
 #include "metkit/mars2grib/backend/checks/matchProductDefinitionTemplateNumber.h"
@@ -155,8 +155,8 @@ void WaveOp(
                 // Nothing to do at runtime for now
                 if constexpr ( Variant == WaveType::Spectra ) {
                     // Nothing to do at runtime for now
-                    long marsDir = deductions::marsDir_or_throw( mars, par );
-                    long marsFreq = deductions::marsFreq_or_throw( mars, par );
+                    long marsDir = deductions::marsDirection_or_throw( mars, par );
+                    long marsFreq = deductions::marsFrequency_or_throw( mars, par );
 
                     set_or_throw<long>( out, "numberOfWaveDirections", marsDir );
                     set_or_throw<long>( out, "numberOfWaveFrequencies", marsFreq );

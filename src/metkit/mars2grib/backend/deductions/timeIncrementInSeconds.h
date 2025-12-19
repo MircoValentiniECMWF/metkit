@@ -25,13 +25,13 @@ std::optional<long> timeIncrementInSeconds_opt(
     try {
 
         // Get the mars.expver
-        auto lengthOfTimeStepInSeconds_opt = get_opt<long>( par, "lengthOfTimeStepInSeconds" );
+        auto lengthOfTimeStepInSeconds_opt = get_opt<long>( par, "timeIncrementInSeconds" );
 
         // TODO MIVAL: Validate (if present needs to be > 0)
         if ( lengthOfTimeStepInSeconds_opt.has_value() ) {
             if ( lengthOfTimeStepInSeconds_opt.value() < 0 ) {
                 throw Mars2GribDeductionException(
-                    "`lengthOfTimeStepInSeconds` must be > 0 if present",
+                    "`timeIncrementInSeconds` must be > 0 if present",
                     Here()
                 );
             }
@@ -47,7 +47,7 @@ std::optional<long> timeIncrementInSeconds_opt(
         // Rethrow nested exceptions
         std::throw_with_nested(
             Mars2GribDeductionException(
-                "Unable to get `expver` from Mars dictionary",
+                "Unable to get `timeIncrementInSeconds` from Mars dictionary",
                 Here()
             )
         );
@@ -76,7 +76,7 @@ long timeIncrementInSeconds_or_throw(
             return timeIncrementInSecondsOpt.value();
         } else {
             throw Mars2GribDeductionException(
-                "`lengthOfTimeStepInSeconds` is not defined in Mars/Par dictionary",
+                "`timeIncrementInSeconds` is not defined in Mars/Par dictionary",
                 Here()
             );
         }
@@ -86,7 +86,7 @@ long timeIncrementInSeconds_or_throw(
         // Rethrow nested exceptions
         std::throw_with_nested(
             Mars2GribDeductionException(
-                "Unable to get `expver` from Mars dictionary",
+                "Unable to get `timeIncrementInSeconds` from Mars dictionary",
                 Here()
             )
         );

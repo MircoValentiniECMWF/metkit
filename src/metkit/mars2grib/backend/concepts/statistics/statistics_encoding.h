@@ -12,6 +12,8 @@
 #include "metkit/mars2grib/backend/deductions/numberOfTimeRanges.h"
 #include "metkit/mars2grib/backend/deductions/timeIncrementInSeconds.h"
 #include "metkit/mars2grib/backend/deductions/statisticsDescriptor.h"
+#include "metkit/mars2grib/backend/deductions/marsStepInSeconds.h"
+#include "metkit/mars2grib/backend/deductions/marsTimeSpanInSeconds.h"
 
 // checks
 #include "metkit/mars2grib/backend/checks/isStatisticsProductDefinitionTemplateNumber.h"
@@ -37,7 +39,7 @@ template<
 >
 constexpr bool statisticsApplicable()
 {
-    return true;
+    return (Sec == SecProductDefinitionSection);
 }
 
 // ======================================================
@@ -63,6 +65,7 @@ void StatisticsOp(
 
     using metkit::mars2grib::utils::dict_traits::set_or_throw;
     using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
+
 
     if constexpr ( statisticsApplicable<Stage, Sec, Variant>() ) {
 
@@ -95,57 +98,86 @@ void StatisticsOp(
             if constexpr ( Stage == StagePreset ) {
 
                 // Get the length of timestep in seconds
-                std::optional<long> timeIncrementInSecondsOpt =
-                    deductions::timeIncrementInSeconds_opt( mars, par );
+                std::optional<long> timeIncrementInSecondsOpt = deductions::timeIncrementInSeconds_opt( mars, par );
+
+                // Set type of statistical processing
+                set_or_throw<long>( out, "typeOfStatisticalProcessing", typeOfStatisticalProcessing<Variant>() );
+                set_or_throw<long>( out, "indicatorOfUnitOfTimeRange", static_cast<long>( utils::time::TimeUnit::Hour ) );
+                set_or_throw<long>( out, "indicatorOfUnitForTimeRange", static_cast<long>( utils::time::TimeUnit::Hour ) );
+
 
                 // HACK: handle special case for MUL-227
                 if ( numberOfTimeRangesVal==1 && !timeIncrementInSecondsOpt.has_value() ) {
 
-                    set_or_throw<long>( out, "typeOfStatisticalProcessing", typeOfStatisticalProcessing<Variant>() );
-                    set_or_throw<long>( out, "indicatorOfUnitForTimeRange",
-                        static_cast<long>( utils::time::TimeUnit::Hour ) );
                     set_or_throw<long>( out, "typeOfTimeIncrement", 2L ); // CodeTable 4.11
-                    set_or_throw<long>( out, "indicatorOfUnitForTimeIncrement",
-                        static_cast<long>( utils::time::TimeUnit::Missing ) );
+                    set_or_throw<long>( out, "indicatorOfUnitForTimeIncrement", static_cast<long>( utils::time::TimeUnit::Missing ) );
                     set_or_throw<long>( out, "timeIncrement", 0L );
 
                 }
                 else {
 
-                    // Get the information needed to encode the statistics
-                    deductions::StatisticalProcessing stat =
-                        deductions::getTimeDescriptorFromMars_orThrow( mars, par, static_cast<long>( Variant ) );
+                    set_or_throw<long>( out, "typeOfTimeIncrement", 2L ); // CodeTable 4.11
+                    set_or_throw<long>( out, "indicatorOfUnitForTimeIncrement", static_cast<long>( utils::time::TimeUnit::Second ) );
+                    set_or_throw<long>( out, "timeIncrement", timeIncrementInSecondsOpt.value() );
 
-                    set_or_throw<long>( out, "typeOfStatisticalProcessing", typeOfStatisticalProcessing<Variant>() );
+                    deductions::StatisticalProcessing statsDesc =
+                        deductions::getTimeDescriptorFromMars_orThrow(
+                            mars,
+                            par,
+                            typeOfStatisticalProcessing<Variant>()
+                        );
+
+                    if ( numberOfTimeRangesVal > 1 ){
+                        throw Mars2GribConceptException(
+                                std::string( statisticsName ),
+                                std::string( statisticsTypeName<Variant>() ),
+                                std::to_string(Stage),
+                                std::to_string(Sec),
+                                "`statistics` concept with multiple time ranges not yet supported at preset stage",
+                                Here()
+                            );
+                    }
 
                 }
+
+
 
             }
 
             if constexpr ( Stage == StageRuntime ) {
 
-                 // Get the length of timestep in seconds
-                std::optional<long> timeIncrementInSecondsOpt =
-                    deductions::timeIncrementInSeconds_opt( mars, par );
 
-                // HACK: handle special case for MUL-227
-                if ( numberOfTimeRangesVal==1 && !timeIncrementInSecondsOpt.has_value() ) {
-                    set_or_throw<long>( out, "typeOfStatisticalProcessing", typeOfStatisticalProcessing<Variant>() );
-                    set_or_throw<long>( out, "indicatorOfUnitForTimeRange",
-                        static_cast<long>( utils::time::TimeUnit::Hour ) );
-                    set_or_throw<long>( out, "typeOfTimeIncrement", 2L ); // CodeTable 4.11
-                    set_or_throw<long>( out, "indicatorOfUnitForTimeIncrement",
-                        static_cast<long>( utils::time::TimeUnit::Missing ) );
-                    set_or_throw<long>( out, "timeIncrement", 0L );
-                }
-                else {
+                long stepInHour = deductions::marsStepInSeconds_or_throw( mars, par )/3600;
+                long timeSpanInHour = deductions::marsTimeSpanInSeconds_or_throw( mars, par )/3600;
 
-                    // Get the information needed to encode the statistics
-                    deductions::StatisticalProcessing stat =
-                        deductions::getTimeDescriptorFromMars_orThrow( mars, par, static_cast<long>( Variant ) );
+                // Get the length of timestep in seconds
+                std::optional<long> timeIncrementInSecondsOpt = deductions::timeIncrementInSeconds_opt( mars, par );
 
-                    set_or_throw<long>( out, "typeOfStatisticalProcessing", typeOfStatisticalProcessing<Variant>() );
+                long tmp = stepInHour - timeSpanInHour;
+                long startStep = ( tmp >= 0 ) ? tmp : 0;
+                long endStep = stepInHour;
 
+                set_or_throw<long>( out, "startStep", startStep );
+                set_or_throw<long>( out, "endStep", endStep );
+                if ( timeIncrementInSecondsOpt.has_value() ) {
+                    deductions::StatisticalProcessing statsDesc =
+                        deductions::getTimeDescriptorFromMars_orThrow(
+                            mars,
+                            par,
+                            typeOfStatisticalProcessing<Variant>()
+                        );
+                };
+
+
+                if ( numberOfTimeRangesVal > 1 ){
+                    throw Mars2GribConceptException(
+                            std::string( statisticsName ),
+                            std::string( statisticsTypeName<Variant>() ),
+                            std::to_string(Stage),
+                            std::to_string(Sec),
+                            "`statistics` concept with multiple time ranges not yet supported at preset stage",
+                            Here()
+                        );
                 }
 
             }

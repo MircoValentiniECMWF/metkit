@@ -6,12 +6,22 @@
 #include <cstdint>
 #include <iostream>
 
-#include "../concept_core.h"
+#include "metkit/mars2grib/backend/concepts/concept_core.h"
+
+// Exceptions
+#include "metkit/mars2grib/utils/mars2grib-exception.h"
+
+namespace metkit::mars2grib::backend::cnpts {
+
+// ======================================================
+// NAME OF THE CONCEPT
+// ======================================================
+inline constexpr std::string_view compositionName{"composition"};
 
 // ======================================================
 // ENUM OF VARIANTS FOR THIS CONCEPT
 // ======================================================
-enum class CompositionType : int {
+enum class CompositionType : std::size_t {
     Chem = 0,
     Aerosol,
     AerosolOptical,
@@ -41,7 +51,7 @@ constexpr std::string_view compositionTypeName();
 #define DEF(T,NAME) \
     template<> constexpr std::string_view compositionTypeName<T>() { return NAME; }
 
-    DEF(CompositionType::Chem, "chem");
+    DEF(CompositionType::Chem, "chemical");
     DEF(CompositionType::Aerosol, "aerosol");
     DEF(CompositionType::AerosolOptical, "aerosolOptical");
     DEF(CompositionType::ChemicalSource, "chemicalSource");
@@ -49,3 +59,5 @@ constexpr std::string_view compositionTypeName();
     DEF(CompositionType::Default, "default");
 
 #undef DEF
+
+} // namespace metkit::mars2grib::backend::cnpts

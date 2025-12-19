@@ -131,10 +131,17 @@ void LevelOp(
                 std::vector<double> pv_array = deductions::pvArray( mars, par );
 
                 // Set the PV array
+                set_or_throw<long>( out, "PVPresent", 1L );
                 set_or_throw<std::vector<double>>( out, "pv", pv_array );
             }
 
             if constexpr ( Stage == StagePreset || Stage == StageRuntime ) {
+
+                std::cout << "I am setting the level: {" <<
+                "stage: " << std::to_string(Stage) << ", " <<
+                "section:" << std::to_string(Section) << ", " <<
+                "variant:" << std::string(levelTypeName<Variant>()) <<
+                "}" << std::endl;
 
                 // Set level type (and level)
                 if constexpr ( Variant == LevelType::HeightAboveGroundAt2M ) {

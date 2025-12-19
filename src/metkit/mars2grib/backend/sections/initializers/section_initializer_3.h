@@ -28,7 +28,7 @@ void allocateTemplateNumber3(
 
     try {
         // Eventually prepare the sample the sample if special handling is needed
-        if constexpr ( TemplateNumber == 51 ) {
+        if constexpr ( TemplateNumber == 50 ) {
             // https://confluence.ecmwf.int/display/ECC/ecCodes+developer+FAQ+-+GRIB#ecCodesdeveloperFAQGRIB-GRIB:HowcanIconvertthesampleGRIB2.tmpltosphericalharmonics?
             set_or_throw<long>( out, "numberOfDataPoints", 6L);
             set_or_throw<long>( out, "numberOfValues", 6L);
@@ -49,7 +49,7 @@ void allocateTemplateNumber3(
         }
         else {
             long drt = static_cast<long>(TemplateNumber);
-            set_or_throw<long>( out, "dataRepresentationTemplateNumber", drt );
+            set_or_throw<long>( out, "gridDefinitionTemplateNumber", drt );
         }
 
         return;

@@ -34,7 +34,14 @@ eckit::DateTime hindcastDateTime(
 
         auto marsTime = get_or_throw<long>( mars, "htime" );
 
-        return eckit::DateTime(marsDate, marsTime);
+        long YYYY =  marsDate / 10000;
+        long MM = (marsDate / 100) % 100;
+        long DD =  marsDate % 100;
+        long hh = marsTime / 10000;
+        long mm = (marsTime / 100) % 100;
+        long ss = marsTime % 100;
+
+       return eckit::DateTime( eckit::Date(YYYY, MM, DD), eckit::Time(hh, mm, ss));
 
     } catch ( ... ) {
 

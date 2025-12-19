@@ -102,7 +102,7 @@ getTimeDescriptorFromMars_orThrow(
 
         const long timeStepSeconds = timeIncrementInSeconds_or_throw( mars, par );
 
-        const long timeSpanInSeconds = marsTimespanInSeconds_or_throw( mars, par );
+        const long timeSpanInSeconds = marsTimeSpanInSeconds_or_throw( mars, par );
 
         if ( timeSpanInSeconds % 3600 != 0 ) {
             throw Mars2GribDeductionException(

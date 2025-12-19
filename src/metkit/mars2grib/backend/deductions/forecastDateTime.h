@@ -42,9 +42,16 @@ eckit::DateTime forecastDateTime_or_throw(
         long marsStepInSecondsVal = marsStep * 3600;  // TODO: Multiply by timestep
 
         // Compute forecast time in seconds since reference time
-        eckit::Date Date{marsDate};
-        eckit::Time Time{marsTime};
-        eckit::DateTime referenceTime{Date, Time};
+
+        long YYYY =  marsDate / 10000;
+        long MM = (marsDate / 100) % 100;
+        long DD =  marsDate % 100;
+        long hh = marsTime / 10000;
+        long mm = (marsTime / 100) % 100;
+        long ss = marsTime % 100;
+
+        eckit::DateTime referenceTime{eckit::Date(YYYY, MM, DD), eckit::Time(hh, mm, ss)};
+
         return referenceTime + static_cast<eckit::Second>(marsStepInSecondsVal);
 
     } catch ( ... ) {

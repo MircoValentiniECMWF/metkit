@@ -30,17 +30,12 @@
 #include "metkit/mars2grib/backend/concepts/statistics/statistics.h"
 #include "metkit/mars2grib/backend/concepts/tables/tables.h"
 #include "metkit/mars2grib/backend/concepts/wave/wave.h"
+#include "metkit/mars2grib/backend/concepts/composition/composition.h"
 
 
 
 
 
-
-
-
-#if 0
-#include "./composition/composition.h"
-#endif
 
 namespace metkit::mars2grib::backend::cnpts {
 
@@ -153,19 +148,8 @@ make_concept_registry()
     RegisterVariants<SatelliteConceptInfo, SatelliteList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
 
-#if 0
-
-
-
-
-
-
-
-
     RegisterVariants<CompositionConceptInfo, CompositionList,
                      MarsDict_t,GeoDict_t,ParDict_t,OptDict_t,OutDict_t>::run(registry);
-
-#endif
 
     return registry;
 }

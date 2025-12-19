@@ -16,7 +16,7 @@
 namespace metkit::mars2grib::backend::deductions {
 
 template<class MarsDict_t, class ParDict_t>
-long marsFreq_or_throw(
+long marsChem_or_throw(
     const MarsDict_t& mars, const ParDict_t& par){
 
     using metkit::mars2grib::utils::dict_traits::get_or_throw;
@@ -24,19 +24,25 @@ long marsFreq_or_throw(
 
     try {
 
-        // Get the mars.freq
-        auto marsFreqVal = get_or_throw<long>( mars, "freq" );
+        // Get the mars.chem
+        auto marsChemVal = get_or_throw<long>( mars, "chem" );
 
         // TODO MIVAL: Validate
+        if ( marsChemVal < 0 || marsChemVal > 900 ) {
+            throw Mars2GribDeductionException(
+                "Invalid value for `chem` in Mars dictionary: " + std::to_string(marsChemVal),
+                Here()
+            );
+        }
 
-        return marsFreqVal;
+        return marsChemVal;
 
     } catch ( ... ) {
 
         // Rethrow nested exceptions
         std::throw_with_nested(
             Mars2GribDeductionException(
-                "Unable to get `freq` from Mars dictionary",
+                "Unable to get `chem` from Mars dictionary",
                 Here()
             )
         );

@@ -102,9 +102,12 @@ void RepresentationOp(
                     // Retrive information from geo dict
                     std::vector<long> PlArray = get_or_throw<std::vector<long>>( geo, "pl" );
 
+                    long numberOfParallelsBetweenAPoleAndTheEquator = get_or_throw<long>( geo, "numberOfParallelsBetweenAPoleAndTheEquator" );
+
                     // Allocate the grib header
                     set_or_throw<std::string>( out, "gridType", "reduced_gg" );
                     set_or_throw<long>( out, "interpretationOfNumberOfPoints", 1L );
+                    set_or_throw<long>( out, "numberOfParallelsBetweenAPoleAndTheEquator", numberOfParallelsBetweenAPoleAndTheEquator );
                     set_or_throw<std::vector<long>>( out, "pl", PlArray );
                 }
                 else if constexpr ( Variant == RepresentationType::SphericalHarmonics ) {
@@ -217,7 +220,6 @@ void RepresentationOp(
                     set_or_throw( out, "longitudeOfFirstGridPointInDegrees", longitudeOfFirstGridPointInDegrees );
                     set_or_throw( out, "latitudeOfLastGridPointInDegrees", latitudeOfLastGridPointInDegrees );
                     set_or_throw( out, "longitudeOfLastGridPointInDegrees", longitudeOfLastGridPointInDegrees );
-                    set_or_throw<long>( out, "numberOfParallelsBetweenAPoleAndTheEquator", numberOfParallelsBetweenAPoleAndTheEquator );
                     set_or_throw<long>( out, "iDirectionIncrementInDegrees", iDirectionIncrementInDegrees );
 
                 }
@@ -231,7 +233,7 @@ void RepresentationOp(
                     const auto longitudeOfFirstGridPointInDegrees = get_or_throw<double>( geo, "longitudeOfFirstGridPointInDegrees" );
                     const auto latitudeOfLastGridPointInDegrees = get_or_throw<double>( geo, "latitudeOfLastGridPointInDegrees" );
                     const auto  longitudeOfLastGridPointInDegrees = get_or_throw<double>( geo, "longitudeOfLastGridPointInDegrees" );
-                    long numberOfParallelsBetweenAPoleAndTheEquator = get_or_throw<long>( geo, "numberOfParallelsBetweenAPoleAndTheEquator" );
+                    // long numberOfParallelsBetweenAPoleAndTheEquator = get_or_throw<long>( geo, "numberOfParallelsBetweenAPoleAndTheEquator" );
 
                     // Configure grib header
                     set_or_throw<long>( out, "truncateDegrees", truncateDegrees );
@@ -240,7 +242,7 @@ void RepresentationOp(
                     set_or_throw( out, "longitudeOfFirstGridPointInDegrees", longitudeOfFirstGridPointInDegrees );
                     set_or_throw( out, "latitudeOfLastGridPointInDegrees", latitudeOfLastGridPointInDegrees );
                     set_or_throw( out, "longitudeOfLastGridPointInDegrees", longitudeOfLastGridPointInDegrees );
-                    set_or_throw<long>( out, "numberOfParallelsBetweenAPoleAndTheEquator", numberOfParallelsBetweenAPoleAndTheEquator );
+                    // set_or_throw<long>( out, "numberOfParallelsBetweenAPoleAndTheEquator", numberOfParallelsBetweenAPoleAndTheEquator );
                     setMissing_or_throw( out, "iDirectionIncrement" );
 
                 }

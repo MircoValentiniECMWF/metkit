@@ -35,9 +35,8 @@ constexpr bool tablesApplicable()
 {
 
     // Conditions to apply concept
-    return ((Variant == TablesType::Default) &&
-            (Stage == StagePreset) &&
-            (Section == SecLocalUseSection));
+    return ((Stage == StageAllocate) &&
+            (Section == SecIdentificationSection));
 
 }
 
@@ -62,6 +61,7 @@ void TablesOp(
     OutDict_t&         out)
 {
 
+    using metkit::mars2grib::utils::dict_traits::get_or_throw;
     using metkit::mars2grib::utils::dict_traits::set_or_throw;
     using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
 
@@ -77,13 +77,19 @@ void TablesOp(
                 << ", Variant=" << std::string(tablesTypeName<Variant>())
                 << std::endl;
 
-            // deduce tablesVersion and localTablesVersion
-            long tablesVersionVal = deductions::tablesVersion<MarsDict_t,ParDict_t>( mars, par );
             long localTablesVersionVal = deductions::localTablesVersion<MarsDict_t,ParDict_t>( mars, par );
 
             // set in output dictionary
-            set_or_throw<long>(  out, "tablesVersion", tablesVersionVal );
-            set_or_throw<long>(  out, "localTablesVersion", localTablesVersionVal );
+            if constexpr ( Variant == TablesType::Custom ) {
+                long tablesVersionVal = get_or_throw<long>( par, "tablesVersion" );
+                set_or_throw<long>(  out, "tablesVersion", tablesVersionVal );
+                set_or_throw<long>(  out, "localTablesVersion", localTablesVersionVal );
+            } else if constexpr ( Variant == TablesType::Default ) {
+                // deduce tablesVersion and localTablesVersion
+                long tablesVersionVal = deductions::tablesVersion<MarsDict_t,ParDict_t>( mars, par );
+                set_or_throw<long>(  out, "tablesVersion", tablesVersionVal );
+                set_or_throw<long>(  out, "localTablesVersion", localTablesVersionVal );
+            }
 
         }
         catch ( ... ){

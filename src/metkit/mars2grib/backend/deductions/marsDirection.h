@@ -16,7 +16,7 @@
 namespace metkit::mars2grib::backend::deductions {
 
 template<class MarsDict_t, class ParDict_t>
-long marsDir_or_throw(
+long marsDirection_or_throw(
     const MarsDict_t& mars, const ParDict_t& par){
 
     using metkit::mars2grib::utils::dict_traits::get_or_throw;
@@ -25,7 +25,7 @@ long marsDir_or_throw(
     try {
 
         // Get the mars.dir
-        auto marsDirVal = get_or_throw<long>( mars, "dir" );
+        auto marsDirVal = get_or_throw<long>( mars, "direction" );
 
         // TODO MIVAL: Validate
 

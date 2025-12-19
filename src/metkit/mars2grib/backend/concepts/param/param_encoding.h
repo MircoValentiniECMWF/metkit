@@ -59,7 +59,8 @@ void ParamOp(
     const OptDict_t&   opt,
     OutDict_t&         out)
 {
-
+    using metkit::mars2grib::utils::dict_traits::get_opt;
+    using metkit::mars2grib::utils::dict_traits::get_or_throw;
     using metkit::mars2grib::utils::dict_traits::set_or_throw;
     using metkit::mars2grib::utils::exceptions::Mars2GribConceptException;
 
@@ -77,6 +78,29 @@ void ParamOp(
 
             // Deduction rules
             long paramId = deductions::paramId( mars, par );
+
+
+            // DEBUG CODE
+            // long PDT = get_or_throw<long>( out, "productDefinitionTemplateNumber" );
+            // long NTR = get_opt<long>( out, "numberOfTimeRange" ).value_or(-1);
+            // std::string TOL = get_or_throw<std::string>( out, "typeOfLevel" );
+            // long lev = get_or_throw<long>( out, "level" );
+
+            // if ( paramId == 237167 ){
+            //     set_or_throw<long>( out, "typeOfFirstFixedSurface", 103 );
+            // }
+
+
+            // Check type Of level
+            // auto l00 = get_opt<long>( out, "typeOfFirstFixedSurface" ).value_or(-1);
+            // auto l01 = get_opt<long>( out, "typeOfSecondFixedSurface" ).value_or(-1);
+            // auto l02 = get_opt<int>( out, "scaledValueOfFirstFixedSurface" ).value_or(-1);
+            // auto l10 = get_opt<int>( out, "scaledValueOfSecondFixedSurface" ).value_or(-1);
+            // auto l11 = get_opt<int>( out, "scaleFactorOfFirstFixedSurface" ).value_or(-1);
+            // auto l12 = get_opt<int>( out, "scaleFactorOfSecondFixedSurface" ).value_or(-1);
+
+            // std::cout << "PDT: " << PDT << ", " << NTR << ", " << TOL << ", " << lev <<
+            // ", " << l00 << ", " << l01 << ", " << l02 << ", " << l10 << ", " << l11 << ", " << l12 << std::endl;
 
             // Set values in output dictionary (grib sample)
             set_or_throw<long>( out, "paramId", paramId );
