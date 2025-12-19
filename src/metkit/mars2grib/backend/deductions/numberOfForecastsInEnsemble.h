@@ -26,7 +26,7 @@ long numberOfForecastsInEnsemble(
         long perturbationNumber = get_or_throw<long>( mars, "number");
 
         // Basic validation
-        if ( perturbationNumber < 0 || perturbationNumber >= numberOfForecastsInEnsemble ){
+        if ( perturbationNumber < 0 || perturbationNumber > numberOfForecastsInEnsemble ){
             throw Mars2GribDeductionException(
                 "`perturbationNumber` must be in range [0, numberOfForecastsInEnsemble)",
                 Here()

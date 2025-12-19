@@ -31,6 +31,45 @@ enum class TypeOfEnsembleForecast : long {
     Missing                             = 255
 };
 
+namespace impl {
+
+    TypeOfEnsembleForecast getTypeOfEnsembleForecast(long typeOfEnsembleForecast) {
+
+        using metkit::mars2grib::utils::exceptions::Mars2GribDeductionException;
+
+        switch (typeOfEnsembleForecast) {
+            case 0:
+                return TypeOfEnsembleForecast::UnperturbedHighResControl;
+            case 1:
+                return TypeOfEnsembleForecast::UnperturbedLowResControl;
+            case 2:
+                return TypeOfEnsembleForecast::NegativelyPerturbed;
+            case 3:
+                return TypeOfEnsembleForecast::PositivelyPerturbed;
+            case 4:
+                return TypeOfEnsembleForecast::MultiModel;
+            case 5:
+                return TypeOfEnsembleForecast::Unperturbed;
+            case 6:
+                return TypeOfEnsembleForecast::Perturbed;
+            case 7:
+                return TypeOfEnsembleForecast::InitialConditionsPerturbations;
+            case 8:
+                return TypeOfEnsembleForecast::ModelPhysicsPerturbations;
+            case 9:
+                return TypeOfEnsembleForecast::InitialAndModelPhysicsPerturbations;
+            case 255:
+                return TypeOfEnsembleForecast::Missing;
+        }
+
+        throw Mars2GribDeductionException(
+            "`typeOfEnsembleForecast` value '" + std::to_string(typeOfEnsembleForecast) + "' is not mapped to any known `typeOfEnsembleForecast`",
+            Here()
+        );
+    }
+
+}
+
 
 // TODO MIVAL: this logic at the moment is very weak, as it does not cover all cases
 // need interaction with DGOV team to improve/define this mapping
@@ -40,23 +79,31 @@ TypeOfEnsembleForecast typeOfEnsembleForecast(
     const MarsDict_t& mars, const ParDict_t& par){
 
     using metkit::mars2grib::utils::dict_traits::get_or_throw;
+    using metkit::mars2grib::utils::dict_traits::has;
     using metkit::mars2grib::utils::exceptions::Mars2GribDeductionException;
 
     try {
     // Get mars type from dictionary
-    std::string marsType = get_or_throw<std::string>( mars, "type" );
 
-    if (  marsType == "cf" ) {
-        return TypeOfEnsembleForecast::Unperturbed;
-    }
-    else if ( marsType == "pf" ) {
-        return TypeOfEnsembleForecast::Perturbed;
+    if (has(par, "typeOfEnsembleForecast")) {
+        long typeOfEnsembleForecast = get_or_throw<long>(par, "typeOfEnsembleForecast");
+        return impl::getTypeOfEnsembleForecast(typeOfEnsembleForecast);
     }
     else {
-        throw Mars2GribDeductionException(
-            "`type` value '" + marsType + "' is not mapped to any known `typeOfEnsembleForecast`",
-            Here()
-        );
+        std::string marsType = get_or_throw<std::string>( mars, "type" );
+
+        if (  marsType == "cf" ) {
+            return TypeOfEnsembleForecast::Unperturbed;
+        }
+        else if ( marsType == "pf" ) {
+            return TypeOfEnsembleForecast::Perturbed;
+        }
+        else {
+            throw Mars2GribDeductionException(
+                "`type` value '" + marsType + "' is not mapped to any known `typeOfEnsembleForecast`",
+                Here()
+            );
+        }
     }
 
     }  catch ( ... ) {
@@ -64,7 +111,7 @@ TypeOfEnsembleForecast typeOfEnsembleForecast(
         // Rethrow nested exceptions
         std::throw_with_nested(
             Mars2GribDeductionException(
-                "Unable to deduce `typeOfEnsembleForecast` from Mars dictionary",
+                "Unable to deduce `typeOfEnsembleForecast` from Mars or Par dictionaries",
                 Here()
             )
         );
