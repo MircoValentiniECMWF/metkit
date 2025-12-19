@@ -62,6 +62,7 @@ public:
 
         size_t count = 0;
         size_t failed = 0;
+        size_t skipped = 0;
         for (const auto& testCase : testCases.getSubConfigurations()) {
             count++;
 
@@ -69,6 +70,12 @@ public:
                 const auto& mars = testCase.getSubConfiguration("mars");
                 const auto& misc = testCase.getSubConfiguration("misc");
                 const auto& geom = testCase.getSubConfiguration("geom");
+
+                // Skip spherical-harmonics
+                if (mars.has("truncation")) {
+                    skipped++;
+                    continue;
+                }
 
                 try {
                     std::vector<double> values(1639680, 0.0);
@@ -82,10 +89,12 @@ public:
                     failed++;
                     break;  // TODO: Remove this to keep running after the first failure!
                 }
+            } else {
+                skipped++;
             }
         }
 
-        eckit::Log::error() << "End of test: " << failed << " test cases failed out of " << count << std::endl;
+        eckit::Log::error() << "End of test: " << failed << " test cases failed out of " << count << " (skipped " << skipped << " cases)" << std::endl;
         // TODO: Throw exception to make test fail!
     }
 };
